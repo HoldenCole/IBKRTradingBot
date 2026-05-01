@@ -54,15 +54,17 @@ def synthetic_quote(p: OptionParams, spread_pct_of_mid: float = 0.06) -> Quote:
     return Quote(bid=bid, ask=ask)
 
 
-# IV defaults per ETF. 3x levered ETFs have ~3x the underlying realized vol,
-# so option IV runs roughly proportionally higher. These are starting points;
-# the user should override with a backtest-time IV regime they trust.
+# IV defaults per ETF. Calibrated against typical 2024-2026 realized IV
+# regimes for these tickers. Levered ETFs (UPRO/TQQQ/SQQQ) sit roughly 3x the
+# underlying realized vol but the prior values (65/75/85%) overstated mid-
+# regime IV by 10-20 points, inflating option prices and P&L magnitudes in
+# backtests. Override per-run if you want to test stress scenarios.
 DEFAULT_IV_BY_ETF: dict[str, float] = {
     "SPY": 0.20,
     "QQQ": 0.25,
-    "UPRO": 0.65,
-    "TQQQ": 0.75,
-    "SQQQ": 0.85,
+    "UPRO": 0.45,
+    "TQQQ": 0.55,
+    "SQQQ": 0.75,
 }
 
 DEFAULT_SPREAD_PCT_BY_ETF: dict[str, float] = {
