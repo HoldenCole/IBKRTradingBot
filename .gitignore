@@ -12,8 +12,11 @@ venv/
 !.env.example
 
 logs/
+state/
 notebooks/
 *.ipynb_checkpoints/
+
+# reports/ is tracked: the EOD push commits per-day snapshots there
 
 .pytest_cache/
 .ruff_cache/
