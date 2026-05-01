@@ -98,6 +98,18 @@ class SharesBacktestEngine:
         self.cfg = config
         self.strategies = list(strategies)
         self.daily_bars = daily_bars
+        # Pre-build date -> row-index lookup tables per symbol so per-day
+        # access is O(1) instead of O(n). Without this, an 8-year backtest
+        # spends most of its time re-scanning DataFrames.
+        self._date_idx: dict[str, dict[date, int]] = {}
+        for sym, df in daily_bars.items():
+            if df is None or df.empty:
+                self._date_idx[sym] = {}
+                continue
+            self._date_idx[sym] = {
+                (ts.date() if hasattr(ts, "date") else ts): i
+                for i, ts in enumerate(df.index)
+            }
         self.cash = config.initial_capital
         self.open_positions: list[_OpenSharePosition] = []
         self.deferred: list[tuple[Signal, date]] = []
@@ -153,8 +165,11 @@ class SharesBacktestEngine:
         df = self.daily_bars.get(sym)
         if df is None or df.empty:
             return
-        open_price = _row_value(df, today, "open")
-        if open_price is None or open_price <= 0:
+        i = self._date_idx[sym].get(today)
+        if i is None:
+            return
+        open_price = float(df["open"].iloc[i])
+        if open_price <= 0:
             return
 
         # Concurrent-position limit
@@ -204,9 +219,10 @@ class SharesBacktestEngine:
             df = self.daily_bars.get(pos.underlying)
             if df is None or df.empty:
                 continue
-            today_close = _row_value(df, today, "close")
-            if today_close is None:
+            i = self._date_idx[pos.underlying].get(today)
+            if i is None:
                 continue
+            today_close = float(df["close"].iloc[i])
 
             should_exit, reason = self._check_exit(pos, today, df)
             if not should_exit:
@@ -224,11 +240,8 @@ class SharesBacktestEngine:
             if days_held >= self.cfg.time_stop_days:
                 return True, "time_stop"
 
-        idx = [d.date() if hasattr(d, "date") else d for d in df.index]
-        if today not in idx:
-            return False, ""
-        i = idx.index(today)
-        if i == 0:
+        i = self._date_idx.get(pos.underlying, {}).get(today)
+        if i is None or i == 0:
             return False, ""
 
         today_high = float(df["high"].iloc[i])
@@ -294,16 +307,18 @@ class SharesBacktestEngine:
         mtm = 0.0
         for p in self.open_positions:
             df = self.daily_bars.get(p.underlying)
-            close = _row_value(df, prior, "close")
-            mtm += p.shares * (close if close else p.entry_price)
+            i = self._date_idx.get(p.underlying, {}).get(prior)
+            close = float(df["close"].iloc[i]) if (i is not None and df is not None) else p.entry_price
+            mtm += p.shares * close
         return self.cash + mtm
 
     def _equity_at_close(self, today: date) -> float:
         mtm = 0.0
         for p in self.open_positions:
             df = self.daily_bars.get(p.underlying)
-            close = _row_value(df, today, "close")
-            mtm += p.shares * (close if close else p.entry_price)
+            i = self._date_idx.get(p.underlying, {}).get(today)
+            close = float(df["close"].iloc[i]) if (i is not None and df is not None) else p.entry_price
+            mtm += p.shares * close
         return self.cash + mtm
 
     # --- Date helpers ---------------------------------------------------
@@ -320,6 +335,17 @@ class SharesBacktestEngine:
     def _bars_through(self, df: pd.DataFrame | None, today: date) -> pd.DataFrame | None:
         if df is None or df.empty:
             return None
+        # Find symbol via identity match against cached frames
+        sym = None
+        for s, cached in self.daily_bars.items():
+            if cached is df:
+                sym = s
+                break
+        if sym is not None:
+            i = self._date_idx[sym].get(today)
+            if i is not None:
+                return df.iloc[: i + 1]
+        # Fallback (shouldn't happen normally)
         idx = df.index
         mask = pd.Series([(d.date() if hasattr(d, "date") else d) <= today for d in idx], index=idx)
         return df.loc[mask]
@@ -328,9 +354,12 @@ class SharesBacktestEngine:
         spy = self.daily_bars.get("SPY")
         if spy is None or spy.empty:
             return None
-        idx = [d.date() if hasattr(d, "date") else d for d in spy.index]
-        prior = [d for d in idx if d < today]
-        return prior[-1] if prior else None
+        idx_map = self._date_idx.get("SPY", {})
+        i = idx_map.get(today)
+        if i is None or i == 0:
+            return None
+        ts = spy.index[i - 1]
+        return ts.date() if hasattr(ts, "date") else ts
 
     @staticmethod
     def _next_session_date(today: date) -> date:
@@ -341,8 +370,19 @@ class SharesBacktestEngine:
 
 
 def _row_value(df: pd.DataFrame | None, today: date, col: str) -> float | None:
+    """Slow O(n) fallback for callers without an index map. The engine
+    methods above use the cached date->index lookup directly."""
     if df is None or df.empty:
         return None
+    # Fast path: try direct .loc[] on Timestamp
+    try:
+        ts = pd.Timestamp(today)
+        if ts in df.index:
+            v = df.at[ts, col]
+            return None if pd.isna(v) else float(v)
+    except Exception:
+        pass
+    # Slow path
     for ts, row in df.iterrows():
         d = ts.date() if hasattr(ts, "date") else ts
         if d == today:
