@@ -67,8 +67,12 @@ DEFAULT_IV_BY_ETF: dict[str, float] = {
     "SQQQ": 0.75,
 }
 
+# Spread defaults reflect typical bid-ask % of mid on ATM weekly/monthly
+# options for these ETFs. Prior values were both too tight on UPRO (which
+# trades thinner than its underlying suggests) and too wide on TQQQ
+# (whose option chain is among the most-liquid retail options).
 DEFAULT_SPREAD_PCT_BY_ETF: dict[str, float] = {
-    "UPRO": 0.06,
-    "TQQQ": 0.05,
-    "SQQQ": 0.07,
+    "UPRO": 0.05,
+    "TQQQ": 0.025,
+    "SQQQ": 0.05,
 }
