@@ -297,6 +297,16 @@ class BacktestEngine:
         sig_bars = self._bars_through(self.daily_bars.get(sig.underlying), today)
         atr20 = float(atr(sig_bars["high"], sig_bars["low"], sig_bars["close"]).iloc[-1])
 
+        # Signal underlying's open price at the entry day. This is what
+        # entry_underlying must hold so that exit logic (afternoon hard
+        # stop, ATR trail, MAE diagnostics) compares against the same
+        # symbol as entry_atr20. Live runner does the equivalent via
+        # broker.underlying_price(sig.underlying); previously this engine
+        # was incorrectly storing the option ETF's open price here.
+        sig_open = self._underlying_open(sig.underlying, today)
+        if sig_open is None:
+            sig_open = self._underlying_close(sig.underlying, today) or spot_today_open
+
         pos = Position(
             trade_id=str(uuid.uuid4()),
             strategy_name=sig.strategy_name,
@@ -307,7 +317,7 @@ class BacktestEngine:
             direction=sig.action,
             entry_time=self._dt(today, time(9, 31)),
             entry_premium=fill_price,
-            entry_underlying=spot_today_open,
+            entry_underlying=sig_open,
             entry_atr20=atr20,
             expiry=expiry,
             initial_contracts=contracts,
@@ -565,6 +575,10 @@ class BacktestEngine:
     def _etf_close(self, etf: str, today: date) -> float | None:
         df = self.etf_bars.get(etf)
         return _row_value(df, today, "close")
+
+    def _underlying_open(self, sym: str, today: date) -> float | None:
+        df = self.daily_bars.get(sym)
+        return _row_value(df, today, "open")
 
     def _underlying_close(self, sym: str, today: date) -> float | None:
         df = self.daily_bars.get(sym)
