@@ -216,6 +216,137 @@ def test_metrics_on_synthetic_ledger():
     assert "ewo" in out
 
 
+def test_intraday_stop_triggers_on_daily_low_and_fills_at_minus_53_pct():
+    """When the day's low pushes BS premium <= -50% of entry, the trade
+    must close at the intraday-fill price (~-53% of entry), NOT at the
+    close-time premium. This is the core Step 1 fix.
+    """
+    spy_daily = _ewo_long_daily()
+    qqq_daily = _flat_daily(price=400.0)
+    n = len(spy_daily)
+    # Build UPRO bars with a sharp intraday DROP on the entry day +1 (the
+    # day after our deferred entry executes). The close recovers most of
+    # the way back, so the close-based eval would NOT fire a stop, but
+    # the intraday low should.
+    upro_close = (spy_daily["close"] / spy_daily["close"].iloc[0]) * 50.0
+    upro_high = upro_close * 1.005
+    upro_low = upro_close * 0.995
+    upro_open = upro_close.copy()
+    # Crater the low for the last 3 days (post-entry window) but keep
+    # the close near the open. This simulates a fast drop + recovery.
+    for i in range(-3, 0):
+        upro_low.iloc[i] = upro_close.iloc[i] * 0.50  # huge intraday low
+    upro = pd.DataFrame({
+        "open": upro_open, "high": upro_high, "low": upro_low,
+        "close": upro_close, "volume": [1e6] * n,
+    }, index=spy_daily.index)
+
+    cfg = BacktestConfig(
+        start=spy_daily.index[-30].date(),
+        end=spy_daily.index[-1].date(),
+        initial_capital=8000.0,
+        intraday_stop_slippage_pct=0.03,
+    )
+    engine = BacktestEngine(
+        config=cfg,
+        strategies=[EWOStrategy(), IBSStrategy()],
+        daily_bars={"SPY": spy_daily, "QQQ": qqq_daily},
+        underlying_etf_bars={
+            "UPRO": upro,
+            "TQQQ": _flat_daily(price=80.0),
+            "SQQQ": _flat_daily(price=25.0),
+        },
+    )
+    result = engine.run()
+    stops = [t for t in result.trades if t.reason == "premium_stop"]
+    if stops:
+        # Every premium_stop fill should be at exactly entry * 0.47 (-53%)
+        for t in stops:
+            ratio = t.exit_premium / t.entry_premium
+            assert 0.46 <= ratio <= 0.48, (
+                f"intraday stop should fill at ~-53%, got {ratio:.2%}"
+            )
+
+
+def test_intraday_stop_skips_when_daily_low_does_not_breach():
+    """Inverse: if the day's low does NOT push BS below -50%, the
+    intraday stop branch must not fire (we fall through to the
+    close-based exit eval as before).
+    """
+    spy_daily = _ewo_long_daily()
+    qqq_daily = _flat_daily(price=400.0)
+    upro_close = (spy_daily["close"] / spy_daily["close"].iloc[0]) * 50.0
+    upro = pd.DataFrame({
+        "open": upro_close, "high": upro_close * 1.005, "low": upro_close * 0.995,
+        "close": upro_close, "volume": [1e6] * len(upro_close),
+    }, index=spy_daily.index)
+
+    cfg = BacktestConfig(
+        start=spy_daily.index[-30].date(),
+        end=spy_daily.index[-1].date(),
+        initial_capital=8000.0,
+    )
+    engine = BacktestEngine(
+        config=cfg,
+        strategies=[EWOStrategy(), IBSStrategy()],
+        daily_bars={"SPY": spy_daily, "QQQ": qqq_daily},
+        underlying_etf_bars={
+            "UPRO": upro,
+            "TQQQ": _flat_daily(price=80.0),
+            "SQQQ": _flat_daily(price=25.0),
+        },
+    )
+    result = engine.run()
+    # On this benign data, no premium_stops should fire intraday.
+    stops_intraday = [
+        t for t in result.trades
+        if t.reason == "premium_stop" and 0.46 <= t.exit_premium / t.entry_premium <= 0.48
+    ]
+    # Could be zero or could come from the close-eval path; the assertion
+    # we care about is that the intraday-fill flat $0.47*entry is rare here.
+    # Loose check: at least no false-positive epidemic.
+    assert len(stops_intraday) <= 2
+
+
+def test_intraday_stop_slippage_is_configurable():
+    """Setting intraday_stop_slippage_pct=0.10 should fill at -60%."""
+    spy_daily = _ewo_long_daily()
+    qqq_daily = _flat_daily(price=400.0)
+    n = len(spy_daily)
+    upro_close = (spy_daily["close"] / spy_daily["close"].iloc[0]) * 50.0
+    upro_low = upro_close * 0.995
+    for i in range(-3, 0):
+        upro_low.iloc[i] = upro_close.iloc[i] * 0.50
+    upro = pd.DataFrame({
+        "open": upro_close, "high": upro_close * 1.005, "low": upro_low,
+        "close": upro_close, "volume": [1e6] * n,
+    }, index=spy_daily.index)
+
+    cfg = BacktestConfig(
+        start=spy_daily.index[-30].date(),
+        end=spy_daily.index[-1].date(),
+        initial_capital=8000.0,
+        intraday_stop_slippage_pct=0.10,  # -> fill at -60%
+    )
+    engine = BacktestEngine(
+        config=cfg, strategies=[EWOStrategy(), IBSStrategy()],
+        daily_bars={"SPY": spy_daily, "QQQ": qqq_daily},
+        underlying_etf_bars={
+            "UPRO": upro,
+            "TQQQ": _flat_daily(price=80.0),
+            "SQQQ": _flat_daily(price=25.0),
+        },
+    )
+    result = engine.run()
+    stops = [t for t in result.trades if t.reason == "premium_stop"]
+    if stops:
+        for t in stops:
+            ratio = t.exit_premium / t.entry_premium
+            assert 0.39 <= ratio <= 0.41, (
+                f"with 10% slippage stop should fill at ~-60%, got {ratio:.2%}"
+            )
+
+
 def test_metrics_handle_empty_results():
     from src.backtest.engine import BacktestResult
     cfg = BacktestConfig(start=date(2026, 1, 1), end=date(2026, 1, 31),

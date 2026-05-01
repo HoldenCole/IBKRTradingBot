@@ -33,9 +33,10 @@ from src.backtest.options import (
     DEFAULT_IV_BY_ETF,
     DEFAULT_SPREAD_PCT_BY_ETF,
     OptionParams,
+    black_scholes_call,
     synthetic_quote,
 )
-from src.positions.exits import ExitKind, MarketState, evaluate_exit
+from src.positions.exits import ExitAction, ExitKind, ExitReason, MarketState, evaluate_exit
 from src.positions.manager import PositionManager
 from src.positions.position import Position
 from src.risk.blackout import BlackoutChecker, StubCalendar
@@ -62,6 +63,13 @@ class BacktestConfig:
     # Slippage on entries: fill at mid + slippage*spread (against you).
     # Slippage on exits: fill at mid - slippage*spread.
     slippage_pct_of_spread: float = 0.25
+
+    # Intraday stop fill model: when an option's premium hits -50% intraday
+    # (detected via the day's low against BS), record the fill at -50% minus
+    # a small extra slippage. Default 0.03 -> fills at -53% of entry premium.
+    # Without this, stops would only be checked at daily close and fill at
+    # whatever the late-day premium was — typically much worse than -50%.
+    intraday_stop_slippage_pct: float = 0.03
 
     # Risk parameters mirror live config defaults
     weekly_loss_budget: float = 500.0
@@ -305,6 +313,42 @@ class BacktestEngine:
 
     # --- Exit evaluation -------------------------------------------------
 
+    def _check_intraday_stop(
+        self, pos: Position, today: date,
+    ) -> tuple[bool, float | None]:
+        """Detect if the option's premium hit -50% intraday using the day's
+        low (long calls — UPRO/TQQQ/SQQQ — all lose value when their
+        underlying drops). Returns (triggered, fill_price). When triggered,
+        fill_price is recorded at exactly -50% minus the configured small
+        slippage rather than wherever the close ended up.
+
+        This is the standard daily-bar approximation for an intraday stop.
+        Without it, we under-attribute stop fills and over-attribute losses
+        to the model when in reality the live bot would catch -50% well
+        before close.
+        """
+        etf = pos.option_etf
+        df = self.etf_bars.get(etf)
+        if df is None or df.empty:
+            return False, None
+        low_today = _row_value(df, today, "low")
+        if low_today is None:
+            return False, None
+
+        iv = self.cfg.iv_by_etf.get(etf, 0.50)
+        dte = max(0, (pos.expiry - today).days)
+        low_premium = black_scholes_call(OptionParams(
+            spot=low_today, strike=_strike_from(pos),
+            dte_days=dte, iv=iv, risk_free=self.cfg.risk_free_rate,
+        ))
+        threshold = pos.entry_premium * 0.50
+        if low_premium > threshold:
+            return False, None
+
+        slippage = self.cfg.intraday_stop_slippage_pct
+        fill_price = pos.entry_premium * max(0.0, 0.50 - slippage)
+        return True, max(0.01, fill_price)
+
     def _evaluate_exits_at_close(self, today: date) -> None:
         if self.pm.open_count() == 0:
             return
@@ -315,6 +359,40 @@ class BacktestEngine:
                 continue
             sig_underlying_close = self._underlying_close(pos.underlying, today)
             if sig_underlying_close is None:
+                continue
+
+            # Step 1 fix: intraday stop trigger. If the day's low pushed BS
+            # premium <= -50% of entry, we record the stop NOW at the
+            # intraday-fill price (typically ~-53%), not at the close.
+            triggered, intraday_fill = self._check_intraday_stop(pos, today)
+            if triggered:
+                action = ExitAction(
+                    kind=ExitKind.CLOSE_ALL,
+                    contracts_to_close=pos.contracts_remaining,
+                    reason=ExitReason.PREMIUM_STOP,
+                    detail=f"intraday low triggered -50% stop (fill @ -{(1-(intraday_fill/pos.entry_premium))*100:.0f}%)",
+                    use_stop_loss_path=True,
+                )
+                entry_premium = pos.entry_premium
+                entry_time = pos.entry_time
+                pnl = self.pm.apply_fill(
+                    pos, action, fill_price=intraday_fill,
+                    now_et=self._dt(today, time(16, 0)),
+                )
+                self.trades.append(TradeRecord(
+                    trade_id=pos.trade_id,
+                    strategy=pos.strategy_name,
+                    underlying=pos.underlying,
+                    option_etf=pos.option_etf,
+                    direction=pos.direction.value,
+                    entry_time=entry_time,
+                    entry_premium=entry_premium,
+                    exit_time=self._dt(today, time(16, 0)),
+                    exit_premium=intraday_fill,
+                    contracts=action.contracts_to_close,
+                    pnl=pnl,
+                    reason=action.reason.value,
+                ))
                 continue
 
             # Repricing the option at today's close
@@ -369,7 +447,6 @@ class BacktestEngine:
 
     def _force_close_remaining(self, today: date) -> None:
         """End-of-backtest: mark-to-market close anything still open."""
-        from src.positions.exits import ExitAction, ExitReason
         for pos in list(self.pm.open_positions()):
             etf = pos.option_etf
             spot_close = self._etf_close(etf, today) or 0.0

@@ -26,6 +26,10 @@ class PerformanceMetrics:
     sharpe: float
     by_strategy: dict[str, dict] = field(default_factory=dict)
     by_reason: dict[str, int] = field(default_factory=dict)
+    # Step 1 additions: holding-period buckets for signal exits, and the
+    # distribution of where premium-stops actually filled.
+    signal_exit_by_hold: dict[str, dict] = field(default_factory=dict)
+    stop_fill_distribution: dict[str, int] = field(default_factory=dict)
 
 
 def _strategy_breakdown(trades: list[TradeRecord]) -> dict[str, dict]:
@@ -62,6 +66,50 @@ def _sharpe(equity: pd.Series, periods_per_year: int = 252) -> float:
     if rets.empty or rets.std(ddof=0) == 0:
         return 0.0
     return float((rets.mean() / rets.std(ddof=0)) * math.sqrt(periods_per_year))
+
+
+def _signal_exit_by_hold(trades: list[TradeRecord]) -> dict[str, dict]:
+    sig = [t for t in trades if t.reason == "signal_exit"]
+    buckets: dict[str, list[float]] = {"0d": [], "1d": [], "2d": [], "3d": [], "4+d": []}
+    for t in sig:
+        h = (t.exit_time - t.entry_time).days
+        key = "4+d" if h >= 4 else f"{h}d"
+        buckets[key].append(t.pnl)
+    out: dict[str, dict] = {}
+    for k, pnls in buckets.items():
+        if not pnls:
+            continue
+        wins = sum(1 for x in pnls if x > 0)
+        out[k] = {
+            "n_trades": len(pnls),
+            "win_rate": wins / len(pnls),
+            "total_pnl": sum(pnls),
+            "avg_pnl": sum(pnls) / len(pnls),
+        }
+    return out
+
+
+def _stop_fill_distribution(trades: list[TradeRecord]) -> dict[str, int]:
+    """Bucket premium_stop fills by % loss vs entry premium.
+    Label is the loss range (e.g. -50% to -55% means we kept 45-50% of premium).
+    """
+    stops = [t for t in trades if t.reason == "premium_stop" and t.entry_premium > 0]
+    # Each row: (lower-ratio, upper-ratio, label-as-loss-range)
+    # Ratio = exit_premium / entry_premium, so ratio 0.45-0.50 -> loss 50-55%.
+    edges = [(0.50, 0.55, "-45% to -50%"),
+             (0.45, 0.50, "-50% to -55%"),
+             (0.40, 0.45, "-55% to -60%"),
+             (0.35, 0.40, "-60% to -65%"),
+             (0.25, 0.35, "-65% to -75%"),
+             (0.0,  0.25, "worse than -75%")]
+    out: dict[str, int] = {label: 0 for _, _, label in edges}
+    for t in stops:
+        ratio = t.exit_premium / t.entry_premium
+        for lo, hi, label in edges:
+            if lo <= ratio < hi or (lo == 0.0 and ratio < 0.25):
+                out[label] += 1
+                break
+    return out
 
 
 def compute_metrics(result: BacktestResult) -> PerformanceMetrics:
@@ -103,6 +151,8 @@ def compute_metrics(result: BacktestResult) -> PerformanceMetrics:
         sharpe=_sharpe(equity),
         by_strategy=_strategy_breakdown(trades),
         by_reason=by_reason,
+        signal_exit_by_hold=_signal_exit_by_hold(trades),
+        stop_fill_distribution=_stop_fill_distribution(trades),
     )
 
 
@@ -136,6 +186,25 @@ def format_report(result: BacktestResult, m: PerformanceMetrics) -> str:
         lines.append("Exit reasons:")
         for r, c in sorted(m.by_reason.items(), key=lambda x: -x[1]):
             lines.append(f"  {r:30s} {c}")
+
+    if m.signal_exit_by_hold:
+        lines.append("")
+        lines.append("Signal-exit P&L by holding period:")
+        for k in ("0d", "1d", "2d", "3d", "4+d"):
+            d = m.signal_exit_by_hold.get(k)
+            if not d:
+                continue
+            lines.append(
+                f"  {k:4s}  n={d['n_trades']:3d}  win%={d['win_rate']:.0%}  "
+                f"total=${d['total_pnl']:>+7.0f}  avg=${d['avg_pnl']:>+6.0f}"
+            )
+
+    if m.stop_fill_distribution and any(m.stop_fill_distribution.values()):
+        lines.append("")
+        lines.append("Premium-stop fill distribution:")
+        for label, count in m.stop_fill_distribution.items():
+            if count:
+                lines.append(f"  {label:20s} {count}")
     if result.skipped_signals:
         lines.append("")
         lines.append(f"Suppressed signals: {len(result.skipped_signals)}")
