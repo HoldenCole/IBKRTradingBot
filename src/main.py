@@ -47,11 +47,95 @@ def cli(argv: list[str] | None = None) -> int:
 
     if args.strategy:
         if args.backtest:
-            logger.warning("Backtest engine not implemented yet — see roadmap.")
-            return 1
+            return _run_backtest(cfg, args.strategy, args.from_date, args.to_date)
         return _run_live(cfg)
 
     p.print_help()
+    return 0
+
+
+def _run_backtest(cfg, strategy_filter: str | None, from_date: str | None,
+                  to_date: str | None) -> int:
+    """Pull historical bars from FMP and run the backtest engine.
+
+    `--strategy` here is a *filter* over the registered strategies (e.g.
+    'ewo' to run EWO alone, 'all' for everything). Afternoon Reversion is
+    skipped because we don't have multi-year intraday data.
+    """
+    from datetime import date
+    from src.backtest.engine import BacktestConfig, BacktestEngine
+    from src.backtest.report import compute_metrics, format_report
+    from src.data.fmp import FMPHistorical
+    from src.strategies.ewo import EWOStrategy
+    from src.strategies.ibs import IBSStrategy
+
+    if not cfg.fmp_api_key:
+        logger.error("Backtest needs FMP_API_KEY in env")
+        return 2
+    if not from_date or not to_date:
+        logger.error("Backtest requires --from YYYY-MM-DD --to YYYY-MM-DD")
+        return 2
+
+    start = date.fromisoformat(from_date)
+    end = date.fromisoformat(to_date)
+    fmp = FMPHistorical(api_key=cfg.fmp_api_key)
+
+    # Pull a buffer of 400 bars before `start` so SMA(200), EWO z-score
+    # (252-day lookback) etc. have history.
+    from datetime import timedelta
+    buffer_start = (start - timedelta(days=600)).isoformat()
+
+    daily_bars = {}
+    etf_bars = {}
+    for sym in ("SPY", "QQQ"):
+        df = fmp.daily(sym, buffer_start, end.isoformat())
+        if df.empty:
+            logger.error(f"no daily bars from FMP for {sym}")
+            return 1
+        daily_bars[sym] = df
+    for etf in ("UPRO", "TQQQ", "SQQQ"):
+        df = fmp.daily(etf, buffer_start, end.isoformat())
+        if df.empty:
+            logger.error(f"no daily bars from FMP for {etf}")
+            return 1
+        etf_bars[etf] = df
+
+    # Strategy selection
+    requested = (strategy_filter or "all").lower()
+    if requested == "afternoon":
+        logger.error(
+            "afternoon reversion backtest needs multi-year intraday data; "
+            "FMP free tier doesn't cover it. Run live in paper to validate."
+        )
+        return 2
+    strategies = []
+    if requested in ("ewo", "all"):
+        strategies.append(EWOStrategy())
+    if requested in ("ibs", "all"):
+        strategies.append(IBSStrategy())
+    if not strategies:
+        logger.error(f"unknown strategy filter: {requested!r}")
+        return 2
+
+    bcfg = BacktestConfig(
+        start=start, end=end,
+        initial_capital=8000.0,
+        weekly_loss_budget=cfg.weekly_loss_budget_usd,
+        per_trade_risk_cap=cfg.per_trade_risk_cap_usd,
+        max_concurrent_positions=cfg.max_concurrent_positions,
+        max_gross_premium_pct=cfg.max_gross_premium_pct,
+        soft_gate_pct=cfg.soft_gate_pct,
+        overnight_multiplier=cfg.overnight_risk_multiplier,
+    )
+    engine = BacktestEngine(
+        config=bcfg,
+        strategies=strategies,
+        daily_bars=daily_bars,
+        underlying_etf_bars=etf_bars,
+    )
+    result = engine.run()
+    metrics = compute_metrics(result)
+    print(format_report(result, metrics))
     return 0
 
 
