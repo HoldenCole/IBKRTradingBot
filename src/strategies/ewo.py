@@ -1,12 +1,18 @@
 """Strategy 1: EWO Mean Reversion (daily-close signals).
 
 See STRATEGIES.md "Strategy 1" for the spec.
+
+NOTE: this strategy is gated by EWO_ENABLED at the runner level. It also
+emits a per-signal UNVALIDATED warning to the log because the 2018-2026
+backtest (6 trades, 50% win, -$25 PnL) does not demonstrate edge at v1.0
+thresholds. See DECISIONS.md for context.
 """
 from __future__ import annotations
 
 from dataclasses import dataclass
 
 import pandas as pd
+from loguru import logger
 
 from src.indicators import ewo_zscore, rsi, sma
 from src.strategies.base import OptionSelection, Signal, SignalAction, Strategy
@@ -34,8 +40,9 @@ class EWOStrategy(Strategy):
     name = "ewo"
     family = "mean_reversion"
 
-    def __init__(self, config: EWOConfig | None = None):
+    def __init__(self, config: EWOConfig | None = None, sqqq_short_enabled: bool = True):
         self.cfg = config or EWOConfig()
+        self.sqqq_short_enabled = sqqq_short_enabled
 
     def on_daily_close(self, symbol: str, daily: pd.DataFrame) -> Signal | None:
         sym = symbol.upper()
@@ -58,6 +65,10 @@ class EWOStrategy(Strategy):
         z_thresh = self.cfg.long_z_spy if sym == "SPY" else self.cfg.long_z_qqq
         if z < z_thresh and r < self.cfg.long_rsi_max and close > sma200:
             high_conv = z < self.cfg.long_high_conviction_z and r < self.cfg.long_high_conviction_rsi
+            logger.warning(
+                f"EWO signal fired UNVALIDATED_LOW_N {sym}: "
+                f"8-year backtest n=6 / 50% win / -$25 PnL. See DECISIONS.md."
+            )
             return Signal(
                 action=SignalAction.LONG,
                 underlying=sym,
@@ -77,7 +88,15 @@ class EWOStrategy(Strategy):
             )
 
         # --- SHORT (QQQ only) ---
-        if sym == "QQQ" and z > self.cfg.short_z_qqq and r > self.cfg.short_rsi_min and close < sma200:
+        if (sym == "QQQ"
+                and self.sqqq_short_enabled
+                and z > self.cfg.short_z_qqq
+                and r > self.cfg.short_rsi_min
+                and close < sma200):
+            logger.warning(
+                f"EWO short signal fired UNVALIDATED_LOW_N {sym}: "
+                f"8-year backtest n=6 / 50% win / -$25 PnL. See DECISIONS.md."
+            )
             return Signal(
                 action=SignalAction.SHORT_FADE,
                 underlying=sym,

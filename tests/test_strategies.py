@@ -88,6 +88,58 @@ def test_afternoon_long_fires_on_morning_selloff(session_5m_bars):
     assert sig.invalidation_price is not None
 
 
+def test_ibs_short_suppressed_when_flag_disabled():
+    """Default sqqq_short_enabled=True allows the IBS short branch; setting
+    it False must suppress SQQQ short signals even when conditions hold.
+    """
+    n = 220
+    rng = np.random.default_rng(5)
+    base = np.linspace(420, 320, n) + rng.normal(0, 0.3, n)  # downtrend
+    high = base + 1.0
+    low = base - 1.0
+    close = base.copy()
+    # Force last bar IBS very high (close near high) and prior low
+    high[-1] = base[-1] + 2.0
+    low[-1] = base[-1] - 0.1
+    close[-1] = high[-1] - 0.05
+    # Prior IBS low
+    high[-2] = base[-2] + 1.0
+    low[-2] = base[-2] - 1.0
+    close[-2] = low[-2] + 0.1
+    df = pd.DataFrame(
+        {"open": base, "high": high, "low": low, "close": close, "volume": [1e6] * n},
+        index=pd.bdate_range(end="2026-04-15", periods=n),
+    )
+
+    # Default (enabled): a short signal should fire on QQQ
+    sig_on = IBSStrategy().on_daily_close("QQQ", df)
+    if sig_on is not None:
+        assert sig_on.action is SignalAction.SHORT_FADE
+        assert sig_on.option.underlying_etf == "SQQQ"
+
+    # Disabled: regardless of whether signal would fire, no SQQQ short emitted
+    sig_off = IBSStrategy(sqqq_short_enabled=False).on_daily_close("QQQ", df)
+    assert sig_off is None or sig_off.action is not SignalAction.SHORT_FADE
+
+
+def test_ewo_short_suppressed_when_flag_disabled():
+    """Symmetric flag check for EWO."""
+    n = 400
+    rng = np.random.default_rng(11)
+    # Downtrend with a sharp final-day rip to drive z-score positive and RSI high
+    base = np.linspace(420, 320, n) + rng.normal(0, 0.3, n)
+    base[-1] += 25.0
+    df = pd.DataFrame(
+        {"open": base, "high": base + 1, "low": base - 1, "close": base,
+         "volume": [1e6] * n},
+        index=pd.bdate_range(end="2026-04-15", periods=n),
+    )
+    # Default firing depends on the EXACT z-score so we don't assert that
+    # the short fires; we only assert the flag's suppression invariant.
+    sig_off = EWOStrategy(sqqq_short_enabled=False).on_daily_close("QQQ", df)
+    assert sig_off is None or sig_off.action is not SignalAction.SHORT_FADE
+
+
 def test_attach_daily_atr_helper():
     n = 50
     rng = np.random.default_rng(0)

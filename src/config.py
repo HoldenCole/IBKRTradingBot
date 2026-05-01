@@ -32,6 +32,11 @@ class Config:
     econ_calendar_provider: str
     fmp_api_key: str | None
 
+    # Strategy enablement flags. See DECISIONS.md (v1.1) for the data-driven
+    # reasoning behind the defaults below.
+    ewo_enabled: bool          # default True; trades log a one-time UNVALIDATED warning
+    sqqq_short_enabled: bool   # default False; SHORT_FADE produces ~2 trades per decade and both lost
+
     @property
     def is_live(self) -> bool:
         return self.mode == "live"
@@ -69,4 +74,6 @@ def load_config(env_file: str | os.PathLike | None = ".env") -> Config:
         regime_timeout_sec=float(_env("REGIME_TIMEOUT_SEC", "2.0")),
         econ_calendar_provider=_env("ECON_CALENDAR_PROVIDER", "stub").lower(),
         fmp_api_key=(_env("FMP_API_KEY", "") or None),
+        ewo_enabled=_env("EWO_ENABLED", "true").lower() in ("1", "true", "yes"),
+        sqqq_short_enabled=_env("SQQQ_SHORT_ENABLED", "false").lower() in ("1", "true", "yes"),
     )

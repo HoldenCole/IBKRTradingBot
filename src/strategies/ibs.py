@@ -26,8 +26,9 @@ class IBSStrategy(Strategy):
     name = "ibs"
     family = "mean_reversion"
 
-    def __init__(self, config: IBSConfig | None = None):
+    def __init__(self, config: IBSConfig | None = None, sqqq_short_enabled: bool = True):
         self.cfg = config or IBSConfig()
+        self.sqqq_short_enabled = sqqq_short_enabled
 
     def on_daily_close(self, symbol: str, daily: pd.DataFrame) -> Signal | None:
         sym = symbol.upper()
@@ -69,6 +70,7 @@ class IBSStrategy(Strategy):
 
         # --- SHORT (QQQ only) ---
         if (sym == "QQQ"
+                and self.sqqq_short_enabled
                 and today_ibs > self.cfg.short_threshold_qqq
                 and close < sma200
                 and prior_ibs <= self.cfg.short_threshold_qqq):

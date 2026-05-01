@@ -410,8 +410,54 @@ Not blocking v1, but flagged for future iteration:
 
 ---
 
+## v1.1 — 2026-05-01
+
+**Scope**: Two configuration defaults flipped. **No parameter changes, no
+threshold changes, no exit-logic changes.** All v1.0 indicator definitions,
+entry conditions, exit rules, sizing, and risk parameters remain in force.
+
+### Defaults flipped
+
+| Config | v1.0 | v1.1 | Rationale |
+|---|---|---|---|
+| `SQQQ_SHORT_ENABLED` | implicit on | **off** | 8-year backtest (2018-2026): 2 trades, 0% win rate, −$360 total. The IBS-short trigger (`IBS > 0.80 AND close < SMA(200) AND no stacking`) almost never fires; when it has, it's lost. Structural rarity, not small-sample noise. |
+| `EWO_ENABLED` | implicit on | **on (acknowledged unvalidated)** | 8-year backtest: 6 trades, 50% win rate, −$25 total. The earlier 2-trade 100% win rate was a small-sample artifact. EWO does NOT have demonstrated edge over a longer sample. Strategy stays enabled because (a) sample is still small (~1 trade/year), (b) the spec's selectivity is intentional, and (c) we don't have evidence to reject it — only evidence not to deploy it confidently. Every EWO signal logs `UNVALIDATED_LOW_N` so the operator sees the caveat at fire time. |
+
+### What was considered for v1.1 and rejected
+
+- **Relaxed EWO thresholds (`z<-1.8`, `RSI<15`)**: refuted by 8-year sample.
+  EWO has no edge at v1.0 thresholds either; loosening risks dilution.
+- **IV-rank-70 entry gate**: counterfactual on Step 2b baseline shows
+  −$250 net P&L if applied. Most stops happen in low-IV regimes, not
+  high. Counterproductive.
+- **Underlying-price stop @ 1.0× ATR (replacing −50% premium stop)**:
+  61% of stops are >1.0× ATR adverse moves on the signal underlying.
+  Both stops catch the same trades. No demonstrable improvement.
+- **Underlying-price stop @ 0.7× ATR**: forfeits more winner P&L
+  (~$499 from MAE analysis) than it saves from earlier stop catches.
+- **Premium stop backstop at −65%**: moot. The −50% premium stop fires
+  intraday under the current model.
+- **Position-limit loosening 2→3**: 4 cases of position_limit suppression
+  with +2.89% forward return suggest a possible miss, but N=4 — parked.
+- **Budget cap loosening**: 5 cases, +0.95% avg forward — N too small.
+
+### Where this leaves the strategy
+
+The 8-year backtest produced Sharpe 0.11 vs the spec's 0.8 threshold
+for live deployment. The strategy as specified is not viable for live
+trading without further work. The next workstream is the **regime
+filter** described in the user's separate workstream — see DECISIONS.md
+for the criterion that would re-open live deployment.
+
+The paper bot remains running for **infrastructure validation**
+(reconnect behavior, order routing, EOD push reliability) — not as
+strategy validation.
+
+---
+
 ## Change Log
 
 | Date | Change | Rationale |
 |---|---|---|
-| 2026-04-22 | Initial spec created | Three strategies locked, options-only, $500/wk fixed budget, Policy A |
+| 2026-04-22 | v1.0: initial spec | Three strategies locked, options-only, $500/wk fixed budget, Policy A |
+| 2026-05-01 | v1.1: SQQQ short off by default; EWO acknowledged unvalidated | 2018-2026 backtest: 8-year sample refuted SHORT_FADE entirely (2 trades, 0% win) and showed EWO has no demonstrated edge (6 trades, 50% win). No parameter or logic changes. See DECISIONS.md for the deliberation. |

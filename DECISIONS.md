@@ -28,36 +28,75 @@ A 5-part diagnostic was run on Step 2b:
 4. Forward returns on suppressed signals.
 5. IV-rank-70 gate counterfactual.
 
-### Bug found mid-diagnostic
+## 2026-05-01 — Bug invalidating the v1.1 prescription (entry_underlying scale mismatch)
 
-`BacktestEngine._execute_entry` was storing the option ETF's open price in
-`Position.entry_underlying`, while `entry_atr20` was computed on the SIGNAL
-underlying (SPY/QQQ). This made any post-hoc analysis that computed
-"underlying move in ATR units" units-incoherent.
+**This section deliberately stands on its own.** The episode is the kind of
+thing that recurs: a diagnostic produces a confident verdict, the verdict
+reaches the recommendation stage, and only a verification challenge surfaces
+that the underlying measurement was wrong. Future readers should be able to
+find this episode quickly, not after combing through a long entry.
 
-The bug had **zero** effect on the trade ledger and PnL of any backtest run
-to date — the affected fields are read by exit branches that don't fire
-materially in the current backtests (afternoon hard stop, ATR trail post-
-+100% scale). But the diagnostic results based on those fields were wrong.
+### What the bug was
 
-Fixed in commit 94f3ae0. Live runner was not affected.
+`BacktestEngine._execute_entry` stored the option ETF's open price
+(UPRO/TQQQ/SQQQ) in `Position.entry_underlying`. But `Position.entry_atr20`
+was computed on the SIGNAL underlying (SPY/QQQ). Any analysis that subtracts
+`entry_underlying` from a SPY/QQQ price and divides by `entry_atr20` is
+computing units-incoherent arithmetic — the diagnostic's MAE buckets and
+"underlying move in ATR units" calculations on stops were both affected.
 
-### Initial (pre-bug-fix) diagnostic verdict
+### Effect on production code
 
-- Bucket A (directional) was 5%, Bucket B (IV/theta) was 75%.
-- MAE on winners: 100% under 0.5× ATR.
-- Verdict: switch to underlying-price stop as primary v1.1 change.
+**Zero effect on trade ledger or P&L** for any backtest run to date.
+`entry_underlying` is read by exit branches (afternoon hard stop, ATR trail
+post +100% scale) that don't fire materially in the current backtests.
+The live runner sets `entry_underlying` correctly (signal underlying via
+`broker.underlying_price(d.underlying)`); only the backtest engine was
+inconsistent.
 
-### Corrected diagnostic verdict
+### What the buggy data said
 
-- Bucket A jumped to 61%, Bucket B collapsed to 5%.
-- MAE on winners: 88% under 0.5× ATR; 12% in 0.5-1.0×; 1 in 1.0-1.5×.
-- Verdict reversed: underlying-price stop offers no clear edge over the
-  existing −50% premium stop.
-- IV-rank-70 gate counterfactual independent of the bug, still showed
-  −$250 net P&L if applied. Counterproductive.
-- Per-strategy: EWO 100% win was a 2-trade artifact; IBS long ~break-even
-  per trade.
+- Stop decomposition: Bucket A (directional, >1× ATR adverse) = **5%**;
+  Bucket B (IV/theta, <0.5× ATR) = **75%**.
+- MAE on signal-exit winners: **100% under 0.5× ATR.**
+- Verdict drawn: switch the −50% premium stop to an underlying-price stop
+  at 1.0× or 0.7× ATR. Aggressive variant supportable by data.
+
+### What the corrected data said
+
+- Stop decomposition: Bucket A = **61%**, Bucket B = **5%** (3 trades).
+  Almost the inverse.
+- MAE on winners: 88% under 0.5×; 12% in 0.5-1.0×; 1 trade in 1.0-1.5×.
+- Verdict reversed: underlying-price stop offers no clear edge.
+- IV-rank-70 gate (independent of the bug): still −$250 net if applied.
+- Per-strategy: EWO 100% win was a 2-trade artifact.
+
+### What was done
+
+- Bug fixed in commit `94f3ae0`. Engine now uses `_underlying_open(sig.underlying, today)`
+  for `entry_underlying`, matching the live runner.
+- Diagnostic re-run with corrected data.
+- v1.1 prescription that depended on the buggy verdict was withdrawn.
+- This section written.
+
+### How the bug was caught
+
+The user asked three specific verification questions about the MAE
+measurement before acting on the prescription:
+
+1. Is MAE measured on the signal underlying (SPY/QQQ), not the ETF?
+2. Is MAE computed as `(intraday_low − entry_price) / entry_ATR` for longs?
+3. What does the MAE distribution look like if you exclude same-day winners?
+
+Question 1 forced a code-read of `BacktestEngine._execute_entry`, which
+exposed the scale mismatch. Without those questions, the underlying-price
+stop change would likely have been committed and only surfaced as wrong
+when the next backtest variant produced inconsistent results.
+
+**Methodology takeaway**: when a diagnostic produces a strong verdict,
+ask measurement-detail questions before implementing. The cost of asking
+is one round-trip; the cost of acting on a wrong measurement is a commit
+that needs reverting plus reputational drag on the next conclusion.
 
 ### Expanded backtest (2018-2026)
 
@@ -152,3 +191,62 @@ backtest model for any future strategy iterations.
   at every stage (initially via the bug, then via small-N sample
   artifacts). **A clean diagnostic process can still produce wrong
   conclusions if the underlying data sample is unrepresentative.**
+
+---
+
+## What would change the recommendation (explicit triggers)
+
+This section locks the criteria for re-opening decisions, so future
+review doesn't re-litigate them open-endedly. If one of these triggers
+fires, the matching decision gets re-evaluated. Otherwise it stands.
+
+### Trigger to reconsider live deployment of v1.0 strategy
+
+**The strategy is reconsidered for live deployment if and only if**
+a regime filter (per the user's separate workstream) is built and,
+when applied to the 2018-2026 backtest, satisfies all of the following:
+
+1. **Identifies high-vol-with-recovery environments with ≥60% precision**
+   when measured against the labeled regimes in this document
+   (`crisis_recovery` is the positive class; precision = correctly-flagged
+   regime-on days / total regime-on days).
+2. **Gated profit factor in regime-on periods is ≥1.5.**
+3. **Gated equity curve in regime-off periods is flat (drawdown ≤−5%).**
+
+If all three hold, paper-trade for 4-6 weeks with the gated strategy,
+then evaluate live.
+
+If any of the three fails, **v1.0 strategy is shelved**, and the
+workstream pivots to v2 design (different timeframe, different signal,
+different option structure — the "Option C" from the v1.1 deliberation).
+
+### Trigger to enable SQQQ short
+
+`SQQQ_SHORT_ENABLED` flips back to true if and only if a future backtest
+(with regime filter or other modification) produces **at least 10 SQQQ
+short trades with a win rate above 50%** in a single sample. Until
+then it stays off. The 2-trade / 0%-win history is structural rarity,
+not bad luck — the entry conditions essentially don't fire.
+
+### Trigger to disable EWO
+
+`EWO_ENABLED` flips to false if and only if EWO accumulates **at least
+10 trades with PF ≤ 0.8** over a forward sample (paper or future backtest
+with regime filter). At <1 trade/year fire rate, this likely takes
+multiple years to resolve — the unvalidated label stays in the meantime.
+
+### Trigger to revisit position cap and budget cap loosening
+
+`MAX_CONCURRENT_POSITIONS=2` and `WEEKLY_LOSS_BUDGET_USD=500` get
+revisited only after **at least 20 paper-trading weeks** with the
+regime filter active. The 4 and 5 cases of suppression we observed
+on the 2024-2026 sample were too small for any conclusion. Live data
+under regime gating is the only path to evidence here.
+
+### Triggers that explicitly do NOT exist
+
+- **No P&L threshold.** A bad month or quarter on paper does not trigger
+  any change. The strategy's decision is regime-gated, not equity-curve-gated.
+- **No "look at one more period" trigger.** The 2018-2026 backtest is
+  the locked baseline. Adding 2027 data later doesn't reopen v1.1
+  unless one of the explicit triggers above fires.

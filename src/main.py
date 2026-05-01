@@ -109,10 +109,13 @@ def _run_backtest(cfg, strategy_filter: str | None, from_date: str | None,
         )
         return 2
     strategies = []
-    if requested in ("ewo", "all"):
-        strategies.append(EWOStrategy())
+    if requested in ("ewo", "all") and cfg.ewo_enabled:
+        strategies.append(EWOStrategy(sqqq_short_enabled=cfg.sqqq_short_enabled))
+    elif requested == "ewo" and not cfg.ewo_enabled:
+        logger.error("--strategy ewo requested but EWO_ENABLED=false in env")
+        return 2
     if requested in ("ibs", "all"):
-        strategies.append(IBSStrategy())
+        strategies.append(IBSStrategy(sqqq_short_enabled=cfg.sqqq_short_enabled))
     if not strategies:
         logger.error(f"unknown strategy filter: {requested!r}")
         return 2
@@ -161,8 +164,6 @@ def _run_live(cfg) -> int:
     from src.runner.runner import LiveRunner
     from src.runner.store import PositionStore
     from src.strategies.afternoon import AfternoonReversionStrategy
-    from src.strategies.ewo import EWOStrategy
-    from src.strategies.ibs import IBSStrategy
     from src.wiring import make_blackout_checker, make_regime
 
     ET = ZoneInfo("America/New_York")
@@ -191,7 +192,7 @@ def _run_live(cfg) -> int:
         runner = LiveRunner(
             broker=broker, feed=feed, pm=pm, budget=budget,
             guardrails=guardrails, blackout=blackout,
-            daily_strategies=[EWOStrategy(), IBSStrategy()],
+            daily_strategies=_build_daily_strategies(cfg),
             intraday_strategy=AfternoonReversionStrategy(),
             store=store, deferred=deferred,
         )
@@ -205,6 +206,21 @@ def _run_live(cfg) -> int:
         return 1
     finally:
         conn.disconnect()
+
+
+def _build_daily_strategies(cfg) -> list:
+    """Build the list of daily-close strategies subject to enablement flags."""
+    from src.strategies.ewo import EWOStrategy
+    from src.strategies.ibs import IBSStrategy
+    out = []
+    if cfg.ewo_enabled:
+        out.append(EWOStrategy(sqqq_short_enabled=cfg.sqqq_short_enabled))
+    else:
+        logger.info("EWO disabled by EWO_ENABLED=false")
+    out.append(IBSStrategy(sqqq_short_enabled=cfg.sqqq_short_enabled))
+    if not cfg.sqqq_short_enabled:
+        logger.info("SQQQ short disabled by SQQQ_SHORT_ENABLED=false")
+    return out
 
 
 async def _runner_loop(runner) -> None:
