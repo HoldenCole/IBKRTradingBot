@@ -30,7 +30,7 @@ class Config:
     regime_timeout_sec: float
 
     econ_calendar_provider: str
-    econ_calendar_api_key: str | None
+    fmp_api_key: str | None
 
     @property
     def is_live(self) -> bool:
@@ -68,5 +68,5 @@ def load_config(env_file: str | os.PathLike | None = ".env") -> Config:
         regime_base_url=(_env("REGIME_BASE_URL", "") or None),
         regime_timeout_sec=float(_env("REGIME_TIMEOUT_SEC", "2.0")),
         econ_calendar_provider=_env("ECON_CALENDAR_PROVIDER", "stub").lower(),
-        econ_calendar_api_key=(_env("ECON_CALENDAR_API_KEY", "") or None),
+        fmp_api_key=(_env("FMP_API_KEY", "") or None),
     )
