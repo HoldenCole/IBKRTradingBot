@@ -194,7 +194,7 @@ class SharesBacktestEngine:
             return
 
         cost = shares * fill_price
-        if cost > self.cash:
+        if cost > self.cash and sig.action == SignalAction.LONG:
             shares = int(self.cash // fill_price)
             if shares < 1:
                 self.skipped.append({
@@ -204,7 +204,16 @@ class SharesBacktestEngine:
                 return
             cost = shares * fill_price
 
-        self.cash -= cost
+        # Cash flow:
+        #   LONG  — pay cash to buy shares.
+        #   SHORT — receive proceeds from selling borrowed shares. Margin
+        #           requirements are conceptually a liability but we don't
+        #           model margin separately in this simple share backtest.
+        #           MTM at close subtracts the buy-back cost from equity.
+        if sig.action == SignalAction.LONG:
+            self.cash -= cost
+        else:
+            self.cash += cost
         self.open_positions.append(_OpenSharePosition(
             trade_id=str(uuid.uuid4()),
             underlying=sym,
@@ -270,11 +279,10 @@ class SharesBacktestEngine:
     ) -> None:
         if pos.direction == SignalAction.LONG:
             pnl = (exit_price - pos.entry_price) * pos.shares
-            self.cash += exit_price * pos.shares
+            self.cash += exit_price * pos.shares  # sell shares
         else:
             pnl = (pos.entry_price - exit_price) * pos.shares
-            # Short share P&L is harder to model accurately; we keep it simple
-            self.cash += (pos.entry_price + (pos.entry_price - exit_price)) * pos.shares
+            self.cash -= exit_price * pos.shares  # buy back to close short
 
         self.open_positions.remove(pos)
         self.trades.append(ShareTrade(
@@ -303,13 +311,17 @@ class SharesBacktestEngine:
         """Equity using yesterday's close as MTM (we're at today's open)."""
         prior = self._prev_trading_date(today)
         if prior is None:
-            return self.cash + sum(p.shares * p.entry_price for p in self.open_positions)
+            return self.cash + sum(
+                p.shares * p.entry_price * (1 if p.direction == SignalAction.LONG else -1)
+                for p in self.open_positions
+            )
         mtm = 0.0
         for p in self.open_positions:
             df = self.daily_bars.get(p.underlying)
             i = self._date_idx.get(p.underlying, {}).get(prior)
             close = float(df["close"].iloc[i]) if (i is not None and df is not None) else p.entry_price
-            mtm += p.shares * close
+            sign = 1 if p.direction == SignalAction.LONG else -1
+            mtm += sign * p.shares * close
         return self.cash + mtm
 
     def _equity_at_close(self, today: date) -> float:
@@ -318,7 +330,11 @@ class SharesBacktestEngine:
             df = self.daily_bars.get(p.underlying)
             i = self._date_idx.get(p.underlying, {}).get(today)
             close = float(df["close"].iloc[i]) if (i is not None and df is not None) else p.entry_price
-            mtm += p.shares * close
+            # LONG  -> mtm contribution = +shares * close (asset value)
+            # SHORT -> mtm contribution = -shares * close (liability to buy back)
+            #          plus the entry proceeds already in self.cash.
+            sign = 1 if p.direction == SignalAction.LONG else -1
+            mtm += sign * p.shares * close
         return self.cash + mtm
 
     # --- Date helpers ---------------------------------------------------

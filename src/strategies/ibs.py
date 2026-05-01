@@ -26,9 +26,15 @@ class IBSStrategy(Strategy):
     name = "ibs"
     family = "mean_reversion"
 
-    def __init__(self, config: IBSConfig | None = None, sqqq_short_enabled: bool = True):
+    def __init__(
+        self,
+        config: IBSConfig | None = None,
+        sqqq_short_enabled: bool = True,
+        long_enabled: bool = True,
+    ):
         self.cfg = config or IBSConfig()
         self.sqqq_short_enabled = sqqq_short_enabled
+        self.long_enabled = long_enabled
 
     def on_daily_close(self, symbol: str, daily: pd.DataFrame) -> Signal | None:
         sym = symbol.upper()
@@ -50,7 +56,9 @@ class IBSStrategy(Strategy):
 
         # --- LONG ---
         long_thresh = self.cfg.long_threshold_spy if sym == "SPY" else self.cfg.long_threshold_qqq
-        if today_ibs < long_thresh and close > sma200 and prior_ibs >= long_thresh:
+        if (self.long_enabled
+                and today_ibs < long_thresh and close > sma200
+                and prior_ibs >= long_thresh):
             return Signal(
                 action=SignalAction.LONG,
                 underlying=sym,
