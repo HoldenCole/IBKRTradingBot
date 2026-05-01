@@ -99,6 +99,10 @@ class TradeRecord:
     contracts: int
     pnl: float
     reason: str
+    # Entry-context fields used by post-hoc diagnostics (stop decomposition,
+    # MAE analysis, IV-rank counterfactuals).
+    entry_underlying: float = 0.0
+    entry_atr20: float = 0.0
 
 
 @dataclass
@@ -392,6 +396,8 @@ class BacktestEngine:
                     contracts=action.contracts_to_close,
                     pnl=pnl,
                     reason=action.reason.value,
+                    entry_underlying=pos.entry_underlying,
+                    entry_atr20=pos.entry_atr20,
                 ))
                 continue
 
@@ -443,6 +449,8 @@ class BacktestEngine:
                 contracts=action.contracts_to_close,
                 pnl=pnl,
                 reason=action.reason.value if action.reason else "n/a",
+                entry_underlying=pos.entry_underlying,
+                entry_atr20=pos.entry_atr20,
             ))
 
     def _force_close_remaining(self, today: date) -> None:
@@ -485,6 +493,8 @@ class BacktestEngine:
                 contracts=action.contracts_to_close,
                 pnl=pnl,
                 reason="end_of_backtest",
+                entry_underlying=pos.entry_underlying,
+                entry_atr20=pos.entry_atr20,
             ))
 
     # --- Equity curve ----------------------------------------------------
