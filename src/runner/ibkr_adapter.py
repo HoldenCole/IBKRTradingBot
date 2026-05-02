@@ -11,6 +11,7 @@ without the package installed (e.g., in CI for static checks).
 """
 from __future__ import annotations
 
+import asyncio
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
@@ -33,12 +34,12 @@ class IBKRBroker:
         # Re-resolve the contract by conId. ib_insync caches qualifications.
         from ib_insync import Contract
         c = Contract(conId=int(contract_id))
-        self.ib.qualifyContracts(c)
+        await self.ib.qualifyContractsAsync(c)
         ticker = self.ib.reqMktData(c, "", False, False)
         # Wait for a tick. In production, callers should use streaming
         # subscriptions; this synchronous form is for one-off lookups.
         for _ in range(20):
-            self.ib.sleep(0.1)
+            await asyncio.sleep(0.1)
             if ticker.bid is not None and ticker.ask is not None and ticker.bid > 0:
                 break
         bid = float(ticker.bid or 0.0)
@@ -48,10 +49,10 @@ class IBKRBroker:
     async def underlying_price(self, symbol: str) -> float:
         from ib_insync import Stock
         c = Stock(symbol, "SMART", "USD")
-        self.ib.qualifyContracts(c)
+        await self.ib.qualifyContractsAsync(c)
         ticker = self.ib.reqMktData(c, "", False, False)
         for _ in range(20):
-            self.ib.sleep(0.1)
+            await asyncio.sleep(0.1)
             if ticker.last is not None and ticker.last > 0:
                 return float(ticker.last)
             if ticker.marketPrice() and ticker.marketPrice() > 0:
@@ -67,7 +68,7 @@ class IBKRBroker:
         from ib_insync import Option, Stock
         spot = await self.underlying_price(underlying_etf)
         target_strike = round(spot) + strike_offset
-        chain = self.ib.reqSecDefOptParams(
+        chain = await self.ib.reqSecDefOptParamsAsync(
             underlyingSymbol=underlying_etf,
             futFopExchange="",
             underlyingSecType="STK",
@@ -99,7 +100,7 @@ class IBKRBroker:
             exchange="SMART",
             currency="USD",
         )
-        self.ib.qualifyContracts(opt)
+        await self.ib.qualifyContractsAsync(opt)
         return OptionContract(
             id=str(opt.conId),
             underlying_etf=underlying_etf,
@@ -111,7 +112,7 @@ class IBKRBroker:
     async def place_limit(self, contract_id, side, contracts, limit_price) -> str:
         from ib_insync import Contract, LimitOrder
         c = Contract(conId=int(contract_id))
-        self.ib.qualifyContracts(c)
+        await self.ib.qualifyContractsAsync(c)
         action = "BUY" if side == "buy" else "SELL"
         order = LimitOrder(action, contracts, limit_price)
         trade = self.ib.placeOrder(c, order)
@@ -160,8 +161,8 @@ class IBKRDataFeed:
     async def daily_bars(self, symbol: str, lookback_days: int = 400) -> pd.DataFrame:
         from ib_insync import Stock
         c = Stock(symbol, "SMART", "USD")
-        self.ib.qualifyContracts(c)
-        bars = self.ib.reqHistoricalData(
+        await self.ib.qualifyContractsAsync(c)
+        bars = await self.ib.reqHistoricalDataAsync(
             c, endDateTime="", durationStr=f"{lookback_days} D",
             barSizeSetting="1 day", whatToShow="TRADES", useRTH=True, formatDate=1,
         )
@@ -170,8 +171,8 @@ class IBKRDataFeed:
     async def session_bars(self, symbol: str, bar_size: str = "5 mins") -> pd.DataFrame:
         from ib_insync import Stock
         c = Stock(symbol, "SMART", "USD")
-        self.ib.qualifyContracts(c)
-        bars = self.ib.reqHistoricalData(
+        await self.ib.qualifyContractsAsync(c)
+        bars = await self.ib.reqHistoricalDataAsync(
             c, endDateTime="", durationStr="1 D",
             barSizeSetting=bar_size, whatToShow="TRADES", useRTH=True, formatDate=1,
         )
