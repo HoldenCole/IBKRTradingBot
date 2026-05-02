@@ -540,6 +540,62 @@ def test_diversifier_verdict_fails_n_trades_below_threshold():
     assert any("n_trades" in f for f in v.failures)
 
 
+# --- VIX spike fade engine ---
+
+def test_vix_spike_v0_fires_on_threshold():
+    from src.backtest.vix_spike_engine import (
+        SignalVariant, VixSpikeConfig, VixSpikeFadeEngine,
+    )
+    n = 60
+    # VIX spikes from 15 to 30 on day 30
+    vix_close = np.concatenate([np.full(30, 15.0), np.full(30, 30.0)])
+    vix = pd.DataFrame(
+        {"close": vix_close},
+        index=pd.bdate_range("2024-01-02", periods=n),
+    )
+    # VXX inverse: jumps when VIX jumps (then bleeds)
+    vxx_close = np.concatenate([np.full(30, 100.0),
+                                 np.linspace(120, 110, 30)])
+    vxx = pd.DataFrame({
+        "open": vxx_close, "high": vxx_close * 1.01, "low": vxx_close * 0.99,
+        "close": vxx_close, "volume": [1e6] * n,
+    }, index=pd.bdate_range("2024-01-02", periods=n))
+    cfg = VixSpikeConfig(
+        start=vix.index[0].date(),
+        end=vix.index[-1].date(),
+        variant=SignalVariant.V0_THRESHOLD,
+        slippage_bps=0.0,
+    )
+    eng = VixSpikeFadeEngine(config=cfg, vix=vix, vxx=vxx)
+    result = eng.run()
+    assert len(result.trades) >= 1
+    t0 = result.trades[0]
+    assert t0.underlying == "VXX"
+    assert t0.direction == "long"
+
+
+def test_intraday_engine_loader_handles_missing_cache():
+    """When no parquet cache, engine returns empty result (doesn't crash)."""
+    from datetime import date as dtdate
+    import tempfile
+    from pathlib import Path
+    from src.backtest.intraday_engine import IntradayBacktestEngine, IntradayConfig
+
+    with tempfile.TemporaryDirectory() as tmp:
+        cfg = IntradayConfig(
+            start=dtdate(2024, 1, 1),
+            end=dtdate(2024, 1, 5),
+            universe="SPY",
+            bar_dir=Path(tmp),
+        )
+        # No cache files — every day returns None
+        daily = {"SPY": pd.DataFrame()}
+        eng = IntradayBacktestEngine(config=cfg, daily_bars=daily)
+        result = eng.run()
+        assert len(result.trades) == 0
+        assert result.equity_curve.empty
+
+
 def test_shares_engine_full_account_sizing():
     spy = _ibs_long_daily()
     qqq = _flat_daily()

@@ -1,0 +1,554 @@
+Fetching VIX from FRED...
+  2111 VIX observations from 2018-01-02 to 2026-04-15
+  VIX min=9.2 max=82.7 median=17.9
+
+Fetching VXX, SPY, QQQ from FMP...
+  VXX: 2087 bars, range $25.75-$4416.00
+  SPY: 2087 bars
+  QQQ: 2087 bars
+
+# VIX SPIKE FADE — diversifier candidate
+# Period: 2018-01-01 -> 2026-04-15
+# QQQ bench full: ret +302.2%  Sortino 1.08
+
+========================================================================
+v0_threshold_full
+========================================================================
+
+[Headline]
+  Trades:        42 (14W / 28L, win%=33%)
+  Total PnL:     $-5,637.25
+  Total return:  -70.5%
+  CAGR:          -13.7%
+  Sharpe (ann):  -0.25
+  Sortino:       -0.14
+  Max drawdown:  -94.0%
+  Profit factor: 0.82
+  Expectancy:    $-134.22/trade
+  Avg win:       $+1797.45
+  Avg loss:      $-1100.05
+
+[Benchmark vs SPY buy-and-hold]
+  Strategy:  ret -70.5%  Sharpe -0.25  |DD| 94%
+  QQQ      : ret +302.2%  Sharpe 0.83  |DD| 36%
+  Delta:    ret -372.6%  Sharpe -1.07
+
+[Tier verdict]
+  TIER D  (both Sharpe (-0.25) and Sortino (-0.14) below 0.5; |DD| 94% >= 35%; return -70% > 20pp below bench)
+
+[Per-year]
+    Year  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+    2018  chop_to_correction         3  100%  $   +1118    inf   0.71    0.41
+    2020  crisis_recovery            9   33%  $   +6893   1.48   1.14    1.38
+    2021  bull                       9   11%  $   -8703   0.03  -1.96   -1.17
+    2022  bear                      11   45%  $   -1280   0.50  -0.52   -0.42
+    2023  bull                       1    0%  $    -167   0.00  -0.09   -0.03
+    2024  bull                       2    0%  $   -2449   0.00  -1.69   -0.46
+    2025  bull_chop                  5   20%  $   -1068   0.50  -0.69   -0.35
+    2026  mixed                      2   50%  $     +18   1.08   0.24    0.14
+
+[Per-regime]
+  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+  bull                      12    8%  $  -11319   0.03  -1.54   -0.59
+  bear                      11   45%  $   -1280   0.50  -0.52   -0.42
+  crisis_recovery            9   33%  $   +6893   1.48   1.14    1.38
+  bull_chop                  5   20%  $   -1068   0.50  -0.69   -0.35
+  chop_to_correction         3  100%  $   +1118    inf   0.71    0.41
+  mixed                      2   50%  $     +18   1.08   0.24    0.14
+
+[Holding-period P&L]
+  Hold       N   Win%       Total      Avg
+  2d         2    0%  $   -2474  $-1237
+  3d         1    0%  $   -1277  $-1277
+  4d         1    0%  $    -484  $ -484
+  5+d       38   37%  $   -1401  $  -37
+
+[Exit reasons]
+  time_stop                           n= 37  avg=$  -27  total=$    -996
+  vix_normalized                      n=  5  avg=$ -928  total=$   -4641
+
+[Diversifier criteria — Rule 2]
+  Correlation with benchmark BAH:  -0.40  (< 0.30? PASS)
+  P&L during benchmark drawdowns:  $  +6619  (> 0? PASS)
+  Standalone Sortino:              -0.14  (> 1.00? FAIL)
+  Trade count:                        42  (>= 30? PASS)
+  Overall:                         FAIL
+    - Sortino -0.14 <= threshold 1.00
+========================================================================
+v0_threshold_train
+========================================================================
+
+[Headline]
+  Trades:        32 (12W / 20L, win%=38%)
+  Total PnL:     $-1,971.88
+  Total return:  -24.6%
+  CAGR:          -5.5%
+  Sharpe (ann):  0.03
+  Sortino:       0.02
+  Max drawdown:  -82.7%
+  Profit factor: 0.92
+  Expectancy:    $-61.62/trade
+  Avg win:       $+1987.41
+  Avg loss:      $-1291.04
+
+[Benchmark vs SPY buy-and-hold]
+  Strategy:  ret -24.6%  Sharpe 0.03  |DD| 83%
+  QQQ      : ret +68.0%  Sharpe 0.53  |DD| 36%
+  Delta:    ret -92.7%  Sharpe -0.50
+
+[Tier verdict]
+  TIER D  (both Sharpe (0.03) and Sortino (0.02) below 0.5; |DD| 83% >= 35%; return -25% > 20pp below bench)
+
+[Per-year]
+    Year  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+    2018  chop_to_correction         3  100%  $   +1118    inf   0.71    0.41
+    2020  crisis_recovery            9   33%  $   +6893   1.48   1.14    1.38
+    2021  bull                       9   11%  $   -8703   0.03  -1.96   -1.17
+    2022  bear                      11   45%  $   -1280   0.50  -0.52   -0.42
+
+[Per-regime]
+  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+  bear                      11   45%  $   -1280   0.50  -0.52   -0.42
+  crisis_recovery            9   33%  $   +6893   1.48   1.14    1.38
+  bull                       9   11%  $   -8703   0.03  -1.96   -1.17
+  chop_to_correction         3  100%  $   +1118    inf   0.71    0.41
+
+[Holding-period P&L]
+  Hold       N   Win%       Total      Avg
+  2d         1    0%  $   -2212  $-2212
+  3d         1    0%  $   -1277  $-1277
+  5+d       30   40%  $   +1518  $  +51
+
+[Exit reasons]
+  time_stop                           n= 30  avg=$  +51  total=$   +1518
+  vix_normalized                      n=  2  avg=$-1745  total=$   -3490
+
+[Diversifier criteria — Rule 2]
+  Correlation with benchmark BAH:  -0.42  (< 0.30? PASS)
+  P&L during benchmark drawdowns:  $  +9061  (> 0? PASS)
+  Standalone Sortino:               0.02  (> 1.00? FAIL)
+  Trade count:                        32  (>= 30? PASS)
+  Overall:                         FAIL
+    - Sortino 0.02 <= threshold 1.00
+========================================================================
+v0_threshold_test
+========================================================================
+
+[Headline]
+  Trades:        10 (2W / 8L, win%=20%)
+  Total PnL:     $-4,869.65
+  Total return:  -60.9%
+  CAGR:          -24.9%
+  Sharpe (ann):  -0.76
+  Sortino:       -0.28
+  Max drawdown:  -66.6%
+  Profit factor: 0.27
+  Expectancy:    $-486.97/trade
+  Avg win:       $+880.67
+  Avg loss:      $-828.87
+
+[Benchmark vs SPY buy-and-hold]
+  Strategy:  ret -60.9%  Sharpe -0.76  |DD| 67%
+  QQQ      : ret +141.0%  Sharpe 1.46  |DD| 23%
+  Delta:    ret -201.9%  Sharpe -2.22
+
+[Tier verdict]
+  TIER D  (both Sharpe (-0.76) and Sortino (-0.28) below 0.5; |DD| 67% >= 35%; return -61% > 20pp below bench)
+
+[Per-year]
+    Year  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+    2023  bull                       1    0%  $    -223   0.00  -0.09   -0.03
+    2024  bull                       2    0%  $   -3257   0.00  -1.69   -0.46
+    2025  bull_chop                  5   20%  $   -1417   0.50  -0.68   -0.35
+    2026  mixed                      2   50%  $     +27   1.09   0.25    0.14
+
+[Per-regime]
+  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+  bull_chop                  5   20%  $   -1417   0.50  -0.68   -0.35
+  bull                       3    0%  $   -3480   0.00  -1.07   -0.27
+  mixed                      2   50%  $     +27   1.09   0.25    0.14
+
+[Holding-period P&L]
+  Hold       N   Win%       Total      Avg
+  2d         1    0%  $    -352  $ -352
+  4d         1    0%  $    -648  $ -648
+  5+d        8   25%  $   -3870  $ -484
+
+[Exit reasons]
+  time_stop                           n=  7  avg=$ -476  total=$   -3330
+  vix_normalized                      n=  3  avg=$ -513  total=$   -1540
+
+[Diversifier criteria — Rule 2]
+  Correlation with benchmark BAH:  -0.34  (< 0.30? PASS)
+  P&L during benchmark drawdowns:  $  -3021  (> 0? FAIL)
+  Standalone Sortino:              -0.28  (> 1.00? FAIL)
+  Trade count:                        10  (>= 30? FAIL)
+  Overall:                         FAIL
+    - drawdown-period P&L $-3021 <= 0 (does not hedge benchmark drawdowns)
+    - Sortino -0.28 <= threshold 1.00
+    - n_trades 10 < threshold 30 (statistical insufficiency)
+========================================================================
+v1_spike_rate_full
+========================================================================
+
+[Headline]
+  Trades:        52 (17W / 35L, win%=33%)
+  Total PnL:     $-4,607.61
+  Total return:  -57.6%
+  CAGR:          -9.8%
+  Sharpe (ann):  -0.19
+  Sortino:       -0.10
+  Max drawdown:  -79.0%
+  Profit factor: 0.80
+  Expectancy:    $-88.61/trade
+  Avg win:       $+1118.87
+  Avg loss:      $-675.10
+
+[Benchmark vs SPY buy-and-hold]
+  Strategy:  ret -57.6%  Sharpe -0.19  |DD| 79%
+  QQQ      : ret +302.2%  Sharpe 0.83  |DD| 36%
+  Delta:    ret -359.8%  Sharpe -1.01
+
+[Tier verdict]
+  TIER D  (both Sharpe (-0.19) and Sortino (-0.10) below 0.5; |DD| 79% >= 35%; return -58% > 20pp below bench)
+
+[Per-year]
+    Year  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+    2018  chop_to_correction        12   58%  $   +4242   2.80   1.24    1.29
+    2019  bull                       5   20%  $   -3925   0.01  -2.70   -0.91
+    2020  crisis_recovery           11   36%  $   +3170   1.57   0.91    0.89
+    2021  bull                       8    0%  $   -5457   0.00  -2.47   -0.95
+    2022  bear                       4   50%  $    -274   0.63  -0.35   -0.12
+    2024  bull                       5   40%  $    -914   0.72  -0.13   -0.07
+    2025  bull_chop                  6   17%  $   -1087   0.44  -0.83   -0.38
+    2026  mixed                      1    0%  $    -363   0.00  -1.93   -0.46
+
+[Per-regime]
+  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+  bull                      18   17%  $  -10296   0.19  -0.60   -0.35
+  chop_to_correction        12   58%  $   +4242   2.80   1.24    1.29
+  crisis_recovery           11   36%  $   +3170   1.57   0.91    0.89
+  bull_chop                  6   17%  $   -1087   0.44  -0.83   -0.38
+  bear                       4   50%  $    -274   0.63  -0.35   -0.12
+  mixed                      1    0%  $    -363   0.00  -1.93   -0.46
+
+[Holding-period P&L]
+  Hold       N   Win%       Total      Avg
+  1d         5    0%  $   -4373  $ -875
+  2d         5    0%  $   -3147  $ -629
+  3d        26   42%  $   +4944  $ +190
+  4d         9   44%  $    +993  $ +110
+  5+d        7   29%  $   -3024  $ -432
+
+[Exit reasons]
+  time_stop                           n= 31  avg=$ +401  total=$  +12424
+  vix_recovered                       n= 21  avg=$ -811  total=$  -17032
+
+[Diversifier criteria — Rule 2]
+  Correlation with benchmark BAH:  -0.28  (< 0.30? PASS)
+  P&L during benchmark drawdowns:  $  +7009  (> 0? PASS)
+  Standalone Sortino:              -0.10  (> 1.00? FAIL)
+  Trade count:                        52  (>= 30? PASS)
+  Overall:                         FAIL
+    - Sortino -0.10 <= threshold 1.00
+========================================================================
+v1_spike_rate_train
+========================================================================
+
+[Headline]
+  Trades:        40 (14W / 26L, win%=35%)
+  Total PnL:     $-2,243.12
+  Total return:  -28.0%
+  CAGR:          -6.4%
+  Sharpe (ann):  -0.07
+  Sortino:       -0.04
+  Max drawdown:  -65.1%
+  Profit factor: 0.88
+  Expectancy:    $-56.08/trade
+  Avg win:       $+1130.76
+  Avg loss:      $-695.15
+
+[Benchmark vs SPY buy-and-hold]
+  Strategy:  ret -28.0%  Sharpe -0.07  |DD| 65%
+  QQQ      : ret +68.0%  Sharpe 0.53  |DD| 36%
+  Delta:    ret -96.0%  Sharpe -0.59
+
+[Tier verdict]
+  TIER D  (both Sharpe (-0.07) and Sortino (-0.04) below 0.5; |DD| 65% >= 35%; return -28% > 20pp below bench)
+
+[Per-year]
+    Year  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+    2018  chop_to_correction        12   58%  $   +4242   2.80   1.24    1.29
+    2019  bull                       5   20%  $   -3925   0.01  -2.70   -0.91
+    2020  crisis_recovery           11   36%  $   +3170   1.57   0.91    0.89
+    2021  bull                       8    0%  $   -5457   0.00  -2.47   -0.95
+    2022  bear                       4   50%  $    -274   0.63  -0.35   -0.12
+
+[Per-regime]
+  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+  bull                      13    8%  $   -9382   0.00  -0.90   -0.54
+  chop_to_correction        12   58%  $   +4242   2.80   1.24    1.29
+  crisis_recovery           11   36%  $   +3170   1.57   0.91    0.89
+  bear                       4   50%  $    -274   0.63  -0.35   -0.12
+
+[Holding-period P&L]
+  Hold       N   Win%       Total      Avg
+  1d         4    0%  $   -4060  $-1015
+  2d         5    0%  $   -3147  $ -629
+  3d        19   47%  $   +5880  $ +309
+  4d         7   43%  $    +906  $ +129
+  5+d        5   40%  $   -1822  $ -364
+
+[Exit reasons]
+  time_stop                           n= 26  avg=$ +383  total=$   +9968
+  vix_recovered                       n= 14  avg=$ -872  total=$  -12211
+
+[Diversifier criteria — Rule 2]
+  Correlation with benchmark BAH:  -0.32  (< 0.30? PASS)
+  P&L during benchmark drawdowns:  $  +7030  (> 0? PASS)
+  Standalone Sortino:              -0.04  (> 1.00? FAIL)
+  Trade count:                        40  (>= 30? PASS)
+  Overall:                         FAIL
+    - Sortino -0.04 <= threshold 1.00
+========================================================================
+v1_spike_rate_test
+========================================================================
+
+[Headline]
+  Trades:        12 (3W / 9L, win%=25%)
+  Total PnL:     $-3,287.89
+  Total return:  -41.1%
+  CAGR:          -14.9%
+  Sharpe (ann):  -0.37
+  Sortino:       -0.15
+  Max drawdown:  -54.4%
+  Profit factor: 0.57
+  Expectancy:    $-273.99/trade
+  Avg win:       $+1478.23
+  Avg loss:      $-858.06
+
+[Benchmark vs SPY buy-and-hold]
+  Strategy:  ret -41.1%  Sharpe -0.37  |DD| 54%
+  QQQ      : ret +141.0%  Sharpe 1.46  |DD| 23%
+  Delta:    ret -182.1%  Sharpe -1.83
+
+[Tier verdict]
+  TIER D  (both Sharpe (-0.37) and Sortino (-0.15) below 0.5; |DD| 54% >= 35%; return -41% > 20pp below bench)
+
+[Per-year]
+    Year  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+    2024  bull                       5   40%  $   -1267   0.72  -0.13   -0.07
+    2025  bull_chop                  6   17%  $   -1516   0.44  -0.84   -0.38
+    2026  mixed                      1    0%  $    -505   0.00  -1.93   -0.46
+
+[Per-regime]
+  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+  bull_chop                  6   17%  $   -1516   0.44  -0.84   -0.38
+  bull                       5   40%  $   -1267   0.72  -0.13   -0.07
+  mixed                      1    0%  $    -505   0.00  -1.93   -0.46
+
+[Holding-period P&L]
+  Hold       N   Win%       Total      Avg
+  1d         1    0%  $    -437  $ -437
+  3d         7   29%  $   -1303  $ -186
+  4d         2   50%  $    +121  $  +61
+  5+d        2    0%  $   -1670  $ -835
+
+[Exit reasons]
+  vix_recovered                       n=  7  avg=$ -957  total=$   -6700
+  time_stop                           n=  5  avg=$ +682  total=$   +3412
+
+[Diversifier criteria — Rule 2]
+  Correlation with benchmark BAH:  -0.19  (< 0.30? PASS)
+  P&L during benchmark drawdowns:  $    -29  (> 0? FAIL)
+  Standalone Sortino:              -0.15  (> 1.00? FAIL)
+  Trade count:                        12  (>= 30? FAIL)
+  Overall:                         FAIL
+    - drawdown-period P&L $-29 <= 0 (does not hedge benchmark drawdowns)
+    - Sortino -0.15 <= threshold 1.00
+    - n_trades 12 < threshold 30 (statistical insufficiency)
+========================================================================
+v2_spx_down_full
+========================================================================
+
+[Headline]
+  Trades:        56 (18W / 38L, win%=32%)
+  Total PnL:     $-6,783.57
+  Total return:  -84.8%
+  CAGR:          -20.3%
+  Sharpe (ann):  -0.56
+  Sortino:       -0.33
+  Max drawdown:  -93.7%
+  Profit factor: 0.66
+  Expectancy:    $-121.14/trade
+  Avg win:       $+737.61
+  Avg loss:      $-527.91
+
+[Benchmark vs SPY buy-and-hold]
+  Strategy:  ret -84.8%  Sharpe -0.56  |DD| 94%
+  QQQ      : ret +302.2%  Sharpe 0.83  |DD| 36%
+  Delta:    ret -387.0%  Sharpe -1.38
+
+[Tier verdict]
+  TIER D  (both Sharpe (-0.56) and Sortino (-0.33) below 0.5; |DD| 94% >= 35%; return -85% > 20pp below bench)
+
+[Per-year]
+    Year  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+    2018  chop_to_correction         7   57%  $    +660   2.50   0.44    0.32
+    2019  bull                       3    0%  $   -2478   0.00  -2.59   -0.86
+    2020  crisis_recovery           15   27%  $     -28   1.00   0.29    0.38
+    2021  bull                       5   40%  $   -1472   0.11  -0.80   -0.31
+    2022  bear                      18   33%  $   -1978   0.25  -1.97   -1.60
+    2023  bull                       1    0%  $    -171   0.00  -0.92   -0.28
+    2024  bull                       2    0%  $   -1170   0.00  -1.90   -0.56
+    2025  bull_chop                  5   40%  $    -147   0.77  -0.20   -0.13
+
+[Per-regime]
+  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+  bear                      18   33%  $   -1978   0.25  -1.97   -1.60
+  crisis_recovery           15   27%  $     -28   1.00   0.29    0.38
+  bull                      11   18%  $   -5291   0.03  -1.33   -0.34
+  chop_to_correction         7   57%  $    +660   2.50   0.44    0.32
+  bull_chop                  5   40%  $    -147   0.77  -0.20   -0.13
+
+[Holding-period P&L]
+  Hold       N   Win%       Total      Avg
+  3d         1    0%  $    -864  $ -864
+  5+d       55   33%  $   -5920  $ -108
+
+[Exit reasons]
+  time_stop                           n= 55  avg=$ -108  total=$   -5920
+  vix_normalized                      n=  1  avg=$ -864  total=$    -864
+
+[Diversifier criteria — Rule 2]
+  Correlation with benchmark BAH:  -0.39  (< 0.30? PASS)
+  P&L during benchmark drawdowns:  $  -3708  (> 0? FAIL)
+  Standalone Sortino:              -0.33  (> 1.00? FAIL)
+  Trade count:                        56  (>= 30? PASS)
+  Overall:                         FAIL
+    - drawdown-period P&L $-3708 <= 0 (does not hedge benchmark drawdowns)
+    - Sortino -0.33 <= threshold 1.00
+========================================================================
+v2_spx_down_train
+========================================================================
+
+[Headline]
+  Trades:        48 (16W / 32L, win%=33%)
+  Total PnL:     $-5,295.46
+  Total return:  -66.2%
+  CAGR:          -19.5%
+  Sharpe (ann):  -0.43
+  Sortino:       -0.33
+  Max drawdown:  -85.7%
+  Profit factor: 0.71
+  Expectancy:    $-110.32/trade
+  Avg win:       $+799.18
+  Avg loss:      $-565.07
+
+[Benchmark vs SPY buy-and-hold]
+  Strategy:  ret -66.2%  Sharpe -0.43  |DD| 86%
+  QQQ      : ret +68.0%  Sharpe 0.53  |DD| 36%
+  Delta:    ret -134.2%  Sharpe -0.96
+
+[Tier verdict]
+  TIER D  (both Sharpe (-0.43) and Sortino (-0.33) below 0.5; |DD| 86% >= 35%; return -66% > 20pp below bench)
+
+[Per-year]
+    Year  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+    2018  chop_to_correction         7   57%  $    +660   2.50   0.44    0.32
+    2019  bull                       3    0%  $   -2478   0.00  -2.59   -0.86
+    2020  crisis_recovery           15   27%  $     -28   1.00   0.29    0.38
+    2021  bull                       5   40%  $   -1472   0.11  -0.80   -0.31
+    2022  bear                      18   33%  $   -1978   0.25  -1.97   -1.60
+
+[Per-regime]
+  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+  bear                      18   33%  $   -1978   0.25  -1.97   -1.60
+  crisis_recovery           15   27%  $     -28   1.00   0.29    0.38
+  bull                       8   25%  $   -3950   0.05  -1.26   -0.46
+  chop_to_correction         7   57%  $    +660   2.50   0.44    0.32
+
+[Holding-period P&L]
+  Hold       N   Win%       Total      Avg
+  3d         1    0%  $    -864  $ -864
+  5+d       47   34%  $   -4431  $  -94
+
+[Exit reasons]
+  time_stop                           n= 47  avg=$  -94  total=$   -4431
+  vix_normalized                      n=  1  avg=$ -864  total=$    -864
+
+[Diversifier criteria — Rule 2]
+  Correlation with benchmark BAH:  -0.45  (< 0.30? PASS)
+  P&L during benchmark drawdowns:  $  -2443  (> 0? FAIL)
+  Standalone Sortino:              -0.33  (> 1.00? FAIL)
+  Trade count:                        48  (>= 30? PASS)
+  Overall:                         FAIL
+    - drawdown-period P&L $-2443 <= 0 (does not hedge benchmark drawdowns)
+    - Sortino -0.33 <= threshold 1.00
+========================================================================
+v2_spx_down_test
+========================================================================
+
+[Headline]
+  Trades:        8 (2W / 6L, win%=25%)
+  Total PnL:     $-4,404.80
+  Total return:  -55.1%
+  CAGR:          -21.6%
+  Sharpe (ann):  -0.87
+  Sortino:       -0.28
+  Max drawdown:  -55.8%
+  Profit factor: 0.25
+  Expectancy:    $-550.60/trade
+  Avg win:       $+722.18
+  Avg loss:      $-974.86
+
+[Benchmark vs SPY buy-and-hold]
+  Strategy:  ret -55.1%  Sharpe -0.87  |DD| 56%
+  QQQ      : ret +141.0%  Sharpe 1.46  |DD| 23%
+  Delta:    ret -196.1%  Sharpe -2.33
+
+[Tier verdict]
+  TIER D  (both Sharpe (-0.87) and Sortino (-0.28) below 0.5; |DD| 56% >= 35%; return -55% > 20pp below bench)
+
+[Per-year]
+    Year  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+    2023  bull                       1    0%  $    -514   0.00  -0.92   -0.28
+    2024  bull                       2    0%  $   -3444   0.00  -1.89   -0.56
+    2025  bull_chop                  5   40%  $    -447   0.76  -0.21   -0.13
+
+[Per-regime]
+  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+  bull_chop                  5   40%  $    -447   0.76  -0.21   -0.13
+  bull                       3    0%  $   -3958   0.00  -1.45   -0.34
+
+[Holding-period P&L]
+  Hold       N   Win%       Total      Avg
+  5+d        8   25%  $   -4405  $ -551
+
+[Exit reasons]
+  time_stop                           n=  8  avg=$ -551  total=$   -4405
+
+[Diversifier criteria — Rule 2]
+  Correlation with benchmark BAH:  -0.21  (< 0.30? PASS)
+  P&L during benchmark drawdowns:  $  -3467  (> 0? FAIL)
+  Standalone Sortino:              -0.28  (> 1.00? FAIL)
+  Trade count:                         8  (>= 30? FAIL)
+  Overall:                         FAIL
+    - drawdown-period P&L $-3467 <= 0 (does not hedge benchmark drawdowns)
+    - Sortino -0.28 <= threshold 1.00
+    - n_trades 8 < threshold 30 (statistical insufficiency)
+
+========================================================================================
+SUMMARY — VIX spike fade variants vs diversifier criteria
+========================================================================================
+
+Variant                    N   Win%  Sortino   Return   Corr      DD$   Verdict
+v0_threshold_full         42   33%  -0.14     -70%   -0.40  $+6619     FAIL
+v0_threshold_train        32   38%   0.02     -25%   -0.42  $+9061     FAIL
+v0_threshold_test         10   20%  -0.28     -61%   -0.34  $-3021     FAIL
+v1_spike_rate_full        52   33%  -0.10     -58%   -0.28  $+7009     FAIL
+v1_spike_rate_train       40   35%  -0.04     -28%   -0.32  $+7030     FAIL
+v1_spike_rate_test        12   25%  -0.15     -41%   -0.19  $  -29     FAIL
+v2_spx_down_full          56   32%  -0.33     -85%   -0.39  $-3708     FAIL
+v2_spx_down_train         48   33%  -0.33     -66%   -0.45  $-2443     FAIL
+v2_spx_down_test           8   25%  -0.28     -55%   -0.21  $-3467     FAIL
