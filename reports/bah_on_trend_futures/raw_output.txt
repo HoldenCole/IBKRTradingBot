@@ -1,0 +1,142 @@
+# BAH-on-trend FUTURES test — does the rule generalize beyond shares?
+# Signal: cash index SMA(50)/(200). Trade: ES/MES (S&P) and NQ/MNQ (NDX).
+# Roll cost: 8 bps/yr (~2 bps × 4 quarterly rolls).
+# Tax: shares 30% STCG; futures 21% via Section 1256 (60%/40%).
+# No MA window tuning; same 50/200 as locked.
+
+
+############################################################################################
+# SECTION 1: NQ / MNQ on NDX
+############################################################################################
+
+============================================================================================
+PERIOD 2018-2026 (in-sample): 2018-01-01 -> 2026-04-15  |  contract: MNQ  (mult $2.0, margin $2200)
+============================================================================================
+
+  Filter ON days: 1066/2081 (51%)
+
+  Vehicle                           Sortino     Return    CAGR   Max DD     Final $   After-tax
+  BAH cash index (no rule)             1.15   +296.9%  +18.1%  -35.6%  $  31,750  $  24,625
+  A. Cash-rule (shares-equiv)          3.83   +924.8%  +32.5%  -10.9%  $  81,987  $  59,791
+  B. 1 contract MNQ                    3.44   +876.5%  +31.7%  -13.7%  $  78,116  $  63,392
+  C. Max-margin MNQ (compound)         3.41  +11721178.2%  +309.5%  -47.6%  $937,702,258  $740,786,464
+
+  Sortino lift over BAH:  cash-rule +2.67  |  1-MNQ +2.29  |  max-margin +2.26
+
+============================================================================================
+PERIOD 2010-2017 (held-out): 2010-01-01 -> 2017-12-31  |  contract: MNQ  (mult $2.0, margin $2200)
+============================================================================================
+
+  Filter ON days: 1205/2013 (60%)
+
+  Vehicle                           Sortino     Return    CAGR   Max DD     Final $   After-tax
+  BAH cash index (no rule)             1.43   +239.0%  +16.5%  -16.3%  $  27,122  $  21,386
+  A. Cash-rule (shares-equiv)          4.28   +563.5%  +26.7%   -4.4%  $  53,081  $  39,557
+  B. 1 contract MNQ                    4.18   +180.1%  +13.8%   -2.4%  $  22,409  $  19,383
+  C. Max-margin MNQ (compound)         3.68  +1069.7%  +36.1%   -9.7%  $  93,573  $  75,603
+
+  Sortino lift over BAH:  cash-rule +2.85  |  1-MNQ +2.75  |  max-margin +2.25
+
+============================================================================================
+PERIOD 2000-2009 (regime shift): 2000-09-18 -> 2009-12-31  |  contract: MNQ  (mult $2.0, margin $2200)
+============================================================================================
+
+  Filter ON days: 793/2335 (34%)
+
+  Vehicle                           Sortino     Return    CAGR   Max DD     Final $   After-tax
+  BAH cash index (no rule)            -0.06    -47.6%  -6.7%  -78.8%  $   4,192  $   5,334
+  A. Cash-rule (shares-equiv)          3.02   +444.0%  +20.0%   -6.8%  $  43,523  $  32,866
+  B. 1 contract MNQ                    2.94    +66.7%  +5.7%   -2.0%  $  13,338  $  12,217
+  C. Max-margin MNQ (compound)         2.53   +125.3%  +9.1%   -4.0%  $  18,021  $  15,917
+
+  Sortino lift over BAH:  cash-rule +3.08  |  1-MNQ +3.00  |  max-margin +2.59
+
+############################################################################################
+# SECTION 2: ES / MES on SPX
+############################################################################################
+
+============================================================================================
+PERIOD 2018-2026 (in-sample): 2018-01-01 -> 2026-04-15  |  contract: MES  (mult $5.0, margin $1500)
+============================================================================================
+
+  Filter ON days: 1081/2081 (52%)
+
+  Vehicle                           Sortino     Return    CAGR   Max DD     Final $   After-tax
+  BAH cash index (no rule)             0.97   +158.5%  +12.2%  -33.9%  $  20,676  $  16,873
+  A. Cash-rule (shares-equiv)          3.89   +405.0%  +21.6%   -7.0%  $  40,396  $  30,677
+  B. 1 contract MES                    3.78   +458.7%  +23.1%   -9.0%  $  44,699  $  36,992
+  C. Max-margin MES (compound)         3.29  +806629.3%  +196.4%  -32.8%  $64,538,343  $50,986,971
+
+  Sortino lift over BAH:  cash-rule +2.93  |  1-MES +2.81  |  max-margin +2.32
+
+============================================================================================
+PERIOD 2010-2017 (held-out): 2010-01-01 -> 2017-12-31  |  contract: MES  (mult $5.0, margin $1500)
+============================================================================================
+
+  Filter ON days: 1174/2013 (58%)
+
+  Vehicle                           Sortino     Return    CAGR   Max DD     Final $   After-tax
+  BAH cash index (no rule)             1.14   +136.0%  +11.4%  -19.4%  $  18,878  $  15,615
+  A. Cash-rule (shares-equiv)          4.63   +364.9%  +21.2%   -3.9%  $  37,194  $  28,436
+  B. 1 contract MES                    4.42   +174.8%  +13.5%   -2.9%  $  21,984  $  19,047
+  C. Max-margin MES (compound)         4.42  +4800.1%  +62.8%  -12.0%  $ 392,010  $ 311,368
+
+  Sortino lift over BAH:  cash-rule +3.50  |  1-MES +3.28  |  max-margin +3.29
+
+============================================================================================
+PERIOD 2000-2009 (regime shift): 2000-09-18 -> 2009-12-31  |  contract: MES  (mult $5.0, margin $1500)
+============================================================================================
+
+  Filter ON days: 858/2335 (37%)
+
+  Vehicle                           Sortino     Return    CAGR   Max DD     Final $   After-tax
+  BAH cash index (no rule)            -0.01    -22.0%  -2.6%  -56.8%  $   6,238  $   6,767
+  A. Cash-rule (shares-equiv)          3.09   +218.6%  +13.3%   -4.3%  $  25,491  $  20,244
+  B. 1 contract MES                    2.96    +86.1%  +6.9%   -2.4%  $  14,888  $  13,441
+  C. Max-margin MES (compound)         2.67   +472.2%  +20.7%  -10.0%  $  45,774  $  37,841
+
+  Sortino lift over BAH:  cash-rule +3.10  |  1-MES +2.98  |  max-margin +2.68
+
+============================================================================================
+DECISION RULE APPLICATION
+============================================================================================
+
+User-locked criteria:
+  - Futures lift within 50% of share lift -> generalizes, deploy candidate
+  - Futures lift higher after taxes/rolls -> deploy on futures
+  - Futures lift lower -> deploy on shares
+  - Futures break the rule (no lift) -> share-specific edge
+
+
+[2018-2026 (in-sample)] NDX/MNQ:
+  Sortino lift over BAH:
+    Shares-equiv:  +2.67
+    1-MNQ:         +2.29  (comparable)
+    Max-margin:    +2.26
+  After-tax return:
+    BAH cash:      +207.8%
+    Shares-equiv:  +647.4%
+    1-MNQ:         +692.4%
+    Max-margin:    +9259730.8%
+
+[2010-2017 (held-out)] NDX/MNQ:
+  Sortino lift over BAH:
+    Shares-equiv:  +2.85
+    1-MNQ:         +2.75  (comparable)
+    Max-margin:    +2.25
+  After-tax return:
+    BAH cash:      +167.3%
+    Shares-equiv:  +394.5%
+    1-MNQ:         +142.3%
+    Max-margin:    +845.0%
+
+[2000-2009 (regime shift)] NDX/MNQ:
+  Sortino lift over BAH:
+    Shares-equiv:  +3.08
+    1-MNQ:         +3.00  (comparable)
+    Max-margin:    +2.59
+  After-tax return:
+    BAH cash:      -33.3%
+    Shares-equiv:  +310.8%
+    1-MNQ:         +52.7%
+    Max-margin:    +99.0%
