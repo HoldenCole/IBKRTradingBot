@@ -21,6 +21,11 @@ from datetime import date
 import pandas as pd
 
 from src.backtest.benchmark import BenchmarkMetrics, equity_metrics, equity_metrics_subset
+from src.backtest.diversifier_check import (
+    DiversifierVerdict,
+    evaluate_diversifier,
+    format_diversifier_verdict,
+)
 from src.backtest.tier import classify, TierVerdict
 
 
@@ -45,6 +50,7 @@ def format_v2_report(
     initial_capital: float,
     benchmark: BenchmarkMetrics,
     skipped: list[dict] | None = None,
+    diversifier_benchmark_close: pd.Series | None = None,
 ) -> str:
     """Format a strategy backtest result against the v2 reporting template."""
     lines: list[str] = []
@@ -96,6 +102,17 @@ def format_v2_report(
         bench_total_return=benchmark.total_return,
         strategy_sortino=sm["sortino"],
     )
+    # --- Diversifier criteria (Rule 2) — only emitted when caller passes
+    # the benchmark close-price series for daily-return correlation. ---
+    diversifier_block = ""
+    if diversifier_benchmark_close is not None and not diversifier_benchmark_close.empty:
+        dv = evaluate_diversifier(
+            strategy_equity=equity_curve,
+            n_trades=n,
+            benchmark_close=diversifier_benchmark_close,
+            sortino=sm["sortino"],
+        )
+        diversifier_block = "\n\n" + format_diversifier_verdict(dv)
     lines.append("\n[Tier verdict]")
     lines.append(f"  TIER {verdict.tier}  ({verdict.rationale})")
 
@@ -174,4 +191,4 @@ def format_v2_report(
         for r, c in Counter(s["reason"] for s in skipped).most_common():
             lines.append(f"  {r:35s} {c}")
 
-    return "\n".join(lines)
+    return "\n".join(lines) + diversifier_block

@@ -432,6 +432,114 @@ def test_overnight_drift_full_account_sizing():
     assert t0.shares == 100  # exactly $10k / $100 = 100 shares
 
 
+# --- Diversifier check ---
+
+def test_diversifier_correlation_low_for_uncorrelated_series():
+    from src.backtest.diversifier_check import correlation_with_benchmark
+    n = 200
+    rng = np.random.default_rng(0)
+    bench = pd.Series(
+        100 + np.cumsum(rng.normal(0, 1, n)),
+        index=pd.bdate_range("2024-01-01", periods=n),
+    )
+    # Strategy: random independent walk
+    strat = pd.Series(
+        8000 + np.cumsum(rng.normal(0, 50, n)),
+        index=pd.bdate_range("2024-01-01", periods=n),
+    )
+    corr = correlation_with_benchmark(strat, bench)
+    assert -0.3 < corr < 0.3  # uncorrelated random walks should have low corr
+
+
+def test_diversifier_drawdown_pnl_positive_for_inverse_strategy():
+    from src.backtest.diversifier_check import drawdown_period_pnl
+    n = 100
+    # Bench: rises then crashes
+    bench = pd.Series(
+        np.concatenate([np.linspace(100, 110, 50), np.linspace(110, 90, 50)]),
+        index=pd.bdate_range("2024-01-01", periods=n),
+    )
+    # Strategy: opposite direction (inverse) — flat then rises during bench drawdown
+    strat = pd.Series(
+        np.concatenate([np.full(50, 8000.0), np.linspace(8000, 8500, 50)]),
+        index=pd.bdate_range("2024-01-01", periods=n),
+    )
+    pnl = drawdown_period_pnl(strat, bench, drawdown_threshold=-0.05)
+    # During bench drawdown (last 50 bars after 5% drop), strategy gained +$500
+    assert pnl > 0
+
+
+def test_diversifier_verdict_passes_all_four():
+    from src.backtest.diversifier_check import evaluate_diversifier
+    n = 200
+    rng = np.random.default_rng(1)
+    bench = pd.Series(
+        100 + np.cumsum(rng.normal(0, 1, n)),
+        index=pd.bdate_range("2024-01-01", periods=n),
+    )
+    # A strategy whose equity rises smoothly; uncorrelated to bench;
+    # makes money during bench drawdowns; high Sortino.
+    strat = pd.Series(
+        8000 + np.linspace(0, 2000, n),  # smooth uptrend
+        index=pd.bdate_range("2024-01-01", periods=n),
+    )
+    v = evaluate_diversifier(
+        strategy_equity=strat,
+        n_trades=50,
+        benchmark_close=bench,
+        sortino=1.5,
+    )
+    assert v.passed
+    assert v.correlation_pass
+    assert v.drawdown_pnl_pass
+    assert v.sortino_pass
+    assert v.n_trades_pass
+
+
+def test_diversifier_verdict_fails_correlation():
+    from src.backtest.diversifier_check import evaluate_diversifier
+    # Strategy whose equity moves in lockstep with benchmark
+    n = 200
+    bench = pd.Series(
+        100 + np.cumsum(np.random.default_rng(2).normal(0, 1, n)),
+        index=pd.bdate_range("2024-01-01", periods=n),
+    )
+    strat = pd.Series(80.0 * bench.values, index=bench.index)  # perfectly correlated
+    v = evaluate_diversifier(
+        strategy_equity=strat,
+        n_trades=50,
+        benchmark_close=bench,
+        sortino=1.5,
+    )
+    assert not v.passed
+    assert not v.correlation_pass
+    assert any("correlation" in f for f in v.failures)
+
+
+def test_diversifier_verdict_fails_n_trades_below_threshold():
+    from src.backtest.diversifier_check import evaluate_diversifier
+    n = 200
+    rng = np.random.default_rng(3)
+    bench = pd.Series(
+        100 + np.cumsum(rng.normal(0, 1, n)),
+        index=pd.bdate_range("2024-01-01", periods=n),
+    )
+    strat = pd.Series(
+        8000 + np.linspace(0, 1000, n),
+        index=pd.bdate_range("2024-01-01", periods=n),
+    )
+    # Only 5 trades — fails n_trades_threshold (default 30)
+    v = evaluate_diversifier(
+        strategy_equity=strat,
+        n_trades=5,
+        benchmark_close=bench,
+        sortino=1.5,
+    )
+    assert not v.passed
+    assert not v.n_trades_pass
+    assert any("n_trades" in f for f in v.failures)
+
+
 def test_shares_engine_full_account_sizing():
     spy = _ibs_long_daily()
     qqq = _flat_daily()

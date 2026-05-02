@@ -250,3 +250,122 @@ under regime gating is the only path to evidence here.
 - **No "look at one more period" trigger.** The 2018-2026 backtest is
   the locked baseline. Adding 2027 data later doesn't reopen v1.1
   unless one of the explicit triggers above fires.
+
+---
+
+## 2026-05-02 — Locked candidate evaluation rules (v2)
+
+After two negative findings (IBS-LS Tier D vs benchmark, overnight drift
+negative Sortino lift on every slice), the v2 strategy validation
+workstream needs explicit rules to prevent re-litigating "is this
+deployable" each time. Locking the criteria here.
+
+### The structural finding driving these rules
+
+**Long-biased trade-in-trade-out strategies on SPY/QQQ in 2018-2026 are
+strictly dominated by buy-and-hold of the same instrument.** This is a
+property of the sample (strong bull punctuated by short crashes that
+recovered quickly), not a strategy-design problem. Any candidate in this
+family must have a clear mechanistic story for why it would beat
+buy-and-hold specifically. If the story can't be articulated upfront,
+the candidate is unlikely to clear the lift test and shouldn't consume
+backtest cycles.
+
+### Rule 1 — buy-and-hold-lift candidates (long-biased, frequent-trading)
+
+Applies to strategies that take long-biased equity exposure with
+multiple entries/exits per month — IBS-style mean reversion, overnight
+drift, momentum continuation on SPY/QQQ shares, etc.
+
+**Pass criteria:**
+- Strategy Sortino > Benchmark Sortino (same instrument, same period)
+- Strategy total return ≥ Benchmark total return (same instrument, same period)
+- Both train and test slices, not just full period
+
+**If pass**: candidate proceeds to portfolio-component evaluation (correlation
+with other components, role in regime mix).
+
+**If fail (either Sortino or return below bench)**: drop the candidate.
+The strategy is strictly dominated by buy-and-hold of the same instrument.
+No leverage or sizing trick fixes a strictly-dominated standalone result.
+
+### Rule 2 — diversifier candidates (low-frequency, regime-specific, contrarian)
+
+Applies to strategies designed to be uncorrelated with long equity —
+VIX spike fade, vol breakouts, defensive rotation, pairs trading,
+short-biased mean reversion in specific regimes.
+
+**Pass criteria (all four):**
+- Correlation of strategy daily returns with QQQ buy-and-hold daily
+  returns < 0.30 (over same period)
+- Strategy P&L during QQQ drawdown periods (>5% from rolling high) > 0
+  (i.e., it hedges, not amplifies)
+- Strategy Sortino > 1.0 on its own equity curve (it makes money on
+  net even though it sits in cash much of the time)
+- ≥30 trades over 8 years for statistical meaningfulness
+
+**Diversifiers are NOT held to the buy-and-hold-return-beat rule.** A
+diversifier whose absolute return is +20% over 8 years can still earn
+its slot if the four criteria above are met — its job is to make the
+portfolio's drawdown profile better, not to beat SPY.
+
+**If pass**: candidate proceeds to portfolio-sizing evaluation.
+
+**If fail any criterion**: drop or specifically diagnose which criterion
+failed and whether the strategy can be tightened to clear it.
+
+### Rule 3 — special cases
+
+**Intraday-only strategies (afternoon reversion):** the buy-and-hold
+comparison may not apply cleanly because the strategy doesn't take
+overnight risk. Report BOTH the lift-test and the diversifier-test;
+treat as diversifier if its primary value is uncorrelated returns,
+treat as lift candidate if it's frequent-trading and competing with
+buy-and-hold.
+
+**Regime-gated strategies:** if a regime classifier exists and the
+strategy is conditional on it, evaluate against the regime-gated
+benchmark — i.e., compare to "what buy-and-hold would have returned
+if you only held the underlying during regime-on periods." This
+applies to IBS-with-regime-gate when user's regime model is delivered.
+
+**Leveraged strategies (Phase 2 options, margin shares):** apply rule 1
+or rule 2 based on the underlying signal's classification, not the
+leverage. Leverage on a regime-dependent strategy amplifies dependence;
+it doesn't change the category.
+
+### What this rules out (won't backtest)
+
+- Most variants of mean reversion on SPY/QQQ shares — already two
+  strikes against this category (IBS-LS, overnight drift).
+- Trend continuation on SPY/QQQ shares — would be just expensive
+  market exposure given the 2018-2026 sample.
+- Most "improve on buy-and-hold" framings without a specific
+  mechanistic story.
+
+### What this favors
+
+- Diversifier strategies with clear uncorrelated mechanics (VIX spike
+  fade, vol breakout, defensive rotation).
+- Strategies on instruments where buy-and-hold isn't the obvious
+  benchmark (sector rotation, pairs trading, fixed-income carry).
+- Leverage applied selectively in regimes where buy-and-hold isn't
+  optimal — but only after a regime classifier exists and the
+  underlying signal already passes rule 1.
+
+### Implementation
+
+`src/backtest/diversifier_check.py` (new) implements rule 2 mechanically.
+`src/backtest/v2_report.py` extended to emit the lift table (rule 1) and
+the diversifier verdict (rule 2) per strategy run. No more manual
+verdicts; the report tells you which tier and which rule applied.
+
+### Triggers to revisit these rules
+
+- A future strategy passes the lift test cleanly: confirms the rule is
+  achievable, no change.
+- The 2018-2026 sample window is extended (e.g., adding 2027+) and the
+  lift-test results materially shift: rule may need recalibration.
+- A backtest produces a result that "feels right" but fails the rule —
+  forces an explicit conversation about whether the rule is too strict.
+  Don't lower the bar without that conversation.
