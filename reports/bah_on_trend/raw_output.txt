@@ -1,0 +1,98 @@
+# BAH-on-trend-ON-days — out-of-sample validation
+# Strategy: hold QQQ when (close > SMA50) AND (SMA50 > SMA200);
+#           0% return (cash) otherwise. Daily flag.
+# Sortino formula: standard (downside dev = sqrt(sum_neg² / N_total),
+#   target = 0). Updated from prior non-standard convention.
+
+========================================================================================
+PERIOD: 2018-2026 (in-sample) (2018-01-01 to 2026-04-15)
+========================================================================================
+  2082 trading days, range $143.50-$637.40
+
+  Metric                 QQQ BAH   Trend gate       Lift
+  Total return          +302.2%     +881.2%   +579.0pp
+  CAGR                   +18.3%      +31.7%    +13.5pp
+  Sortino                   1.17         3.77      +2.60
+  Sharpe                    0.83         2.38      +1.55
+  Max drawdown           -35.6%      -10.8%    +24.8pp
+  Final equity ($)    $   32,174  $    78,494  $ +46,320
+  Filter-ON days               -  1072/2082 (51%)
+
+[2018-2026 (in-sample)] Per-year breakdown
+  Year   BAH ret  Strat ret     Lift
+  2018    -2.7%     +0.0%   +2.7pp
+  2019   +37.8%    +30.9%   -6.9pp
+  2020   +47.6%    +63.9%  +16.4pp
+  2021   +26.8%    +45.9%  +19.1pp
+  2022   -33.1%     -0.3%  +32.7pp
+  2023   +53.8%    +54.8%   +1.0pp
+  2024   +24.8%    +36.4%  +11.6pp
+  2025   +20.2%    +29.9%   +9.7pp
+  2026    +3.8%    +14.6%  +10.9pp
+
+========================================================================================
+PERIOD: 2010-2017 (held-out) (2010-01-01 to 2017-12-31)
+========================================================================================
+  2013 trading days, range $42.47-$158.64
+
+  Metric                 QQQ BAH   Trend gate       Lift
+  Total return          +235.5%     +590.4%   +354.9pp
+  CAGR                   +16.4%      +27.4%    +11.0pp
+  Sortino                   1.42         4.48      +3.05
+  Sharpe                    1.00         2.67      +1.67
+  Max drawdown           -16.4%       -4.3%    +12.1pp
+  Final equity ($)    $   26,844  $    55,233  $ +28,389
+  Filter-ON days               -  1202/2013 (60%)
+
+[2010-2017 (held-out)] Per-year breakdown
+  Year   BAH ret  Strat ret     Lift
+  2010   +17.3%     +5.8%  -11.6pp
+  2011    +2.5%    +14.5%  +12.0pp
+  2012   +16.7%    +38.4%  +21.8pp
+  2013   +35.1%    +42.3%   +7.2pp
+  2014   +17.4%    +36.9%  +19.5pp
+  2015    +8.3%    +26.9%  +18.6pp
+  2016    +5.9%    +17.3%  +11.3pp
+  2017   +31.5%    +42.1%  +10.6pp
+
+========================================================================================
+PERIOD: 2000-2009 (different regime) (2000-01-01 to 2009-12-31)
+========================================================================================
+  2514 trading days, range $20.06-$117.75
+
+  Metric                 QQQ BAH   Trend gate       Lift
+  Total return           -51.3%     +401.3%   +452.6pp
+  CAGR                    -6.9%      +17.5%    +24.5pp
+  Sortino                  -0.05         2.81      +2.86
+  Sharpe                   -0.04         1.70      +1.74
+  Max drawdown           -83.0%       -7.1%    +75.9pp
+  Final equity ($)    $    3,898  $    40,105  $ +36,207
+  Filter-ON days               -  790/2514 (31%)
+
+[2000-2009 (different regime)] Per-year breakdown
+  Year   BAH ret  Strat ret     Lift
+  2000   -38.4%     +0.0%  +38.4pp
+  2001   -33.3%     +0.0%  +33.3pp
+  2002   -37.4%     +0.0%  +37.4pp
+  2003   +49.6%    +63.3%  +13.7pp
+  2004    +9.5%    +16.6%   +7.1pp
+  2005    +1.2%    +11.6%  +10.3pp
+  2006    +6.8%    +16.6%   +9.8pp
+  2007   +18.7%    +46.8%  +28.1pp
+  2008   -41.9%     +0.0%  +41.9pp
+  2009   +55.2%    +37.9%  -17.4pp
+
+========================================================================================
+DECISION RULE — locked criteria
+========================================================================================
+
+In-sample (2018-2026) Sortino lift: +2.60
+Held-out (2010-2017)  Sortino lift: +3.05
+Held-out (2000-2009)  Sortino lift: +2.86
+
+Rule: each held-out lift within 50% of in-sample (within ±1.30)
+  2010-2017: |+3.05| >= 1.30? PASS
+  2000-2009: |+2.86| >= 1.30? PASS
+
+--- VERDICT ---
+  REAL CANDIDATE: BAH-on-trend-ON-days lifts comparably across all three periods. Worth scoping as the portfolio's buy-and-hold-lift component.

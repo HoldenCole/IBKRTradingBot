@@ -45,9 +45,21 @@ def buy_and_hold_metrics(
     daily_std = float(rets.std(ddof=0))
     sharpe = (daily_mean / daily_std) * math.sqrt(252) if daily_std > 0 else 0.0
 
-    neg = rets[rets < 0]
-    if len(neg) and float(neg.std(ddof=0)) > 0:
-        sortino = (daily_mean / float(neg.std(ddof=0))) * math.sqrt(252)
+    # Standard Sortino (Sortino-Price 1994 / Bawa-Lindenberg LPM2):
+    # downside deviation = sqrt( sum_{r<target} (target-r)^2 / N_total )
+    # Target = 0 (risk-free assumed 0 to match Sharpe convention).
+    # Note: prior implementation used std-of-negatives (N_negative denom,
+    # centered at mean-of-negatives) which understates the "true" Sortino
+    # by ~30-50% in cash-heavy strategies. Switched to standard for
+    # consistency with academic and practitioner convention.
+    downside = rets[rets < 0]
+    n_total = len(rets)
+    if len(downside) and n_total > 0:
+        dd2 = float((downside ** 2).sum() / n_total)
+        if dd2 > 0:
+            sortino = (daily_mean / math.sqrt(dd2)) * math.sqrt(252)
+        else:
+            sortino = 0.0
     else:
         sortino = 0.0
 
@@ -89,9 +101,14 @@ def equity_metrics(
     cagr = (equity.iloc[-1] / equity.iloc[0]) ** (1.0 / max(years, 1e-9)) - 1.0 if years > 0 else 0.0
     daily_std = float(rets.std(ddof=0))
     sharpe = (float(rets.mean()) / daily_std) * math.sqrt(252) if daily_std > 0 else 0.0
-    neg = rets[rets < 0]
-    sortino = (float(rets.mean()) / float(neg.std(ddof=0))) * math.sqrt(252) \
-        if len(neg) and float(neg.std(ddof=0)) > 0 else 0.0
+    # Standard Sortino (see buy_and_hold_metrics for rationale).
+    downside = rets[rets < 0]
+    n_total = len(rets)
+    if len(downside) and n_total > 0:
+        dd2 = float((downside ** 2).sum() / n_total)
+        sortino = (float(rets.mean()) / math.sqrt(dd2)) * math.sqrt(252) if dd2 > 0 else 0.0
+    else:
+        sortino = 0.0
     rmax = equity.cummax()
     dd = (equity - rmax) / rmax
     max_dd = float(dd.min())
@@ -132,9 +149,14 @@ def equity_metrics_subset(
         return _empty_metrics()
     daily_std = float(rets.std(ddof=0))
     sharpe = (float(rets.mean()) / daily_std) * math.sqrt(252) if daily_std > 0 else 0.0
-    neg = rets[rets < 0]
-    sortino = (float(rets.mean()) / float(neg.std(ddof=0))) * math.sqrt(252) \
-        if len(neg) and float(neg.std(ddof=0)) > 0 else 0.0
+    # Standard Sortino — same convention as buy_and_hold_metrics
+    downside = rets[rets < 0]
+    n_total = len(rets)
+    if len(downside) and n_total > 0:
+        dd2 = float((downside ** 2).sum() / n_total)
+        sortino = (float(rets.mean()) / math.sqrt(dd2)) * math.sqrt(252) if dd2 > 0 else 0.0
+    else:
+        sortino = 0.0
     rmax = sub.cummax()
     dd = (sub - rmax) / rmax
     return {
