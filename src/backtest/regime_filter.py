@@ -166,6 +166,36 @@ class YearExclusionFilter:
 
 
 @dataclass
+class BullishTrendFilter:
+    """User-spec'd Filter 1 (2026-05-02): asymmetric multi-timeframe trend.
+
+    ON when:  close > SMA(fast)  AND  SMA(fast) > SMA(slow)
+    OFF otherwise.
+
+    Note this is asymmetric — UNLIKE TrendCoherenceFilter, this does
+    NOT activate during bearish-aligned trends. The user's hypothesis
+    is that IBS mean reversion should fire only during confirmed
+    bullish trends; bearish-aligned days (which include 2022's
+    sustained downtrend) are blocked entirely. This blocks profitable
+    IBS-short trades in 2022 — that's an explicit cost being tested.
+
+    Defaults to (50, 200) per user spec.
+    """
+    fast_sma: int = 50
+    slow_sma: int = 200
+    name: str = "BullishTrendFilter_50_200"
+
+    def is_active(self, daily: pd.DataFrame, today: date) -> bool:
+        i = _index_of(daily, today)
+        if i is None or i < self.slow_sma:
+            return True  # not enough history; default to ON
+        close = float(daily["close"].iloc[i])
+        sma_fast = float(daily["close"].iloc[i - self.fast_sma + 1: i + 1].mean())
+        sma_slow = float(daily["close"].iloc[i - self.slow_sma + 1: i + 1].mean())
+        return close > sma_fast > sma_slow
+
+
+@dataclass
 class CompositeAndFilter:
     """Combine multiple filters with AND — all must be active to allow."""
     filters: list[RegimeFilter]
