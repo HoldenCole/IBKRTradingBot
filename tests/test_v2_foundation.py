@@ -264,6 +264,91 @@ def test_short_realized_pnl_matches_cash_delta():
     assert abs(final_eq - expected) < 1.0
 
 
+# --- Regime filter ---
+
+def test_drawdown_filter_blocks_during_correction():
+    from src.backtest.regime_filter import DrawdownFilter
+    n = 60
+    closes = np.concatenate([np.full(n - 5, 100.0), [95.0, 92.0, 90.0, 92.0, 91.0]])
+    df = pd.DataFrame(
+        {"open": closes, "high": closes + 1, "low": closes - 1,
+         "close": closes, "volume": [1e6] * n},
+        index=pd.bdate_range(end="2026-04-15", periods=n),
+    )
+    f = DrawdownFilter(lookback=30, threshold=-0.07)
+    # Last bar: drawdown from rolling-30d high (100) is -9% -> OFF
+    last_d = df.index[-1].date()
+    assert f.is_active(df, last_d) is False
+    # First bar in stable plateau: small drawdown -> ON
+    early_d = df.index[20].date()
+    assert f.is_active(df, early_d) is True
+
+
+def test_sma200_band_filter_blocks_near_sma():
+    from src.backtest.regime_filter import Sma200BandFilter
+    n = 250
+    base = np.linspace(100.0, 100.5, n)  # essentially flat -> close very near SMA200
+    df = pd.DataFrame(
+        {"open": base, "high": base + 0.1, "low": base - 0.1,
+         "close": base, "volume": [1e6] * n},
+        index=pd.bdate_range(end="2026-04-15", periods=n),
+    )
+    f = Sma200BandFilter(sma_period=200, band=0.05)
+    # Close ~= SMA200 -> OFF
+    assert f.is_active(df, df.index[-1].date()) is False
+
+    # If we shift close 10% above SMA200 it's outside the band -> ON
+    base2 = base.copy()
+    base2[-1] = base[-1] * 1.10
+    df2 = df.copy()
+    df2["close"] = base2
+    df2["high"] = base2 + 0.1
+    df2["low"] = base2 - 0.1
+    assert f.is_active(df2, df2.index[-1].date()) is True
+
+
+def test_trend_coherence_filter():
+    from src.backtest.regime_filter import TrendCoherenceFilter
+    n = 250
+    # Strong uptrend: each bar higher than previous; SMA50 < close, SMA200 < SMA50.
+    base = np.linspace(100.0, 200.0, n)
+    df = pd.DataFrame(
+        {"open": base, "high": base + 0.1, "low": base - 0.1,
+         "close": base, "volume": [1e6] * n},
+        index=pd.bdate_range(end="2026-04-15", periods=n),
+    )
+    f = TrendCoherenceFilter(fast_sma=50, slow_sma=200)
+    # Uptrend on the last bar -> ON
+    assert f.is_active(df, df.index[-1].date()) is True
+
+    # Flat series: close == SMA50 == SMA200 -> NEITHER bullish nor bearish -> OFF
+    flat = pd.DataFrame(
+        {"open": [100.0] * n, "high": [100.0] * n, "low": [100.0] * n,
+         "close": [100.0] * n, "volume": [1e6] * n},
+        index=pd.bdate_range(end="2026-04-15", periods=n),
+    )
+    assert f.is_active(flat, flat.index[-1].date()) is False
+
+
+def test_engine_honors_regime_filter():
+    from src.backtest.regime_filter import NoFilter
+    spy = _ibs_long_daily()
+    qqq = _flat_daily()
+    cfg = SharesBacktestConfig(
+        start=spy.index[-30].date(),
+        end=spy.index[-1].date(),
+        initial_capital=8000.0,
+        regime_filter=NoFilter(),
+    )
+    eng = SharesBacktestEngine(
+        config=cfg, strategies=[IBSStrategy()],
+        daily_bars={"SPY": spy, "QQQ": qqq},
+    )
+    result = eng.run()
+    # NoFilter behaves identically to no filter — at least one trade should fire.
+    assert len(result.trades) >= 1
+
+
 def test_shares_engine_full_account_sizing():
     spy = _ibs_long_daily()
     qqq = _flat_daily()

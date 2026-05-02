@@ -1,0 +1,596 @@
+
+# REGIME FILTER VALIDATION — IBS LS on QQQ shares
+# Period: 2018-01-01 -> 2026-04-15
+# Bench: SPY return +160.4%  Sharpe 0.70  Sortino 0.85  |DD| 34%
+
+========================================================================
+BASELINE — no filter (LS_full reproduction)
+========================================================================
+
+[Headline]
+  Trades:        337 (228W / 109L, win%=68%)
+  Total PnL:     $+6,673.42
+  Total return:  +83.4%
+  CAGR:          +7.6%
+  Sharpe (ann):  0.67
+  Sortino:       0.59
+  Max drawdown:  -15.5%
+  Profit factor: 1.38
+  Expectancy:    $+19.80/trade
+  Avg win:       $+107.17
+  Avg loss:      $-162.94
+
+[Benchmark vs SPY buy-and-hold]
+  Strategy:  ret +83.4%  Sharpe 0.67  |DD| 16%
+  SPY      : ret +160.4%  Sharpe 0.70  |DD| 34%
+  Delta:    ret -77.0%  Sharpe -0.03
+
+[Tier verdict]
+  TIER D  (return +83% > 20pp below bench)
+
+[Per-year]
+    Year  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+    2018  chop_to_correction        40   62%  $    -877   0.68  -0.76   -0.65
+    2019  bull                      36   67%  $    -113   0.91  -0.15   -0.11
+    2020  crisis_recovery           50   88%  $   +2768   3.64   2.43    1.50
+    2021  bull                      38   68%  $    +876   1.56   0.90    0.75
+    2022  bear                      49   69%  $   +2741   1.89   1.31    1.85
+    2023  bull                      43   67%  $   +1143   1.52   1.18    1.23
+    2024  bull                      40   57%  $    -176   0.93  -0.21   -0.15
+    2025  bull_chop                 33   64%  $   +1098   1.51   0.80    0.82
+    2026  mixed                      8   25%  $    -786   0.41  -1.50   -1.56
+
+[Per-regime]
+  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+  bull                     157   65%  $   +1729   1.23   0.79    1.81
+  crisis_recovery           50   88%  $   +2768   3.64   2.43    1.50
+  bear                      49   69%  $   +2741   1.89   1.31    1.85
+  chop_to_correction        40   62%  $    -877   0.68  -0.76   -0.65
+  bull_chop                 33   64%  $   +1098   1.51   0.80    0.82
+  mixed                      8   25%  $    -786   0.41  -1.50   -1.56
+
+[Holding-period P&L]
+  Hold       N   Win%       Total      Avg
+  0d       140   94%  $  +12897  $  +92
+  1d        72   72%  $   +4203  $  +58
+  2d        24   58%  $     +23  $   +1
+  3d        18   61%  $    +860  $  +48
+  4d        32   38%  $   -1295  $  -40
+  5+d       51   14%  $  -10013  $ -196
+
+[Exit reasons]
+  signal_ibs_above_70                 n=121  avg=$   -1  total=$     -78
+  signal_close_above_prior_high       n=102  avg=$  +98  total=$  +10013
+  time_stop                           n= 51  avg=$ -196  total=$  -10013
+  signal_ibs_below_30                 n= 34  avg=$  +43  total=$   +1468
+  signal_close_below_prior_low        n= 29  avg=$ +182  total=$   +5284
+
+[Suppressed signals: 42]
+  max_concurrent                      42
+========================================================================
+V0 — DrawdownFilter(30d, -7%)
+========================================================================
+
+[Headline]
+  Trades:        269 (179W / 90L, win%=67%)
+  Total PnL:     $+2,569.37
+  Total return:  +32.1%
+  CAGR:          +3.4%
+  Sharpe (ann):  0.41
+  Sortino:       0.28
+  Max drawdown:  -11.9%
+  Profit factor: 1.22
+  Expectancy:    $+9.55/trade
+  Avg win:       $+78.40
+  Avg loss:      $-127.38
+
+[Benchmark vs SPY buy-and-hold]
+  Strategy:  ret +32.1%  Sharpe 0.41  |DD| 12%
+  SPY      : ret +160.4%  Sharpe 0.70  |DD| 34%
+  Delta:    ret -128.3%  Sharpe -0.29
+
+[Tier verdict]
+  TIER D  (both Sharpe (0.41) and Sortino (0.28) below 0.5; return +32% > 20pp below bench)
+
+[Per-year]
+    Year  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+    2018  chop_to_correction        32   62%  $    -417   0.79  -0.39   -0.27
+    2019  bull                      35   69%  $     -69   0.94  -0.07   -0.05
+    2020  crisis_recovery           35   86%  $   +1110   2.07   1.29    0.58
+    2021  bull                      33   64%  $     +45   1.03  -0.00   -0.00
+    2022  bear                      22   77%  $   +1462   3.10   1.79    1.84
+    2023  bull                      40   70%  $   +1190   1.84   1.53    1.50
+    2024  bull                      38   58%  $     +99   1.07   0.02    0.01
+    2025  bull_chop                 26   58%  $    -291   0.80  -0.29   -0.19
+    2026  mixed                      8   25%  $    -560   0.41  -1.49   -1.55
+
+[Per-regime]
+  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+  bull                     146   65%  $   +1266   1.24   0.78    1.00
+  crisis_recovery           35   86%  $   +1110   2.07   1.29    0.58
+  chop_to_correction        32   62%  $    -417   0.79  -0.39   -0.27
+  bull_chop                 26   58%  $    -291   0.80  -0.29   -0.19
+  bear                      22   77%  $   +1462   3.10   1.79    1.84
+  mixed                      8   25%  $    -560   0.41  -1.49   -1.55
+
+[Holding-period P&L]
+  Hold       N   Win%       Total      Avg
+  0d       113   93%  $   +7437  $  +66
+  1d        60   68%  $   +2277  $  +38
+  2d        17   53%  $    -604  $  -36
+  3d        13   62%  $    +172  $  +13
+  4d        27   41%  $   -1388  $  -51
+  5+d       39   13%  $   -5325  $ -137
+
+[Exit reasons]
+  signal_ibs_above_70                 n=114  avg=$   -8  total=$    -940
+  signal_close_above_prior_high       n= 88  avg=$  +75  total=$   +6592
+  time_stop                           n= 39  avg=$ -137  total=$   -5325
+  signal_ibs_below_30                 n= 15  avg=$  +26  total=$    +386
+  signal_close_below_prior_low        n= 13  avg=$ +143  total=$   +1856
+
+[Suppressed signals: 110]
+  regime_off                          81
+  max_concurrent                      29
+========================================================================
+V0_5pct — DrawdownFilter(30d, -5%)
+========================================================================
+
+[Headline]
+  Trades:        232 (154W / 78L, win%=66%)
+  Total PnL:     $+1,801.92
+  Total return:  +22.5%
+  CAGR:          +2.5%
+  Sharpe (ann):  0.34
+  Sortino:       0.22
+  Max drawdown:  -14.2%
+  Profit factor: 1.19
+  Expectancy:    $+7.77/trade
+  Avg win:       $+74.45
+  Avg loss:      $-123.88
+
+[Benchmark vs SPY buy-and-hold]
+  Strategy:  ret +22.5%  Sharpe 0.34  |DD| 14%
+  SPY      : ret +160.4%  Sharpe 0.70  |DD| 34%
+  Delta:    ret -137.9%  Sharpe -0.36
+
+[Tier verdict]
+  TIER D  (both Sharpe (0.34) and Sortino (0.22) below 0.5; return +23% > 20pp below bench)
+
+[Per-year]
+    Year  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+    2018  chop_to_correction        27   67%  $     -89   0.94  -0.07   -0.05
+    2019  bull                      30   67%  $    -276   0.75  -0.42   -0.26
+    2020  crisis_recovery           34   88%  $   +1389   2.72   1.78    0.78
+    2021  bull                      28   71%  $    +521   1.67   0.76    0.49
+    2022  bear                      15   67%  $    +517   1.71   0.73    0.66
+    2023  bull                      31   65%  $    +772   1.68   1.23    1.06
+    2024  bull                      38   58%  $    +108   1.08   0.03    0.02
+    2025  bull_chop                 25   56%  $    -480   0.68  -0.68   -0.43
+    2026  mixed                      4    0%  $    -661   0.00  -2.61   -1.91
+
+[Per-regime]
+  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+  bull                     127   65%  $   +1126   1.25   0.71    0.78
+  crisis_recovery           34   88%  $   +1389   2.72   1.78    0.78
+  chop_to_correction        27   67%  $     -89   0.94  -0.07   -0.05
+  bull_chop                 25   56%  $    -480   0.68  -0.68   -0.43
+  bear                      15   67%  $    +517   1.71   0.73    0.66
+  mixed                      4    0%  $    -661   0.00  -2.61   -1.91
+
+[Holding-period P&L]
+  Hold       N   Win%       Total      Avg
+  0d        99   92%  $   +5869  $  +59
+  1d        53   66%  $   +1761  $  +33
+  2d        12   67%  $    +122  $  +10
+  3d        10   50%  $     -34  $   -3
+  4d        25   40%  $   -1502  $  -60
+  5+d       33   15%  $   -4414  $ -134
+
+[Exit reasons]
+  signal_ibs_above_70                 n=100  avg=$   -3  total=$    -287
+  signal_close_above_prior_high       n= 78  avg=$  +70  total=$   +5429
+  time_stop                           n= 33  avg=$ -134  total=$   -4414
+  signal_ibs_below_30                 n= 12  avg=$  -25  total=$    -302
+  signal_close_below_prior_low        n=  9  avg=$ +153  total=$   +1377
+
+[Suppressed signals: 147]
+  regime_off                          125
+  max_concurrent                      22
+========================================================================
+V1 — Sma200BandFilter(5%)
+========================================================================
+
+[Headline]
+  Trades:        271 (184W / 87L, win%=68%)
+  Total PnL:     $+3,696.08
+  Total return:  +46.2%
+  CAGR:          +4.7%
+  Sharpe (ann):  0.48
+  Sortino:       0.36
+  Max drawdown:  -25.9%
+  Profit factor: 1.30
+  Expectancy:    $+13.64/trade
+  Avg win:       $+86.04
+  Avg loss:      $-139.49
+
+[Benchmark vs SPY buy-and-hold]
+  Strategy:  ret +46.2%  Sharpe 0.48  |DD| 26%
+  SPY      : ret +160.4%  Sharpe 0.70  |DD| 34%
+  Delta:    ret -114.2%  Sharpe -0.21
+
+[Tier verdict]
+  TIER D  (both Sharpe (0.48) and Sortino (0.36) below 0.5; return +46% > 20pp below bench)
+
+[Per-year]
+    Year  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+    2018  chop_to_correction        30   57%  $   -1593   0.37  -1.79   -1.25
+    2019  bull                      19   63%  $    -271   0.62  -0.58   -0.29
+    2020  crisis_recovery           46   87%  $   +1894   3.18   2.06    1.24
+    2021  bull                      37   68%  $    +554   1.43   0.70    0.56
+    2022  bear                      38   68%  $   +2031   2.09   1.35    1.68
+    2023  bull                      35   74%  $   +1242   1.98   1.85    1.99
+    2024  bull                      38   58%  $    -209   0.89  -0.29   -0.21
+    2025  bull_chop                 26   62%  $    +532   1.42   0.57    0.47
+    2026  mixed                      2    0%  $    -485   0.00  -1.87   -0.95
+
+[Per-regime]
+  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+  bull                     129   66%  $   +1317   1.26   0.79    1.51
+  crisis_recovery           46   87%  $   +1894   3.18   2.06    1.24
+  bear                      38   68%  $   +2031   2.09   1.35    1.68
+  chop_to_correction        30   57%  $   -1593   0.37  -1.79   -1.25
+  bull_chop                 26   62%  $    +532   1.42   0.57    0.47
+  mixed                      2    0%  $    -485   0.00  -1.87   -0.95
+
+[Holding-period P&L]
+  Hold       N   Win%       Total      Avg
+  0d       120   94%  $   +8686  $  +72
+  1d        52   71%  $   +2375  $  +46
+  2d        18   50%  $    -191  $  -11
+  3d        14   64%  $    +738  $  +53
+  4d        27   37%  $   -1296  $  -48
+  5+d       40   15%  $   -6616  $ -165
+
+[Exit reasons]
+  signal_ibs_above_70                 n=108  avg=$   -3  total=$    -345
+  signal_close_above_prior_high       n= 85  avg=$  +82  total=$   +6945
+  time_stop                           n= 40  avg=$ -165  total=$   -6616
+  signal_ibs_below_30                 n= 23  avg=$  +42  total=$    +965
+  signal_close_below_prior_low        n= 15  avg=$ +183  total=$   +2748
+
+[Suppressed signals: 108]
+  regime_off                          83
+  max_concurrent                      25
+========================================================================
+V2 — TrendCoherenceFilter(50/200)
+========================================================================
+
+[Headline]
+  Trades:        207 (142W / 65L, win%=69%)
+  Total PnL:     $+2,811.23
+  Total return:  +35.1%
+  CAGR:          +3.7%
+  Sharpe (ann):  0.45
+  Sortino:       0.28
+  Max drawdown:  -15.5%
+  Profit factor: 1.33
+  Expectancy:    $+13.58/trade
+  Avg win:       $+80.17
+  Avg loss:      $-131.89
+
+[Benchmark vs SPY buy-and-hold]
+  Strategy:  ret +35.1%  Sharpe 0.45  |DD| 15%
+  SPY      : ret +160.4%  Sharpe 0.70  |DD| 34%
+  Delta:    ret -125.3%  Sharpe -0.24
+
+[Tier verdict]
+  TIER D  (both Sharpe (0.45) and Sortino (0.28) below 0.5; return +35% > 20pp below bench)
+
+[Per-year]
+    Year  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+    2018  chop_to_correction        27   63%  $    -628   0.64  -0.80   -0.52
+    2019  bull                      16   62%  $    -179   0.73  -0.37   -0.19
+    2020  crisis_recovery           34   85%  $   +1002   2.05   1.22    0.56
+    2021  bull                      26   69%  $    +269   1.39   0.40    0.26
+    2022  bear                      28   75%  $   +1783   2.34   1.32    1.34
+    2023  bull                      23   78%  $    +967   2.36   1.90    1.78
+    2024  bull                      33   58%  $    +312   1.30   0.26    0.18
+    2025  bull_chop                 19   53%  $    -547   0.58  -0.70   -0.38
+    2026  mixed                      1    0%  $    -167   0.00  -0.58   -0.27
+
+[Per-regime]
+  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+  bull                      98   66%  $   +1368   1.44   0.83    1.17
+  crisis_recovery           34   85%  $   +1002   2.05   1.22    0.56
+  bear                      28   75%  $   +1783   2.34   1.32    1.34
+  chop_to_correction        27   63%  $    -628   0.64  -0.80   -0.52
+  bull_chop                 19   53%  $    -547   0.58  -0.70   -0.38
+  mixed                      1    0%  $    -167   0.00  -0.58   -0.27
+
+[Holding-period P&L]
+  Hold       N   Win%       Total      Avg
+  0d        97   94%  $   +6752  $  +70
+  1d        41   71%  $   +1977  $  +48
+  2d        11   64%  $    +224  $  +20
+  3d         9   56%  $     +91  $  +10
+  4d        20   35%  $   -1539  $  -77
+  5+d       29   10%  $   -4694  $ -162
+
+[Exit reasons]
+  signal_ibs_above_70                 n= 84  avg=$   -5  total=$    -452
+  signal_close_above_prior_high       n= 66  avg=$  +75  total=$   +4944
+  time_stop                           n= 29  avg=$ -162  total=$   -4694
+  signal_ibs_below_30                 n= 15  avg=$  +53  total=$    +800
+  signal_close_below_prior_low        n= 13  avg=$ +170  total=$   +2212
+
+[Suppressed signals: 172]
+  regime_off                          151
+  max_concurrent                      21
+========================================================================
+V0+V2 OR (drawdown -7% OR chop blocked)
+========================================================================
+
+[Headline]
+  Trades:        298 (197W / 101L, win%=66%)
+  Total PnL:     $+3,114.01
+  Total return:  +38.9%
+  CAGR:          +4.0%
+  Sharpe (ann):  0.43
+  Sortino:       0.33
+  Max drawdown:  -14.7%
+  Profit factor: 1.23
+  Expectancy:    $+10.45/trade
+  Avg win:       $+84.99
+  Avg loss:      $-134.94
+
+[Benchmark vs SPY buy-and-hold]
+  Strategy:  ret +38.9%  Sharpe 0.43  |DD| 15%
+  SPY      : ret +160.4%  Sharpe 0.70  |DD| 34%
+  Delta:    ret -121.5%  Sharpe -0.27
+
+[Tier verdict]
+  TIER D  (both Sharpe (0.43) and Sortino (0.33) below 0.5; return +39% > 20pp below bench)
+
+[Per-year]
+    Year  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+    2018  chop_to_correction        34   62%  $    -621   0.72  -0.57   -0.42
+    2019  bull                      36   67%  $    -108   0.91  -0.13   -0.10
+    2020  crisis_recovery           38   84%  $   +1242   2.22   1.42    0.70
+    2021  bull                      33   64%  $     +49   1.04  -0.00   -0.00
+    2022  bear                      43   72%  $   +2371   2.17   1.52    1.95
+    2023  bull                      42   69%  $    +944   1.53   1.20    1.24
+    2024  bull                      38   58%  $    +119   1.08   0.03    0.02
+    2025  bull_chop                 26   58%  $    -306   0.80  -0.29   -0.19
+    2026  mixed                      8   25%  $    -577   0.42  -1.48   -1.54
+
+[Per-regime]
+  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+  bull                     149   64%  $   +1004   1.17   0.73    1.25
+  bear                      43   72%  $   +2371   2.17   1.52    1.95
+  crisis_recovery           38   84%  $   +1242   2.22   1.42    0.70
+  chop_to_correction        34   62%  $    -621   0.72  -0.57   -0.42
+  bull_chop                 26   58%  $    -306   0.80  -0.29   -0.19
+  mixed                      8   25%  $    -577   0.42  -1.48   -1.54
+
+[Holding-period P&L]
+  Hold       N   Win%       Total      Avg
+  0d       126   94%  $   +9489  $  +75
+  1d        63   68%  $   +2484  $  +39
+  2d        20   55%  $    -483  $  -24
+  3d        13   54%  $    -114  $   -9
+  4d        30   40%  $   -1282  $  -43
+  5+d       46   13%  $   -6979  $ -152
+
+[Exit reasons]
+  signal_ibs_above_70                 n=115  avg=$   -8  total=$    -918
+  signal_close_above_prior_high       n= 90  avg=$  +77  total=$   +6888
+  time_stop                           n= 46  avg=$ -152  total=$   -6979
+  signal_ibs_below_30                 n= 27  avg=$  +32  total=$    +870
+  signal_close_below_prior_low        n= 20  avg=$ +163  total=$   +3254
+
+[Suppressed signals: 81]
+  regime_off                          48
+  max_concurrent                      33
+========================================================================
+DIAG — exclude 2018 + 2026 by year (hindsight)
+========================================================================
+
+[Headline]
+  Trades:        289 (201W / 88L, win%=70%)
+  Total PnL:     $+9,384.15
+  Total return:  +117.3%
+  CAGR:          +9.8%
+  Sharpe (ann):  0.91
+  Sortino:       0.74
+  Max drawdown:  -11.1%
+  Profit factor: 1.61
+  Expectancy:    $+32.47/trade
+  Avg win:       $+123.06
+  Avg loss:      $-174.44
+
+[Benchmark vs SPY buy-and-hold]
+  Strategy:  ret +117.3%  Sharpe 0.91  |DD| 11%
+  SPY      : ret +160.4%  Sharpe 0.70  |DD| 34%
+  Delta:    ret -43.1%  Sharpe +0.22
+
+[Tier verdict]
+  TIER D  (return +117% > 20pp below bench)
+
+[Per-year]
+    Year  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+    2019  bull                      36   67%  $    -125   0.91  -0.14   -0.10
+    2020  crisis_recovery           50   88%  $   +3119   3.65   2.43    1.50
+    2021  bull                      38   68%  $    +997   1.57   0.91    0.76
+    2022  bear                      49   69%  $   +3034   1.87   1.29    1.81
+    2023  bull                      43   67%  $   +1294   1.52   1.18    1.23
+    2024  bull                      40   57%  $    -181   0.93  -0.19   -0.14
+    2025  bull_chop                 33   64%  $   +1247   1.52   0.81    0.84
+
+[Per-regime]
+  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+  bull                     157   65%  $   +1984   1.24   0.80    1.81
+  crisis_recovery           50   88%  $   +3119   3.65   2.43    1.50
+  bear                      49   69%  $   +3034   1.87   1.29    1.81
+  bull_chop                 33   64%  $   +1247   1.52   0.81    0.84
+
+[Holding-period P&L]
+  Hold       N   Win%       Total      Avg
+  0d       122   94%  $  +12877  $ +106
+  1d        66   71%  $   +4538  $  +69
+  2d        20   65%  $    +349  $  +17
+  3d        14   57%  $    +500  $  +36
+  4d        29   41%  $    -865  $  -30
+  5+d       38   16%  $   -8015  $ -211
+
+[Exit reasons]
+  signal_ibs_above_70                 n=104  avg=$   +6  total=$    +615
+  signal_close_above_prior_high       n= 88  avg=$ +109  total=$   +9618
+  time_stop                           n= 38  avg=$ -211  total=$   -8015
+  signal_ibs_below_30                 n= 32  avg=$  +52  total=$   +1677
+  signal_close_below_prior_low        n= 27  avg=$ +203  total=$   +5489
+
+[Suppressed signals: 90]
+  regime_off                          56
+  max_concurrent                      34
+========================================================================
+DIAG — exclude only 2018
+========================================================================
+
+[Headline]
+  Trades:        297 (203W / 94L, win%=68%)
+  Total PnL:     $+8,488.31
+  Total return:  +106.1%
+  CAGR:          +9.1%
+  Sharpe (ann):  0.84
+  Sortino:       0.70
+  Max drawdown:  -11.1%
+  Profit factor: 1.50
+  Expectancy:    $+28.58/trade
+  Avg win:       $+124.85
+  Avg loss:      $-179.32
+
+[Benchmark vs SPY buy-and-hold]
+  Strategy:  ret +106.1%  Sharpe 0.84  |DD| 11%
+  SPY      : ret +160.4%  Sharpe 0.70  |DD| 34%
+  Delta:    ret -54.3%  Sharpe +0.15
+
+[Tier verdict]
+  TIER D  (return +106% > 20pp below bench)
+
+[Per-year]
+    Year  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+    2019  bull                      36   67%  $    -125   0.91  -0.14   -0.10
+    2020  crisis_recovery           50   88%  $   +3119   3.65   2.43    1.50
+    2021  bull                      38   68%  $    +997   1.57   0.91    0.76
+    2022  bear                      49   69%  $   +3034   1.87   1.29    1.81
+    2023  bull                      43   67%  $   +1294   1.52   1.18    1.23
+    2024  bull                      40   57%  $    -181   0.93  -0.19   -0.14
+    2025  bull_chop                 33   64%  $   +1247   1.52   0.81    0.84
+    2026  mixed                      8   25%  $    -896   0.41  -1.53   -1.58
+
+[Per-regime]
+  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+  bull                     157   65%  $   +1984   1.24   0.80    1.81
+  crisis_recovery           50   88%  $   +3119   3.65   2.43    1.50
+  bear                      49   69%  $   +3034   1.87   1.29    1.81
+  bull_chop                 33   64%  $   +1247   1.52   0.81    0.84
+  mixed                      8   25%  $    -896   0.41  -1.53   -1.58
+
+[Holding-period P&L]
+  Hold       N   Win%       Total      Avg
+  0d       124   94%  $  +13487  $ +109
+  1d        66   71%  $   +4538  $  +69
+  2d        20   65%  $    +349  $  +17
+  3d        14   57%  $    +500  $  +36
+  4d        29   41%  $    -865  $  -30
+  5+d       44   14%  $   -9521  $ -216
+
+[Exit reasons]
+  signal_ibs_above_70                 n=104  avg=$   +6  total=$    +615
+  signal_close_above_prior_high       n= 90  avg=$ +114  total=$  +10228
+  time_stop                           n= 44  avg=$ -216  total=$   -9521
+  signal_ibs_below_30                 n= 32  avg=$  +52  total=$   +1677
+  signal_close_below_prior_low        n= 27  avg=$ +203  total=$   +5489
+
+[Suppressed signals: 82]
+  regime_off                          45
+  max_concurrent                      37
+========================================================================
+DIAG — exclude only 2026
+========================================================================
+
+[Headline]
+  Trades:        329 (226W / 103L, win%=69%)
+  Total PnL:     $+7,458.98
+  Total return:  +93.2%
+  CAGR:          +8.3%
+  Sharpe (ann):  0.73
+  Sortino:       0.62
+  Max drawdown:  -15.5%
+  Profit factor: 1.45
+  Expectancy:    $+22.67/trade
+  Avg win:       $+105.70
+  Avg loss:      $-159.52
+
+[Benchmark vs SPY buy-and-hold]
+  Strategy:  ret +93.2%  Sharpe 0.73  |DD| 16%
+  SPY      : ret +160.4%  Sharpe 0.70  |DD| 34%
+  Delta:    ret -67.2%  Sharpe +0.03
+
+[Tier verdict]
+  TIER D  (return +93% > 20pp below bench)
+
+[Per-year]
+    Year  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+    2018  chop_to_correction        40   62%  $    -877   0.68  -0.76   -0.65
+    2019  bull                      36   67%  $    -113   0.91  -0.15   -0.11
+    2020  crisis_recovery           50   88%  $   +2768   3.64   2.43    1.50
+    2021  bull                      38   68%  $    +876   1.56   0.90    0.75
+    2022  bear                      49   69%  $   +2741   1.89   1.31    1.85
+    2023  bull                      43   67%  $   +1143   1.52   1.18    1.23
+    2024  bull                      40   57%  $    -176   0.93  -0.21   -0.15
+    2025  bull_chop                 33   64%  $   +1098   1.51   0.80    0.82
+
+[Per-regime]
+  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+  bull                     157   65%  $   +1729   1.23   0.79    1.81
+  crisis_recovery           50   88%  $   +2768   3.64   2.43    1.50
+  bear                      49   69%  $   +2741   1.89   1.31    1.85
+  chop_to_correction        40   62%  $    -877   0.68  -0.76   -0.65
+  bull_chop                 33   64%  $   +1098   1.51   0.80    0.82
+
+[Holding-period P&L]
+  Hold       N   Win%       Total      Avg
+  0d       138   94%  $  +12352  $  +90
+  1d        72   72%  $   +4203  $  +58
+  2d        24   58%  $     +23  $   +1
+  3d        18   61%  $    +860  $  +48
+  4d        32   38%  $   -1295  $  -40
+  5+d       45   16%  $   -8683  $ -193
+
+[Exit reasons]
+  signal_ibs_above_70                 n=121  avg=$   -1  total=$     -78
+  signal_close_above_prior_high       n=100  avg=$  +95  total=$   +9468
+  time_stop                           n= 45  avg=$ -193  total=$   -8683
+  signal_ibs_below_30                 n= 34  avg=$  +43  total=$   +1468
+  signal_close_below_prior_low        n= 29  avg=$ +182  total=$   +5284
+
+[Suppressed signals: 50]
+  max_concurrent                      39
+  regime_off                          11
+
+========================================================================
+SUMMARY — all candidates
+========================================================================
+
+Filter                                                 N  Sharpe  Sortino   Return   |DD|
+BASELINE                                             337   0.67    0.59     +83%    16%
+V0                                                   269   0.41    0.28     +32%    12%
+V0_5pct                                              232   0.34    0.22     +23%    14%
+V1                                                   271   0.48    0.36     +46%    26%
+V2                                                   207   0.45    0.28     +35%    15%
+V0+V2 OR (drawdown -7% OR chop blocked)              298   0.43    0.33     +39%    15%
+DIAG                                                 289   0.91    0.74    +117%    11%
+DIAG                                                 297   0.84    0.70    +106%    11%
+DIAG                                                 329   0.73    0.62     +93%    16%

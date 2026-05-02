@@ -43,6 +43,7 @@ class SharesBacktestConfig:
     slippage_bps: float = 5.0            # 5 bps on share fills
     time_stop_days: int = 5              # 0 disables time stop
     enable_signal_only_mode: bool = False  # disables time stop too (raw signal edge)
+    regime_filter: object | None = None  # RegimeFilter; None = always-on
 
 
 @dataclass
@@ -146,7 +147,7 @@ class SharesBacktestEngine:
         # 2. Close phase: evaluate exits
         self._evaluate_exits(today)
 
-        # 3. Daily-close strategy pass
+        # 3. Daily-close strategy pass — regime gate at signal time
         next_open = self._next_session_date(today)
         for sym in ("SPY", "QQQ"):
             bars = self._bars_through(self.daily_bars.get(sym), today)
@@ -154,8 +155,17 @@ class SharesBacktestEngine:
                 continue
             for strat in self.strategies:
                 sig = strat.on_daily_close(sym, bars)
-                if sig is not None:
-                    self.deferred.append((sig, next_open))
+                if sig is None:
+                    continue
+                if self.cfg.regime_filter is not None:
+                    if not self.cfg.regime_filter.is_active(bars, today):
+                        self.skipped.append({
+                            "date": today.isoformat(),
+                            "underlying": sig.underlying,
+                            "reason": "regime_off",
+                        })
+                        continue
+                self.deferred.append((sig, next_open))
 
         # 4. Equity at close
         self.equity_by_date[today] = self._equity_at_close(today)
