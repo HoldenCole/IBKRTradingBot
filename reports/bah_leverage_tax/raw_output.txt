@@ -1,0 +1,165 @@
+# Leverage-targeted BAH-on-trend  —  $$8,000 starting capital
+# Vehicles: shares (1x), MNQ futures (1.5x and 2.0x targets), MES futures (1.5x and 2.0x)
+# Roll cost: 8 bps/yr scaled by leverage. Sortino: standard formula.
+# Tax: federal only (Texas, no state). 4 scenarios.
+
+
+####################################################################################################
+# NDX / MNQ analysis
+####################################################################################################
+
+====================================================================================================
+PERIOD 2018-2026 (in-sample)  |  2018-01-01 -> 2026-04-15  |  contract: MNQ
+====================================================================================================
+
+  BAH cash index:    Sortino +1.15  return +296.9%  DD -35.6%  final $   31,750
+  Shares (1x):       Sortino +3.83  return +924.8%  DD -10.9%  final $   81,987
+  Futures 1.5x:      Sortino +3.82  return +3017.3%  DD -16.1%  final $  249,386
+  Futures 2.0x:      Sortino +3.82  return +9126.7%  DD -21.0%  final $  738,135
+  Futures 5.0x (1 MNQ on $8k) Sortino +3.82  return +3244784.1%  DD -47.3%  final $259,590,729
+
+  After-tax final equity ($) by tax scenario:
+  Scenario                                      Shares    Fut 1.5x    Fut 2.0x      Actual
+  Lower bracket (24% STCG, 15% LTCG)        $  64,230  $ 204,489  $ 602,330  $211,308,342
+  Lower bracket + NIIT 3.8%                 $  61,419  $ 195,316  $ 574,585  $201,444,198
+  Higher bracket (37% STCG, 20% LTCG)       $  54,612  $ 184,695  $ 542,459  $190,022,558
+  Higher bracket + NIIT 3.8%                $  51,801  $ 175,522  $ 514,714  $180,158,414
+
+  After-tax CAGR (Lower bracket (24% STCG, 15% LTCG)):
+    Shares (1x):       +28.6%
+    Futures 1.5x:      +47.9%
+    Futures 2.0x:      +68.5%
+    Futures 5.0x (1 MNQ on $8k): +242.0%
+
+====================================================================================================
+PERIOD 2010-2017 (held-out)  |  2010-01-01 -> 2017-12-31  |  contract: MNQ
+====================================================================================================
+
+  BAH cash index:    Sortino +1.43  return +239.0%  DD -16.3%  final $   27,122
+  Shares (1x):       Sortino +4.28  return +563.5%  DD  -4.4%  final $   53,081
+  Futures 1.5x:      Sortino +4.27  return +1554.4%  DD  -6.5%  final $  132,353
+  Futures 2.0x:      Sortino +4.27  return +3967.9%  DD  -8.6%  final $  325,433
+  Futures 5.0x (1 MNQ on $8k) Sortino +4.27  return +620007.4%  DD -20.5%  final $49,608,589
+
+  After-tax final equity ($) by tax scenario:
+  Scenario                                      Shares    Fut 1.5x    Fut 2.0x      Actual
+  Lower bracket (24% STCG, 15% LTCG)        $  42,261  $ 109,223  $ 266,390  $40,382,879
+  Lower bracket + NIIT 3.8%                 $  40,548  $ 104,498  $ 254,328  $38,498,057
+  Higher bracket (37% STCG, 20% LTCG)       $  36,401  $  99,026  $ 240,361  $36,315,631
+  Higher bracket + NIIT 3.8%                $  34,688  $  94,301  $ 228,298  $34,430,809
+
+  After-tax CAGR (Lower bracket (24% STCG, 15% LTCG)):
+    Shares (1x):       +23.2%
+    Futures 1.5x:      +38.7%
+    Futures 2.0x:      +55.1%
+    Futures 5.0x (1 MNQ on $8k): +191.0%
+
+====================================================================================================
+PERIOD 2000-2009 (regime shift)  |  2000-09-18 -> 2009-12-31  |  contract: MNQ
+====================================================================================================
+
+  BAH cash index:    Sortino -0.06  return  -47.6%  DD -78.8%  final $    4,192
+  Shares (1x):       Sortino +3.02  return +444.0%  DD  -6.8%  final $   43,523
+  Futures 1.5x:      Sortino +3.02  return +1116.9%  DD -10.2%  final $   97,353
+  Futures 2.0x:      Sortino +3.02  return +2561.0%  DD -13.4%  final $  212,881
+  Futures 5.0x (1 MNQ on $8k) Sortino +3.02  return +172177.8%  DD -32.1%  final $13,782,227
+
+  After-tax final equity ($) by tax scenario:
+  Scenario                                      Shares    Fut 1.5x    Fut 2.0x      Actual
+  Lower bracket (24% STCG, 15% LTCG)        $  34,997  $  80,734  $ 174,773  $11,220,221
+  Lower bracket + NIIT 3.8%                 $  33,647  $  77,338  $ 166,988  $10,696,800
+  Higher bracket (37% STCG, 20% LTCG)       $  30,379  $  73,407  $ 157,973  $10,090,734
+  Higher bracket + NIIT 3.8%                $  29,029  $  70,011  $ 150,187  $9,567,313
+
+  After-tax CAGR (Lower bracket (24% STCG, 15% LTCG)):
+    Shares (1x):       +17.2%
+    Futures 1.5x:      +28.3%
+    Futures 2.0x:      +39.4%
+    Futures 5.0x (1 MNQ on $8k): +118.3%
+
+####################################################################################################
+# SPX / MES analysis
+####################################################################################################
+
+====================================================================================================
+PERIOD 2018-2026 (in-sample)  |  2018-01-01 -> 2026-04-15  |  contract: MES
+====================================================================================================
+
+  BAH cash index:    Sortino +0.97  return +158.5%  DD -33.9%  final $   20,676
+  Shares (1x):       Sortino +3.89  return +405.0%  DD  -7.0%  final $   40,396
+  Futures 1.5x:      Sortino +3.88  return +1004.4%  DD -10.3%  final $   88,350
+  Futures 2.0x:      Sortino +3.88  return +2288.5%  DD -13.6%  final $  191,084
+  Futures 3.6x (1 MES on $8k) Sortino +3.88  return +25465.7%  DD -23.7%  final $2,045,253
+
+  After-tax final equity ($) by tax scenario:
+  Scenario                                      Shares    Fut 1.5x    Fut 2.0x      Actual
+  Lower bracket (24% STCG, 15% LTCG)        $  32,621  $  73,405  $ 157,030  $1,666,324
+  Lower bracket + NIIT 3.8%                 $  31,390  $  70,352  $ 150,073  $1,588,909
+  Higher bracket (37% STCG, 20% LTCG)       $  28,410  $  66,816  $ 142,017  $1,499,270
+  Higher bracket + NIIT 3.8%                $  27,179  $  63,763  $ 135,060  $1,421,854
+
+  After-tax CAGR (Lower bracket (24% STCG, 15% LTCG)):
+    Shares (1x):       +18.5%
+    Futures 1.5x:      +30.7%
+    Futures 2.0x:      +43.3%
+    Futures 3.6x (1 MES on $8k): +90.6%
+
+====================================================================================================
+PERIOD 2010-2017 (held-out)  |  2010-01-01 -> 2017-12-31  |  contract: MES
+====================================================================================================
+
+  BAH cash index:    Sortino +1.14  return +136.0%  DD -19.4%  final $   18,878
+  Shares (1x):       Sortino +4.63  return +364.9%  DD  -3.9%  final $   37,194
+  Futures 1.5x:      Sortino +4.62  return +880.5%  DD  -5.8%  final $   78,439
+  Futures 2.0x:      Sortino +4.62  return +1952.7%  DD  -7.7%  final $  164,219
+  Futures 3.6x (1 MES on $8k) Sortino +4.62  return +20189.8%  DD -13.5%  final $1,623,184
+
+  After-tax final equity ($) by tax scenario:
+  Scenario                                      Shares    Fut 1.5x    Fut 2.0x      Actual
+  Lower bracket (24% STCG, 15% LTCG)        $  30,188  $  65,337  $ 135,162  $1,322,760
+  Lower bracket + NIIT 3.8%                 $  29,078  $  62,660  $ 129,226  $1,261,383
+  Higher bracket (37% STCG, 20% LTCG)       $  26,392  $  59,561  $ 122,352  $1,190,315
+  Higher bracket + NIIT 3.8%                $  25,283  $  56,885  $ 116,416  $1,128,938
+
+  After-tax CAGR (Lower bracket (24% STCG, 15% LTCG)):
+    Shares (1x):       +18.1%
+    Futures 1.5x:      +30.1%
+    Futures 2.0x:      +42.5%
+    Futures 3.6x (1 MES on $8k): +89.6%
+
+====================================================================================================
+PERIOD 2000-2009 (regime shift)  |  2000-09-18 -> 2009-12-31  |  contract: MES
+====================================================================================================
+
+  BAH cash index:    Sortino -0.01  return  -22.0%  DD -56.8%  final $    6,238
+  Shares (1x):       Sortino +3.09  return +218.6%  DD  -4.3%  final $   25,491
+  Futures 1.5x:      Sortino +3.08  return +457.2%  DD  -6.5%  final $   44,578
+  Futures 2.0x:      Sortino +3.08  return +866.5%  DD  -8.6%  final $   77,317
+  Futures 3.6x (1 MES on $8k) Sortino +3.08  return +5132.9%  DD -15.3%  final $  418,630
+
+  After-tax final equity ($) by tax scenario:
+  Scenario                                      Shares    Fut 1.5x    Fut 2.0x      Actual
+  Lower bracket (24% STCG, 15% LTCG)        $  21,293  $  37,774  $  64,424  $ 342,253
+  Lower bracket + NIIT 3.8%                 $  20,629  $  36,384  $  61,790  $ 326,649
+  Higher bracket (37% STCG, 20% LTCG)       $  19,020  $  34,775  $  58,740  $ 308,581
+  Higher bracket + NIIT 3.8%                $  18,355  $  33,385  $  56,106  $ 292,977
+
+  After-tax CAGR (Lower bracket (24% STCG, 15% LTCG)):
+    Shares (1x):       +11.1%
+    Futures 1.5x:      +18.2%
+    Futures 2.0x:      +25.2%
+    Futures 3.6x (1 MES on $8k): +49.9%
+
+====================================================================================================
+DEPLOYMENT FEASIBILITY AT $8K (current index levels ~April 2026)
+====================================================================================================
+
+MNQ (index ~$20000):
+  1.5x target:  notional $12,000  |  1 MNQ = $40,000 notional  |  contracts to target: 0.30  |  1-contract leverage: 5.0x
+  2.0x target:  notional $16,000  |  1 MNQ = $40,000 notional  |  contracts to target: 0.40  |  1-contract leverage: 5.0x
+  Note: smallest whole-contract position = 1 = 5.0x leverage
+
+MES (index ~$5800):
+  1.5x target:  notional $12,000  |  1 MES = $29,000 notional  |  contracts to target: 0.41  |  1-contract leverage: 3.6x
+  2.0x target:  notional $16,000  |  1 MES = $29,000 notional  |  contracts to target: 0.55  |  1-contract leverage: 3.6x
+  Note: smallest whole-contract position = 1 = 3.6x leverage
