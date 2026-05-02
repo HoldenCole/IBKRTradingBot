@@ -138,11 +138,37 @@ def main() -> int:
             slippage_bps=slip,
         )
 
-    # Cross-variant summary
+    # Benchmark comparison + lift table — the strategy must beat the
+    # corresponding underlying's buy-and-hold Sortino in the same period.
+    # Otherwise you should just hold the underlying.
+    print("\n" + "=" * 80)
+    print("LIFT vs BENCHMARK — overnight drift Sortino minus same-period")
+    print("buy-and-hold Sortino on the same underlying (1bp/side slippage)")
+    print("=" * 80)
+    benches = {
+        "SPY_full": spy_bench_full,
+        "SPY_train": spy_bench_train,
+        "SPY_test": spy_bench_test,
+        "QQQ_full": qqq_bench_full,
+        "QQQ_train": qqq_bench_train,
+        "QQQ_test": qqq_bench_test,
+    }
+    from src.backtest.benchmark import equity_metrics
+    print(f"\n{'Variant':14s}  {'Bench Sortino':>13s}  {'Strat Sortino':>13s}  "
+          f"{'Lift':>7s}  {'Bench Return':>12s}  {'Strat Return':>12s}  "
+          f"{'Lift (pp)':>9s}")
+    for key, bench in benches.items():
+        m = equity_metrics(runs[key].equity_curve, 8000.0)
+        sortino_lift = m["sortino"] - bench.sortino
+        return_lift_pp = (m["total_return"] - bench.total_return) * 100
+        print(f"{key:14s}  {bench.sortino:>13.2f}  {m['sortino']:>13.2f}  "
+              f"{sortino_lift:>+6.2f}  {bench.total_return:>+11.1%}  "
+              f"{m['total_return']:>+11.1%}  {return_lift_pp:>+8.1f}")
+
+    # Cross-variant summary (kept from before)
     print("\n" + "=" * 72)
     print("SUMMARY — overnight drift, all variants")
     print("=" * 72)
-    from src.backtest.benchmark import equity_metrics
     print(f"\n{'Variant':22s}  {'N':>4s}  {'Win%':>5s}  {'Sharpe':>6s}  "
           f"{'Sortino':>7s}  {'Return':>7s}  {'|DD|':>5s}  {'Final $':>9s}")
     for label, r in runs.items():
