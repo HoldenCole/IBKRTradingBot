@@ -1,0 +1,628 @@
+
+# OVERNIGHT DRIFT — SPY + QQQ shares
+# Period: 2018-01-01 -> 2026-04-15
+# SPY bench (full): ret +160.4%  Sharpe 0.70  Sortino 0.85  |DD| 34%
+# QQQ bench (full): ret +302.2%  Sharpe 0.83  Sortino 1.08  |DD| 36%
+
+========================================================================
+SPY_full — Overnight SPY (2018-2026, slip=1.0bp)
+========================================================================
+
+[Headline]
+  Trades:        2081 (1130W / 951L, win%=54%)
+  Total PnL:     $+1,997.21
+  Total return:  +25.0%
+  CAGR:          +2.7%
+  Sharpe (ann):  0.28
+  Sortino:       0.31
+  Max drawdown:  -29.3%
+  Profit factor: 1.05
+  Expectancy:    $+0.96/trade
+  Avg win:       $+39.89
+  Avg loss:      $-45.29
+
+[Benchmark vs SPY buy-and-hold]
+  Strategy:  ret +25.0%  Sharpe 0.28  |DD| 29%
+  SPY      : ret +160.4%  Sharpe 0.70  |DD| 34%
+  Delta:    ret -135.4%  Sharpe -0.41
+
+[Tier verdict]
+  TIER D  (both Sharpe (0.28) and Sortino (0.31) below 0.5; return +25% > 20pp below bench)
+
+[Per-year]
+    Year  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+    2018  chop_to_correction       251   53%  $    +383   1.10   0.81    1.14
+    2019  bull                     252   56%  $    +803   1.23   1.18    1.54
+    2020  crisis_recovery          253   57%  $    +615   1.07   0.38    0.37
+    2021  bull                     252   60%  $    +974   1.24   1.30    1.70
+    2022  bear                     251   45%  $   -1956   0.77  -1.46   -2.31
+    2023  bull                     250   49%  $    -175   0.96  -0.15   -0.23
+    2024  bull                     252   60%  $   +1477   1.45   1.92    2.09
+    2025  bull_chop                250   57%  $    +194   1.04   0.18    0.20
+    2026  mixed                     70   51%  $    -319   0.82  -1.06   -1.69
+
+[Per-regime]
+  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+  bull                    1006   56%  $   +3080   1.21   0.44    0.37
+  crisis_recovery          253   57%  $    +615   1.07   0.38    0.37
+  chop_to_correction       251   53%  $    +383   1.10   0.81    1.14
+  bear                     251   45%  $   -1956   0.77  -1.46   -2.31
+  bull_chop                250   57%  $    +194   1.04   0.18    0.20
+  mixed                     70   51%  $    -319   0.82  -1.06   -1.69
+
+[Holding-period P&L]
+  Hold       N   Win%       Total      Avg
+  1d      1625   55%  $   +3746  $   +2
+  2d        24   54%  $    -350  $  -15
+  3d       376   55%  $    -849  $   -2
+  4d        56   38%  $    -550  $  -10
+
+[Exit reasons]
+  overnight_exit                      n=2081  avg=$   +1  total=$   +1997
+========================================================================
+SPY_train — Overnight SPY (2018-01-01..2022-12-31, slip=1.0bp)
+========================================================================
+
+[Headline]
+  Trades:        1258 (679W / 579L, win%=54%)
+  Total PnL:     $+779.00
+  Total return:  +9.7%
+  CAGR:          +1.9%
+  Sharpe (ann):  0.20
+  Sortino:       0.22
+  Max drawdown:  -29.3%
+  Profit factor: 1.03
+  Expectancy:    $+0.62/trade
+  Avg win:       $+43.48
+  Avg loss:      $-49.65
+
+[Benchmark vs SPY buy-and-hold]
+  Strategy:  ret +9.7%  Sharpe 0.20  |DD| 29%
+  SPY      : ret +42.3%  Sharpe 0.44  |DD| 34%
+  Delta:    ret -32.5%  Sharpe -0.23
+
+[Tier verdict]
+  TIER D  (both Sharpe (0.20) and Sortino (0.22) below 0.5; return +10% > 20pp below bench)
+
+[Per-year]
+    Year  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+    2018  chop_to_correction       251   53%  $    +383   1.10   0.81    1.14
+    2019  bull                     252   56%  $    +803   1.23   1.18    1.54
+    2020  crisis_recovery          253   57%  $    +615   1.07   0.38    0.37
+    2021  bull                     252   60%  $    +974   1.24   1.30    1.70
+    2022  bear                     250   44%  $   -1997   0.77  -1.46   -2.31
+
+[Per-regime]
+  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+  bull                     504   58%  $   +1778   1.24   1.42    2.24
+  crisis_recovery          253   57%  $    +615   1.07   0.38    0.37
+  chop_to_correction       251   53%  $    +383   1.10   0.81    1.14
+  bear                     250   44%  $   -1997   0.77  -1.46   -2.31
+
+[Holding-period P&L]
+  Hold       N   Win%       Total      Avg
+  1d       986   55%  $   +2483  $   +3
+  2d        12   42%  $    -385  $  -32
+  3d       227   53%  $   -1256  $   -6
+  4d        33   39%  $     -63  $   -2
+
+[Exit reasons]
+  overnight_exit                      n=1258  avg=$   +1  total=$    +779
+========================================================================
+SPY_test — Overnight SPY (2023-01-01..2026-04-15, slip=1.0bp)
+========================================================================
+
+[Headline]
+  Trades:        822 (450W / 372L, win%=55%)
+  Total PnL:     $+1,051.58
+  Total return:  +13.2%
+  CAGR:          +3.8%
+  Sharpe (ann):  0.46
+  Sortino:       0.56
+  Max drawdown:  -16.6%
+  Profit factor: 1.08
+  Expectancy:    $+1.28/trade
+  Avg win:       $+31.12
+  Avg loss:      $-34.82
+
+[Benchmark vs SPY buy-and-hold]
+  Strategy:  ret +13.2%  Sharpe 0.46  |DD| 17%
+  SPY      : ret +83.8%  Sharpe 1.30  |DD| 19%
+  Delta:    ret -70.6%  Sharpe -0.84
+
+[Tier verdict]
+  TIER D  (return +13% > 20pp below bench)
+
+[Per-year]
+    Year  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+    2023  bull                     250   49%  $    -164   0.95  -0.16   -0.24
+    2024  bull                     252   60%  $   +1362   1.47   1.98    2.17
+    2025  bull_chop                250   57%  $    +146   1.03   0.15    0.17
+    2026  mixed                     70   51%  $    -293   0.82  -1.07   -1.69
+
+[Per-regime]
+  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+  bull                     502   54%  $   +1199   1.18   0.91    1.17
+  bull_chop                250   57%  $    +146   1.03   0.15    0.17
+  mixed                     70   51%  $    -293   0.82  -1.07   -1.69
+
+[Holding-period P&L]
+  Hold       N   Win%       Total      Avg
+  1d       639   55%  $   +1145  $   +2
+  2d        12   67%  $     +29  $   +2
+  3d       149   58%  $    +352  $   +2
+  4d        22   32%  $    -475  $  -22
+
+[Exit reasons]
+  overnight_exit                      n=822  avg=$   +1  total=$   +1052
+========================================================================
+QQQ_full — Overnight QQQ (2018-2026, slip=1.0bp)
+========================================================================
+
+[Headline]
+  Trades:        2081 (1132W / 949L, win%=54%)
+  Total PnL:     $+4,776.51
+  Total return:  +59.7%
+  CAGR:          +5.8%
+  Sharpe (ann):  0.47
+  Sortino:       0.55
+  Max drawdown:  -31.0%
+  Profit factor: 1.08
+  Expectancy:    $+2.30/trade
+  Avg win:       $+57.18
+  Avg loss:      $-63.17
+
+[Benchmark vs SPY buy-and-hold]
+  Strategy:  ret +59.7%  Sharpe 0.47  |DD| 31%
+  QQQ      : ret +302.2%  Sharpe 0.83  |DD| 36%
+  Delta:    ret -242.4%  Sharpe -0.36
+
+[Tier verdict]
+  TIER D  (return +60% > 20pp below bench)
+
+[Per-year]
+    Year  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+    2018  chop_to_correction       251   53%  $    +488   1.09   0.76    1.07
+    2019  bull                     252   57%  $    +992   1.21   1.10    1.45
+    2020  crisis_recovery          253   61%  $   +1619   1.17   0.76    0.74
+    2021  bull                     252   57%  $   +1082   1.17   0.95    1.28
+    2022  bear                     251   43%  $   -2987   0.75  -1.60   -2.58
+    2023  bull                     250   49%  $    +325   1.06   0.49    0.79
+    2024  bull                     252   59%  $   +2504   1.48   2.09    2.37
+    2025  bull_chop                250   58%  $   +1195   1.14   0.67    0.81
+    2026  mixed                     70   47%  $    -442   0.85  -0.89   -1.45
+
+[Per-regime]
+  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+  bull                    1006   55%  $   +4903   1.23   0.57    0.53
+  crisis_recovery          253   61%  $   +1619   1.17   0.76    0.74
+  chop_to_correction       251   53%  $    +488   1.09   0.76    1.07
+  bear                     251   43%  $   -2987   0.75  -1.60   -2.58
+  bull_chop                250   58%  $   +1195   1.14   0.67    0.81
+  mixed                     70   47%  $    -442   0.85  -0.89   -1.45
+
+[Holding-period P&L]
+  Hold       N   Win%       Total      Avg
+  1d      1625   55%  $   +7443  $   +5
+  2d        24   54%  $    -167  $   -7
+  3d       376   52%  $   -1378  $   -4
+  4d        56   43%  $   -1122  $  -20
+
+[Exit reasons]
+  overnight_exit                      n=2081  avg=$   +2  total=$   +4777
+========================================================================
+QQQ_train — Overnight QQQ (2018-01-01..2022-12-31, slip=1.0bp)
+========================================================================
+
+[Headline]
+  Trades:        1258 (682W / 576L, win%=54%)
+  Total PnL:     $+1,115.88
+  Total return:  +14.0%
+  CAGR:          +2.7%
+  Sharpe (ann):  0.25
+  Sortino:       0.29
+  Max drawdown:  -29.3%
+  Profit factor: 1.03
+  Expectancy:    $+0.89/trade
+  Avg win:       $+57.67
+  Avg loss:      $-66.34
+
+[Benchmark vs SPY buy-and-hold]
+  Strategy:  ret +14.0%  Sharpe 0.25  |DD| 29%
+  QQQ      : ret +68.0%  Sharpe 0.53  |DD| 36%
+  Delta:    ret -54.1%  Sharpe -0.28
+
+[Tier verdict]
+  TIER D  (both Sharpe (0.25) and Sortino (0.29) below 0.5; return +14% > 20pp below bench)
+
+[Per-year]
+    Year  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+    2018  chop_to_correction       251   53%  $    +488   1.09   0.76    1.07
+    2019  bull                     252   57%  $    +992   1.21   1.10    1.45
+    2020  crisis_recovery          253   61%  $   +1619   1.17   0.76    0.74
+    2021  bull                     252   57%  $   +1082   1.17   0.95    1.28
+    2022  bear                     250   43%  $   -3066   0.74  -1.60   -2.58
+
+[Per-regime]
+  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+  bull                     504   57%  $   +2074   1.19   1.19    2.58
+  crisis_recovery          253   61%  $   +1619   1.17   0.76    0.74
+  chop_to_correction       251   53%  $    +488   1.09   0.76    1.07
+  bear                     250   43%  $   -3066   0.74  -1.60   -2.58
+
+[Holding-period P&L]
+  Hold       N   Win%       Total      Avg
+  1d       986   56%  $   +3910  $   +4
+  2d        12   42%  $    -338  $  -28
+  3d       227   50%  $   -2026  $   -9
+  4d        33   45%  $    -430  $  -13
+
+[Exit reasons]
+  overnight_exit                      n=1258  avg=$   +1  total=$   +1116
+========================================================================
+QQQ_test — Overnight QQQ (2023-01-01..2026-04-15, slip=1.0bp)
+========================================================================
+
+[Headline]
+  Trades:        822 (449W / 373L, win%=55%)
+  Total PnL:     $+3,096.94
+  Total return:  +38.7%
+  CAGR:          +10.5%
+  Sharpe (ann):  0.89
+  Sortino:       1.14
+  Max drawdown:  -18.3%
+  Profit factor: 1.16
+  Expectancy:    $+3.77/trade
+  Avg win:       $+48.82
+  Avg loss:      $-50.46
+
+[Benchmark vs SPY buy-and-hold]
+  Strategy:  ret +38.7%  Sharpe 0.89  |DD| 18%
+  QQQ      : ret +141.0%  Sharpe 1.46  |DD| 23%
+  Delta:    ret -102.3%  Sharpe -0.57
+
+[Tier verdict]
+  TIER D  (combined Sharpe/Sortino/DD/return below all upper-tier thresholds)
+
+[Per-year]
+    Year  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+    2023  bull                     250   49%  $    +274   1.06   0.48    0.78
+    2024  bull                     252   59%  $   +2174   1.48   2.10    2.37
+    2025  bull_chop                250   58%  $   +1020   1.14   0.67    0.80
+    2026  mixed                     70   47%  $    -371   0.85  -0.86   -1.42
+
+[Per-regime]
+  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+  bull                     502   54%  $   +2448   1.27   1.29    1.69
+  bull_chop                250   58%  $   +1020   1.14   0.67    0.80
+  mixed                     70   47%  $    -371   0.85  -0.86   -1.42
+
+[Holding-period P&L]
+  Hold       N   Win%       Total      Avg
+  1d       639   55%  $   +3077  $   +5
+  2d        12   67%  $    +147  $  +12
+  3d       149   56%  $    +545  $   +4
+  4d        22   36%  $    -672  $  -31
+
+[Exit reasons]
+  overnight_exit                      n=822  avg=$   +4  total=$   +3097
+========================================================================
+SPY_full_NO_SLIP — Overnight SPY (2018-2026, slip=0.0bp)
+========================================================================
+
+[Headline]
+  Trades:        2081 (1169W / 912L, win%=56%)
+  Total PnL:     $+6,977.27
+  Total return:  +87.2%
+  CAGR:          +7.9%
+  Sharpe (ann):  0.68
+  Sortino:       0.74
+  Max drawdown:  -28.9%
+  Profit factor: 1.14
+  Expectancy:    $+3.35/trade
+  Avg win:       $+49.82
+  Avg loss:      $-56.21
+
+[Benchmark vs SPY buy-and-hold]
+  Strategy:  ret +87.2%  Sharpe 0.68  |DD| 29%
+  SPY      : ret +160.4%  Sharpe 0.70  |DD| 34%
+  Delta:    ret -73.2%  Sharpe -0.01
+
+[Tier verdict]
+  TIER D  (return +87% > 20pp below bench)
+
+[Per-year]
+    Year  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+    2018  chop_to_correction       251   56%  $    +807   1.21   1.40    1.99
+    2019  bull                     252   59%  $   +1321   1.37   1.81    2.36
+    2020  crisis_recovery          253   57%  $   +1248   1.13   0.59    0.58
+    2021  bull                     252   61%  $   +1781   1.39   1.98    2.60
+    2022  bear                     251   45%  $   -1907   0.82  -1.13   -1.79
+    2023  bull                     250   51%  $    +325   1.07   0.51    0.81
+    2024  bull                     252   62%  $   +2669   1.63   2.51    2.65
+    2025  bull_chop                250   60%  $   +1004   1.14   0.61    0.68
+    2026  mixed                     70   54%  $    -271   0.90  -0.57   -0.93
+
+[Per-regime]
+  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+  bull                    1006   58%  $   +6096   1.35   1.03    1.03
+  crisis_recovery          253   57%  $   +1248   1.13   0.59    0.58
+  chop_to_correction       251   56%  $    +807   1.21   1.40    1.99
+  bear                     251   45%  $   -1907   0.82  -1.13   -1.79
+  bull_chop                250   60%  $   +1004   1.14   0.61    0.68
+  mixed                     70   54%  $    -271   0.90  -0.57   -0.93
+
+[Holding-period P&L]
+  Hold       N   Win%       Total      Avg
+  1d      1625   57%  $   +8074  $   +5
+  2d        24   58%  $    -320  $  -13
+  3d       376   57%  $    -149  $   -0
+  4d        56   41%  $    -628  $  -11
+
+[Exit reasons]
+  overnight_exit                      n=2081  avg=$   +3  total=$   +6977
+========================================================================
+SPY_train_NO_SLIP — Overnight SPY (2018-01-01..2022-12-31, slip=0.0bp)
+========================================================================
+
+[Headline]
+  Trades:        1258 (699W / 559L, win%=56%)
+  Total PnL:     $+3,193.38
+  Total return:  +39.9%
+  CAGR:          +7.0%
+  Sharpe (ann):  0.56
+  Sortino:       0.59
+  Max drawdown:  -28.9%
+  Profit factor: 1.10
+  Expectancy:    $+2.54/trade
+  Avg win:       $+50.39
+  Avg loss:      $-57.30
+
+[Benchmark vs SPY buy-and-hold]
+  Strategy:  ret +39.9%  Sharpe 0.56  |DD| 29%
+  SPY      : ret +42.3%  Sharpe 0.44  |DD| 34%
+  Delta:    ret -2.4%  Sharpe +0.12
+
+[Tier verdict]
+  TIER C  (Sortino 0.59 in [0.5,1.0), |DD| 29% < 35%, return +40% within 20pp of bench +42%)
+
+[Per-year]
+    Year  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+    2018  chop_to_correction       251   56%  $    +807   1.21   1.40    1.99
+    2019  bull                     252   59%  $   +1321   1.37   1.81    2.36
+    2020  crisis_recovery          253   57%  $   +1248   1.13   0.59    0.58
+    2021  bull                     252   61%  $   +1781   1.39   1.98    2.60
+    2022  bear                     250   45%  $   -1964   0.81  -1.13   -1.79
+
+[Per-regime]
+  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+  bull                     504   60%  $   +3102   1.38   1.75    3.59
+  crisis_recovery          253   57%  $   +1248   1.13   0.59    0.58
+  chop_to_correction       251   56%  $    +807   1.21   1.40    1.99
+  bear                     250   45%  $   -1964   0.81  -1.13   -1.79
+
+[Holding-period P&L]
+  Hold       N   Win%       Total      Avg
+  1d       986   56%  $   +4685  $   +5
+  2d        12   42%  $    -411  $  -34
+  3d       227   56%  $   -1090  $   -5
+  4d        33   42%  $     +10  $   +0
+
+[Exit reasons]
+  overnight_exit                      n=1258  avg=$   +3  total=$   +3193
+========================================================================
+SPY_test_NO_SLIP — Overnight SPY (2023-01-01..2026-04-15, slip=0.0bp)
+========================================================================
+
+[Headline]
+  Trades:        822 (469W / 353L, win%=57%)
+  Total PnL:     $+2,624.19
+  Total return:  +32.8%
+  CAGR:          +9.0%
+  Sharpe (ann):  0.99
+  Sortino:       1.19
+  Max drawdown:  -15.8%
+  Profit factor: 1.19
+  Expectancy:    $+3.19/trade
+  Avg win:       $+34.42
+  Avg loss:      $-38.29
+
+[Benchmark vs SPY buy-and-hold]
+  Strategy:  ret +32.8%  Sharpe 0.99  |DD| 16%
+  SPY      : ret +83.8%  Sharpe 1.30  |DD| 19%
+  Delta:    ret -51.0%  Sharpe -0.31
+
+[Tier verdict]
+  TIER D  (combined Sharpe/Sortino/DD/return below all upper-tier thresholds)
+
+[Per-year]
+    Year  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+    2023  bull                     250   51%  $    +250   1.07   0.55    0.86
+    2024  bull                     252   62%  $   +1885   1.63   2.50    2.65
+    2025  bull_chop                250   60%  $    +684   1.13   0.59    0.66
+    2026  mixed                     70   54%  $    -195   0.89  -0.59   -0.95
+
+[Per-regime]
+  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+  bull                     502   56%  $   +2135   1.33   1.53    1.92
+  bull_chop                250   60%  $    +684   1.13   0.59    0.66
+  mixed                     70   54%  $    -195   0.89  -0.59   -0.95
+
+[Holding-period P&L]
+  Hold       N   Win%       Total      Avg
+  1d       639   57%  $   +2404  $   +4
+  2d        12   75%  $     +59  $   +5
+  3d       149   58%  $    +650  $   +4
+  4d        22   36%  $    -489  $  -22
+
+[Exit reasons]
+  overnight_exit                      n=822  avg=$   +3  total=$   +2624
+========================================================================
+QQQ_full_NO_SLIP — Overnight QQQ (2018-2026, slip=0.0bp)
+========================================================================
+
+[Headline]
+  Trades:        2081 (1168W / 913L, win%=56%)
+  Total PnL:     $+11,159.01
+  Total return:  +139.5%
+  CAGR:          +11.1%
+  Sharpe (ann):  0.81
+  Sortino:       0.95
+  Max drawdown:  -27.1%
+  Profit factor: 1.15
+  Expectancy:    $+5.36/trade
+  Avg win:       $+71.43
+  Avg loss:      $-79.16
+
+[Benchmark vs SPY buy-and-hold]
+  Strategy:  ret +139.5%  Sharpe 0.81  |DD| 27%
+  QQQ      : ret +302.2%  Sharpe 0.83  |DD| 36%
+  Delta:    ret -162.7%  Sharpe -0.02
+
+[Tier verdict]
+  TIER D  (return +139% > 20pp below bench)
+
+[Per-year]
+    Year  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+    2018  chop_to_correction       251   55%  $    +908   1.17   1.18    1.65
+    2019  bull                     252   60%  $   +1532   1.32   1.59    2.11
+    2020  crisis_recovery          253   62%  $   +2414   1.23   0.97    0.94
+    2021  bull                     252   58%  $   +1977   1.27   1.44    1.94
+    2022  bear                     251   45%  $   -3094   0.79  -1.33   -2.14
+    2023  bull                     250   52%  $   +1003   1.15   0.96    1.56
+    2024  bull                     252   60%  $   +4181   1.60   2.54    2.85
+    2025  bull_chop                250   59%  $   +2623   1.23   1.02    1.21
+    2026  mixed                     70   50%  $    -385   0.91  -0.49   -0.82
+
+[Per-regime]
+  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+  bull                    1006   57%  $   +8693   1.34   0.94    1.03
+  crisis_recovery          253   62%  $   +2414   1.23   0.97    0.94
+  chop_to_correction       251   55%  $    +908   1.17   1.18    1.65
+  bear                     251   45%  $   -3094   0.79  -1.33   -2.14
+  bull_chop                250   59%  $   +2623   1.23   1.02    1.21
+  mixed                     70   50%  $    -385   0.91  -0.49   -0.82
+
+[Holding-period P&L]
+  Hold       N   Win%       Total      Avg
+  1d      1625   57%  $  +13112  $   +8
+  2d        24   54%  $     -45  $   -2
+  3d       376   54%  $    -587  $   -2
+  4d        56   43%  $   -1321  $  -24
+
+[Exit reasons]
+  overnight_exit                      n=2081  avg=$   +5  total=$  +11159
+========================================================================
+QQQ_train_NO_SLIP — Overnight QQQ (2018-01-01..2022-12-31, slip=0.0bp)
+========================================================================
+
+[Headline]
+  Trades:        1258 (704W / 554L, win%=56%)
+  Total PnL:     $+3,635.60
+  Total return:  +45.4%
+  CAGR:          +7.8%
+  Sharpe (ann):  0.56
+  Sortino:       0.64
+  Max drawdown:  -27.1%
+  Profit factor: 1.08
+  Expectancy:    $+2.89/trade
+  Avg win:       $+66.05
+  Avg loss:      $-77.37
+
+[Benchmark vs SPY buy-and-hold]
+  Strategy:  ret +45.4%  Sharpe 0.56  |DD| 27%
+  QQQ      : ret +68.0%  Sharpe 0.53  |DD| 36%
+  Delta:    ret -22.6%  Sharpe +0.03
+
+[Tier verdict]
+  TIER D  (return +45% > 20pp below bench)
+
+[Per-year]
+    Year  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+    2018  chop_to_correction       251   55%  $    +908   1.17   1.18    1.65
+    2019  bull                     252   60%  $   +1532   1.32   1.59    2.11
+    2020  crisis_recovery          253   62%  $   +2414   1.23   0.97    0.94
+    2021  bull                     252   58%  $   +1977   1.27   1.44    1.94
+    2022  bear                     250   44%  $   -3196   0.78  -1.33   -2.14
+
+[Per-regime]
+  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+  bull                     504   59%  $   +3509   1.29   1.38    3.64
+  crisis_recovery          253   62%  $   +2414   1.23   0.97    0.94
+  chop_to_correction       251   55%  $    +908   1.17   1.18    1.65
+  bear                     250   44%  $   -3196   0.78  -1.33   -2.14
+
+[Holding-period P&L]
+  Hold       N   Win%       Total      Avg
+  1d       986   58%  $   +6354  $   +6
+  2d        12   42%  $    -340  $  -28
+  3d       227   51%  $   -1980  $   -9
+  4d        33   45%  $    -398  $  -12
+
+[Exit reasons]
+  overnight_exit                      n=1258  avg=$   +3  total=$   +3636
+========================================================================
+QQQ_test_NO_SLIP — Overnight QQQ (2023-01-01..2026-04-15, slip=0.0bp)
+========================================================================
+
+[Headline]
+  Trades:        822 (463W / 359L, win%=56%)
+  Total PnL:     $+5,011.36
+  Total return:  +62.6%
+  CAGR:          +16.0%
+  Sharpe (ann):  1.30
+  Sortino:       1.66
+  Max drawdown:  -17.3%
+  Profit factor: 1.25
+  Expectancy:    $+6.10/trade
+  Avg win:       $+53.70
+  Avg loss:      $-55.30
+
+[Benchmark vs SPY buy-and-hold]
+  Strategy:  ret +62.6%  Sharpe 1.30  |DD| 17%
+  QQQ      : ret +141.0%  Sharpe 1.46  |DD| 23%
+  Delta:    ret -78.4%  Sharpe -0.16
+
+[Tier verdict]
+  TIER D  (combined Sharpe/Sortino/DD/return below all upper-tier thresholds)
+
+[Per-year]
+    Year  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+    2023  bull                     250   52%  $    +675   1.15   0.96    1.56
+    2024  bull                     252   60%  $   +2811   1.60   2.53    2.85
+    2025  bull_chop                250   59%  $   +1780   1.23   1.02    1.22
+    2026  mixed                     70   50%  $    -256   0.91  -0.48   -0.81
+
+[Per-regime]
+  Regime                     N   Win%       Total     PF  Sharpe  Sortino
+  bull                     502   56%  $   +3487   1.38   1.73    2.29
+  bull_chop                250   59%  $   +1780   1.23   1.02    1.22
+  mixed                     70   50%  $    -256   0.91  -0.48   -0.81
+
+[Holding-period P&L]
+  Hold       N   Win%       Total      Avg
+  1d       639   56%  $   +4539  $   +7
+  2d        12   67%  $    +202  $  +17
+  3d       149   58%  $    +965  $   +6
+  4d        22   36%  $    -695  $  -32
+
+[Exit reasons]
+  overnight_exit                      n=822  avg=$   +6  total=$   +5011
+
+========================================================================
+SUMMARY — overnight drift, all variants
+========================================================================
+
+Variant                    N   Win%  Sharpe  Sortino   Return   |DD|    Final $
+SPY_full                2081   54%   0.28    0.31     +25%    29%   $   9997
+SPY_train               1258   54%   0.20    0.22     +10%    29%   $   8779
+SPY_test                 822   55%   0.46    0.56     +13%    17%   $   9052
+QQQ_full                2081   54%   0.47    0.55     +60%    31%   $  12777
+QQQ_train               1258   54%   0.25    0.29     +14%    29%   $   9116
+QQQ_test                 822   55%   0.89    1.14     +39%    18%   $  11097
+SPY_full_NO_SLIP        2081   56%   0.68    0.74     +87%    29%   $  14977
+SPY_train_NO_SLIP       1258   56%   0.56    0.59     +40%    29%   $  11193
+SPY_test_NO_SLIP         822   57%   0.99    1.19     +33%    16%   $  10624
+QQQ_full_NO_SLIP        2081   56%   0.81    0.95    +139%    27%   $  19159
+QQQ_train_NO_SLIP       1258   56%   0.56    0.64     +45%    27%   $  11636
+QQQ_test_NO_SLIP         822   56%   1.30    1.66     +63%    17%   $  13011

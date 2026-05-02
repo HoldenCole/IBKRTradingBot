@@ -349,6 +349,89 @@ def test_engine_honors_regime_filter():
     assert len(result.trades) >= 1
 
 
+# --- Overnight drift engine ---
+
+def test_overnight_drift_pnl_matches_close_to_open_returns():
+    """If close T = 100, open T+1 = 101, 80 shares: pnl = +$80 minus slippage."""
+    from src.backtest.overnight_engine import OvernightConfig, OvernightDriftEngine
+
+    n = 5
+    closes = [100.0, 100.0, 100.0, 100.0, 100.0]
+    opens  = [99.5, 101.0, 102.0, 100.5, 101.5]
+    df = pd.DataFrame(
+        {"open": opens, "high": [102.0]*n, "low": [99.0]*n, "close": closes,
+         "volume": [1e6]*n},
+        index=pd.bdate_range(end="2026-04-15", periods=n),
+    )
+    cfg = OvernightConfig(
+        start=df.index[0].date(),
+        end=df.index[-1].date(),
+        universe="SPY",
+        initial_capital=10_000.0,
+        slippage_bps=0.0,  # no slippage for clean math
+    )
+    eng = OvernightDriftEngine(cfg, {"SPY": df})
+    result = eng.run()
+    # Expect 4 overnight trades (n-1 since last day has no next-day open)
+    assert len(result.trades) == 4
+    # Trade 0: bought close=100, sold open=101 -> +$1 per share
+    t0 = result.trades[0]
+    assert t0.entry_price == 100.0
+    assert t0.exit_price == 101.0
+    # 100 shares (from $10k / $100), +$1 each = +$100
+    assert t0.shares == 100
+    assert abs(t0.pnl - 100.0) < 1e-6
+    # Direction always long
+    assert all(t.direction == "long" for t in result.trades)
+    # 1-3 calendar days held (Mon-Fri overnights are 1d; Fri-Mon is 3d)
+    assert all(1 <= t.days_held <= 3 for t in result.trades)
+
+
+def test_overnight_drift_slippage_applied_both_legs():
+    from src.backtest.overnight_engine import OvernightConfig, OvernightDriftEngine
+    n = 3
+    df = pd.DataFrame(
+        {"open": [100.0, 100.0, 100.0], "high": [101.0]*n, "low": [99.0]*n,
+         "close": [100.0]*n, "volume": [1e6]*n},
+        index=pd.bdate_range(end="2026-04-15", periods=n),
+    )
+    cfg = OvernightConfig(
+        start=df.index[0].date(),
+        end=df.index[-1].date(),
+        universe="SPY",
+        initial_capital=10_000.0,
+        slippage_bps=10.0,  # 10 bps each side
+    )
+    eng = OvernightDriftEngine(cfg, {"SPY": df})
+    result = eng.run()
+    # No directional move, but each trade incurs ~10bps each leg = ~20bps loss
+    # On 100 shares * $100 entry, ~20bps of $10k = ~$20 loss per trade
+    for t in result.trades:
+        assert t.pnl < 0  # slippage drag in flat market
+
+
+def test_overnight_drift_full_account_sizing():
+    from src.backtest.overnight_engine import OvernightConfig, OvernightDriftEngine
+    n = 5
+    df = pd.DataFrame(
+        {"open": [100.0]*n, "high": [101.0]*n, "low": [99.0]*n,
+         "close": [100.0]*n, "volume": [1e6]*n},
+        index=pd.bdate_range(end="2026-04-15", periods=n),
+    )
+    cfg = OvernightConfig(
+        start=df.index[0].date(),
+        end=df.index[-1].date(),
+        universe="SPY",
+        initial_capital=10_000.0,
+        slippage_bps=0.0,
+    )
+    eng = OvernightDriftEngine(cfg, {"SPY": df})
+    result = eng.run()
+    # First trade should buy ~100 shares with $10k
+    t0 = result.trades[0]
+    assert t0.shares == 100  # exactly $10k / $100 = 100 shares
+
+
 def test_shares_engine_full_account_sizing():
     spy = _ibs_long_daily()
     qqq = _flat_daily()
