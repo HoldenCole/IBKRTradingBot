@@ -20,7 +20,7 @@ from datetime import date
 
 import pandas as pd
 
-from src.backtest.benchmark import BenchmarkMetrics, equity_metrics
+from src.backtest.benchmark import BenchmarkMetrics, equity_metrics, equity_metrics_subset
 from src.backtest.tier import classify, TierVerdict
 
 
@@ -94,13 +94,15 @@ def format_v2_report(
         strategy_total_return=sm["total_return"],
         bench_sharpe=benchmark.sharpe,
         bench_total_return=benchmark.total_return,
+        strategy_sortino=sm["sortino"],
     )
     lines.append("\n[Tier verdict]")
     lines.append(f"  TIER {verdict.tier}  ({verdict.rationale})")
 
     # --- Per-year ---
     lines.append("\n[Per-year]")
-    lines.append(f"  {'Year':>6s}  {'Regime':22s}  {'N':>4s}  {'Win%':>5s}  {'Total':>10s}  {'PF':>5s}")
+    lines.append(f"  {'Year':>6s}  {'Regime':22s}  {'N':>4s}  {'Win%':>5s}  "
+                 f"{'Total':>10s}  {'PF':>5s}  {'Sharpe':>6s}  {'Sortino':>7s}")
     by_year: dict[int, list] = defaultdict(list)
     for t in trades:
         by_year[t.entry_date.year if hasattr(t, "entry_date") else t.entry_time.year].append(t)
@@ -114,15 +116,21 @@ def format_v2_report(
         pfy_s = f"{pfy:.2f}" if pfy != float("inf") else " inf"
         total = sum(t.pnl for t in ts)
         wr = len(wins) / len(ts) if ts else 0
-        lines.append(f"  {y:>6d}  {regime:22s}  {len(ts):>4d}  {wr:>4.0%}  ${total:>+8.0f}  {pfy_s:>5s}")
+        sub = equity_metrics_subset(equity_curve, lambda d, _y=y: d.year == _y)
+        lines.append(f"  {y:>6d}  {regime:22s}  {len(ts):>4d}  {wr:>4.0%}  "
+                     f"${total:>+8.0f}  {pfy_s:>5s}  {sub['sharpe']:>5.2f}   {sub['sortino']:>5.2f}")
 
     # --- Per-regime ---
     lines.append("\n[Per-regime]")
-    lines.append(f"  {'Regime':22s}  {'N':>4s}  {'Win%':>5s}  {'Total':>10s}  {'PF':>5s}")
+    lines.append(f"  {'Regime':22s}  {'N':>4s}  {'Win%':>5s}  {'Total':>10s}  "
+                 f"{'PF':>5s}  {'Sharpe':>6s}  {'Sortino':>7s}")
     by_regime: dict[str, list] = defaultdict(list)
+    by_regime_years: dict[str, set] = defaultdict(set)
     for t in trades:
         y = t.entry_date.year if hasattr(t, "entry_date") else t.entry_time.year
-        by_regime[REGIME_BY_YEAR.get(y, "?")].append(t)
+        regime = REGIME_BY_YEAR.get(y, "?")
+        by_regime[regime].append(t)
+        by_regime_years[regime].add(y)
     for regime, ts in sorted(by_regime.items(), key=lambda x: -len(x[1])):
         wins = [t for t in ts if t.pnl > 0]
         losses = [t for t in ts if t.pnl <= 0]
@@ -131,7 +139,10 @@ def format_v2_report(
         pfr_s = f"{pfr:.2f}" if pfr != float("inf") else " inf"
         total = sum(t.pnl for t in ts)
         wr = len(wins) / len(ts) if ts else 0
-        lines.append(f"  {regime:22s}  {len(ts):>4d}  {wr:>4.0%}  ${total:>+8.0f}  {pfr_s:>5s}")
+        years = by_regime_years[regime]
+        sub = equity_metrics_subset(equity_curve, lambda d, _ys=years: d.year in _ys)
+        lines.append(f"  {regime:22s}  {len(ts):>4d}  {wr:>4.0%}  ${total:>+8.0f}  "
+                     f"{pfr_s:>5s}  {sub['sharpe']:>5.2f}   {sub['sortino']:>5.2f}")
 
     # --- Holding-period ---
     lines.append("\n[Holding-period P&L]")

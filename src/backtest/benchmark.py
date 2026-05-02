@@ -103,3 +103,48 @@ def equity_metrics(
         "max_drawdown": max_dd,
         "final_equity": float(equity.iloc[-1]),
     }
+
+
+def equity_metrics_subset(
+    equity: pd.Series,
+    date_filter,  # callable date -> bool
+) -> dict:
+    """Slice the equity curve by a date predicate and compute metrics on
+    that subset. Used for per-year and per-regime Sortino reporting.
+
+    Returns sharpe=0, sortino=0 etc. when the slice has fewer than 2 points.
+    The 'subset' is a contiguous-or-not selection by date; daily returns
+    are computed within the subset only (so a regime composed of multiple
+    non-contiguous years will compute returns within each contiguous run
+    correctly via pct_change).
+    """
+    if equity.empty:
+        return _empty_metrics()
+    mask = pd.Series(
+        [date_filter(d.date() if hasattr(d, "date") else d) for d in equity.index],
+        index=equity.index,
+    )
+    sub = equity.loc[mask]
+    if len(sub) < 2:
+        return _empty_metrics()
+    rets = sub.pct_change().dropna()
+    if rets.empty:
+        return _empty_metrics()
+    daily_std = float(rets.std(ddof=0))
+    sharpe = (float(rets.mean()) / daily_std) * math.sqrt(252) if daily_std > 0 else 0.0
+    neg = rets[rets < 0]
+    sortino = (float(rets.mean()) / float(neg.std(ddof=0))) * math.sqrt(252) \
+        if len(neg) and float(neg.std(ddof=0)) > 0 else 0.0
+    rmax = sub.cummax()
+    dd = (sub - rmax) / rmax
+    return {
+        "n_days": len(sub),
+        "subset_return": float((sub.iloc[-1] - sub.iloc[0]) / sub.iloc[0]) if sub.iloc[0] else 0.0,
+        "sharpe": float(sharpe),
+        "sortino": float(sortino),
+        "max_drawdown": float(dd.min()),
+    }
+
+
+def _empty_metrics() -> dict:
+    return {"n_days": 0, "subset_return": 0.0, "sharpe": 0.0, "sortino": 0.0, "max_drawdown": 0.0}
