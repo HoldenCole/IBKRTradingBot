@@ -1,0 +1,116 @@
+Fetching QQQ + T-bill...
+
+====================================================================================================
+# Asymmetric trigger variants | QQQ 2000-2026 | Convention 2 (MOC)
+====================================================================================================
+
+Variant                                   Sortino      CAGR  AT CAGR   |DD|  Trans/yr     Final $
+  (QQQ buy-and-hold)                         0.58    +7.5%      n/a      83%        --  $  53,074
+  V1: SS_50/200 (baseline)                   0.83    +6.3%    +5.4%      22%    12.56/yr  $  39,451
+  V2: AS 20/50 entry → 50/200 promoted       0.69    +5.6%    +4.8%      30%    11.30/yr  $  33,205
+  V3: AS 50/100 entry → 50/200 promoted      0.66    +5.1%    +4.3%      24%    12.75/yr  $  29,494
+  V4: AS 20/100 entry → 50/200 promoted      0.86    +6.8%    +5.9%      22%    12.29/yr  $  44,770
+  V5: SS_50/100 (single filter)              0.65    +4.9%    +4.2%      24%    12.90/yr  $  28,437
+
+====================================================================================================
+# Liberation Day 2025 — exit/entry dates per variant
+# QQQ peak Feb 19 2025: $539 | Liberation Day Apr 2: $476 | Apr 8 low: $416 | Jul peak: $556
+====================================================================================================
+
+  V1: SS_50/200 (baseline)
+      exit 2025-01-02 at QQQ $510.23
+     entry 2025-01-03 at QQQ $518.58
+      exit 2025-01-10 at QQQ $507.19
+     entry 2025-01-15 at QQQ $516.70
+      exit 2025-01-16 at QQQ $513.08
+     entry 2025-01-17 at QQQ $521.74
+      exit 2025-01-27 at QQQ $514.21
+     entry 2025-01-28 at QQQ $521.81
+      exit 2025-02-03 at QQQ $518.11
+     entry 2025-02-04 at QQQ $524.47
+      exit 2025-02-24 at QQQ $519.87
+     entry 2025-06-24 at QQQ $539.78
+
+  V2: AS 20/50 entry → 50/200 promoted
+      exit 2025-01-02 at QQQ $510.23
+     entry 2025-01-06 at QQQ $524.54
+      exit 2025-01-07 at QQQ $515.18
+     entry 2025-01-17 at QQQ $521.74
+      exit 2025-01-27 at QQQ $514.21
+     entry 2025-01-28 at QQQ $521.81
+      exit 2025-02-03 at QQQ $518.11
+     entry 2025-02-04 at QQQ $524.47
+      exit 2025-02-24 at QQQ $519.87
+     entry 2025-05-13 at QQQ $515.59
+
+  V3: AS 50/100 entry → 50/200 promoted
+      exit 2025-01-02 at QQQ $510.23
+     entry 2025-01-03 at QQQ $518.58
+      exit 2025-01-10 at QQQ $507.19
+     entry 2025-01-15 at QQQ $516.70
+      exit 2025-01-16 at QQQ $513.08
+     entry 2025-01-17 at QQQ $521.74
+      exit 2025-01-27 at QQQ $514.21
+     entry 2025-01-28 at QQQ $521.81
+      exit 2025-02-03 at QQQ $518.11
+     entry 2025-02-04 at QQQ $524.47
+      exit 2025-02-24 at QQQ $519.87
+     entry 2025-06-20 at QQQ $526.83
+
+  V4: AS 20/100 entry → 50/200 promoted
+      exit 2025-01-02 at QQQ $510.23
+     entry 2025-01-06 at QQQ $524.54
+      exit 2025-01-07 at QQQ $515.18
+     entry 2025-01-17 at QQQ $521.74
+      exit 2025-01-27 at QQQ $514.21
+     entry 2025-01-28 at QQQ $521.81
+      exit 2025-02-03 at QQQ $518.11
+     entry 2025-02-04 at QQQ $524.47
+      exit 2025-02-24 at QQQ $519.87
+     entry 2025-05-22 at QQQ $514.00
+
+  V5: SS_50/100 (single filter)
+      exit 2025-01-02 at QQQ $510.23
+     entry 2025-01-03 at QQQ $518.58
+      exit 2025-01-10 at QQQ $507.19
+     entry 2025-01-15 at QQQ $516.70
+      exit 2025-01-16 at QQQ $513.08
+     entry 2025-01-17 at QQQ $521.74
+      exit 2025-01-27 at QQQ $514.21
+     entry 2025-01-28 at QQQ $521.81
+      exit 2025-02-03 at QQQ $518.11
+     entry 2025-02-04 at QQQ $524.47
+      exit 2025-02-24 at QQQ $519.87
+     entry 2025-06-20 at QQQ $526.83
+
+====================================================================================================
+# Locked Tier-A criteria (vs V1 baseline)
+# Sortino +0.3, AT-CAGR ≥ baseline, |DD| materially better, transitions ≤ 2x
+====================================================================================================
+
+  Baseline V1: Sortino 0.83, AT-CAGR +5.40%, |DD| 22%, Trans/yr 12.56
+
+  Variant                                    ΔSortino   ΔAT-CAGR     ΔDD  TPY≤2x?   PASS?
+  V2: AS 20/50 entry → 50/200 promoted      ✗ -0.15  ✗  -0.6pp ✗   +8pp     ✓   fail
+  V3: AS 50/100 entry → 50/200 promoted     ✗ -0.17  ✗  -1.1pp ✗   +2pp     ✓   fail
+  V4: AS 20/100 entry → 50/200 promoted     ✗ +0.03  ✓  +0.5pp ✗   -0pp     ✓   fail
+  V5: SS_50/100 (single filter)             ✗ -0.18  ✗  -1.2pp ✗   +2pp     ✓   fail
+
+  Variants passing locked criteria: NONE
+
+====================================================================================================
+# Long-history check on ^GSPC 1928-2026 (baseline V1 vs V2 only — savings test)
+====================================================================================================
+
+Fetching ^GSPC + TB3MS...
+
+Period                                   V1 baseline             V2 AS 20/50               Δ
+                                    Sort  CAGR  |DD|        Sort  CAGR  |DD|    ΔSort  ΔCAGR
+  1928-1949 Depression+WWII     0.38 +2.4%  37%  0.53 +4.1%  39%  +0.16  +1.7pp
+  1950-1965 Post-war bull       1.92 +10.0%   9%  1.76 +9.0%   9%  -0.16  -1.0pp
+  1966-1982 Secular bear        1.95 +8.9%   8%  1.78 +8.9%   9%  -0.17  +0.1pp
+  1983-1999 Disinflationary     1.26 +8.5%  14%  1.12 +7.6%  16%  -0.14  -0.9pp
+  2000-2009 Dotcom+GFC          0.22 +1.0%  21%  0.20 +0.9%  25%  -0.02  -0.1pp
+  2010-2017 Post-GFC            0.44 +2.3%  22%  0.18 +0.8%  26%  -0.26  -1.5pp
+  2018-2026 Modern              0.94 +6.0%  18%  0.77 +5.3%  21%  -0.17  -0.7pp
+  FULL 1928-2026                0.97 +5.9%  37%  0.89 +5.8%  39%  -0.08  -0.1pp
