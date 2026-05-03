@@ -1,0 +1,204 @@
+Fetching SPY (yfinance) and VIX (FRED)...
+  SPY: 6609 bars from 2000-01-03 to 2026-04-14
+  VIX: 6640 obs, range 9.1-82.7
+
+############################################################################################
+# TEST 1 — Conservative LEAPS (0.80 delta, 18mo, 60% sizing, roll at 6mo)
+############################################################################################
+
+============================================================================================
+TEST 1 — 2018-2026 (in-sample)
+  delta=0.8, tenor=18mo, sizing=60%, roll-at=180d
+  Period: 2018-01-01 -> 2026-04-15
+============================================================================================
+
+  Final equity:         $    29,244  (start $8,000)
+  Total return:           +265.6%
+  CAGR:                    +16.9%
+  Sortino:                   1.73
+  Sharpe:                    1.13
+  Max drawdown:            -24.5%
+
+  Operational:
+    Trades closed:       46
+    Rolls:               0
+    Filter-off exits:    45
+    LTCG qualified:      0 of 46 (0%)
+    Avg hold (days):     34
+    Days in position:    1578 of 2081 (76%)
+    Worst realized loss: $-1,350
+
+  After-tax outcomes (with realized hold-period mix):
+    Lower bracket (24% STCG, 15% LTCG)          final $    24,146  ret  +201.8%  CAGR +14.3%
+      tax: $    5,099  (LTCG taxable $        0, STCG taxable $   21,244)
+    Higher bracket (37% STCG, 20% LTCG)         final $    21,384  ret  +167.3%  CAGR +12.6%
+      tax: $    7,860  (LTCG taxable $        0, STCG taxable $   21,244)
+
+============================================================================================
+TEST 1 — 2010-2017 (held-out)
+  delta=0.8, tenor=18mo, sizing=60%, roll-at=180d
+  Period: 2010-01-01 -> 2017-12-31
+============================================================================================
+
+  Final equity:         $    13,916  (start $8,000)
+  Total return:            +73.9%
+  CAGR:                     +7.2%
+  Sortino:                   0.76
+  Sharpe:                    0.52
+  Max drawdown:            -50.4%
+
+  Operational:
+    Trades closed:       68
+    Rolls:               0
+    Filter-off exits:    67
+    LTCG qualified:      0 of 68 (0%)
+    Avg hold (days):     25
+    Days in position:    1697 of 2013 (84%)
+    Worst realized loss: $-662
+
+  After-tax outcomes (with realized hold-period mix):
+    Lower bracket (24% STCG, 15% LTCG)          final $    12,496  ret   +56.2%  CAGR  +5.7%
+      tax: $    1,420  (LTCG taxable $        0, STCG taxable $    5,916)
+    Higher bracket (37% STCG, 20% LTCG)         final $    11,727  ret   +46.6%  CAGR  +4.9%
+      tax: $    2,189  (LTCG taxable $        0, STCG taxable $    5,916)
+
+============================================================================================
+TEST 1 — 2000-2009 (regime shift)
+  delta=0.8, tenor=18mo, sizing=60%, roll-at=180d
+  Period: 2000-01-03 -> 2009-12-31
+============================================================================================
+
+  Final equity:         $     9,945  (start $8,000)
+  Total return:            +24.3%
+  CAGR:                     +2.2%
+  Sortino:                   0.32
+  Sharpe:                    0.23
+  Max drawdown:            -34.2%
+
+  Operational:
+    Trades closed:       44
+    Rolls:               0
+    Filter-off exits:    43
+    LTCG qualified:      0 of 44 (0%)
+    Avg hold (days):     28
+    Days in position:    1237 of 2515 (49%)
+    Worst realized loss: $-447
+
+  After-tax outcomes (with realized hold-period mix):
+    Lower bracket (24% STCG, 15% LTCG)          final $     9,478  ret   +18.5%  CAGR  +1.7%
+      tax: $      467  (LTCG taxable $        0, STCG taxable $    1,945)
+    Higher bracket (37% STCG, 20% LTCG)         final $     9,226  ret   +15.3%  CAGR  +1.4%
+      tax: $      720  (LTCG taxable $        0, STCG taxable $    1,945)
+
+############################################################################################
+# TEST 2 — Aggressive LEAPS (0.70 delta, 12mo, 80% sizing, roll at 4mo)
+############################################################################################
+
+============================================================================================
+TEST 2 — 2018-2026 (in-sample)
+  delta=0.7, tenor=12mo, sizing=80%, roll-at=120d
+  Period: 2018-01-01 -> 2026-04-15
+============================================================================================
+
+  Final equity:         $    85,331  (start $8,000)
+  Total return:           +966.6%
+  CAGR:                    +33.1%
+  Sortino:                   1.91
+  Sharpe:                    1.22
+  Max drawdown:            -39.4%
+
+  Operational:
+    Trades closed:       46
+    Rolls:               0
+    Filter-off exits:    45
+    LTCG qualified:      0 of 46 (0%)
+    Avg hold (days):     34
+    Days in position:    1578 of 2081 (76%)
+    Worst realized loss: $-6,759
+
+  After-tax outcomes (with realized hold-period mix):
+    Lower bracket (24% STCG, 15% LTCG)          final $    66,772  ret  +734.6%  CAGR +29.2%
+      tax: $   18,560  (LTCG taxable $        0, STCG taxable $   77,331)
+    Higher bracket (37% STCG, 20% LTCG)         final $    56,719  ret  +609.0%  CAGR +26.7%
+      tax: $   28,613  (LTCG taxable $        0, STCG taxable $   77,331)
+
+============================================================================================
+TEST 2 — 2010-2017 (held-out)
+  delta=0.7, tenor=12mo, sizing=80%, roll-at=120d
+  Period: 2010-01-01 -> 2017-12-31
+============================================================================================
+
+  Final equity:         $    29,217  (start $8,000)
+  Total return:           +265.2%
+  CAGR:                    +17.6%
+  Sortino:                   1.08
+  Sharpe:                    0.72
+  Max drawdown:            -68.7%
+
+  Operational:
+    Trades closed:       68
+    Rolls:               0
+    Filter-off exits:    67
+    LTCG qualified:      0 of 68 (0%)
+    Avg hold (days):     25
+    Days in position:    1697 of 2013 (84%)
+    Worst realized loss: $-1,982
+
+  After-tax outcomes (with realized hold-period mix):
+    Lower bracket (24% STCG, 15% LTCG)          final $    24,125  ret  +201.6%  CAGR +14.8%
+      tax: $    5,092  (LTCG taxable $        0, STCG taxable $   21,217)
+    Higher bracket (37% STCG, 20% LTCG)         final $    21,366  ret  +167.1%  CAGR +13.1%
+      tax: $    7,850  (LTCG taxable $        0, STCG taxable $   21,217)
+
+============================================================================================
+TEST 2 — 2000-2009 (regime shift)
+  delta=0.7, tenor=12mo, sizing=80%, roll-at=120d
+  Period: 2000-01-03 -> 2009-12-31
+============================================================================================
+
+  Final equity:         $    13,013  (start $8,000)
+  Total return:            +62.7%
+  CAGR:                     +5.0%
+  Sortino:                   0.46
+  Sharpe:                    0.32
+  Max drawdown:            -50.8%
+
+  Operational:
+    Trades closed:       44
+    Rolls:               0
+    Filter-off exits:    43
+    LTCG qualified:      0 of 44 (0%)
+    Avg hold (days):     28
+    Days in position:    1237 of 2515 (49%)
+    Worst realized loss: $-960
+
+  After-tax outcomes (with realized hold-period mix):
+    Lower bracket (24% STCG, 15% LTCG)          final $    11,810  ret   +47.6%  CAGR  +4.0%
+      tax: $    1,203  (LTCG taxable $        0, STCG taxable $    5,013)
+    Higher bracket (37% STCG, 20% LTCG)         final $    11,158  ret   +39.5%  CAGR  +3.4%
+      tax: $    1,855  (LTCG taxable $        0, STCG taxable $    5,013)
+
+============================================================================================
+COMPARISON — LEAPS vs shares 1x vs futures 1.5x (lower bracket after-tax CAGR)
+============================================================================================
+
+Period                           Shares 1x    Fut 1.5x    LEAPS T1    LEAPS T2
+  2018-2026 (in-sample)              +18.5%     +30.7%     +14.3%     +29.2%
+  2010-2017 (held-out)               +18.1%     +30.1%      +5.7%     +14.8%
+  2000-2009 (regime shift)           +11.1%     +18.2%      +1.7%      +4.0%
+
+============================================================================================
+DECISION RULE — LEAPS vs shares 1x and vs futures 1.5x
+============================================================================================
+
+  Test 1 2018-2026 in-sample evaluation:
+    Sortino 1.73  vs gate 3.11  (FAIL)
+    Max DD  -24.5%  vs gate 25%  (PASS)
+    CAGR    14.3% vs shares+5pp = 23.5%  (FAIL)
+    vs futures 1.5x (30.7%):  lower
+
+  Test 2 2018-2026 in-sample evaluation:
+    Sortino 1.91  vs gate 3.11  (FAIL)
+    Max DD  -39.4%  vs gate 25%  (FAIL)
+    CAGR    29.2% vs shares+5pp = 23.5%  (PASS)
+    vs futures 1.5x (30.7%):  lower
