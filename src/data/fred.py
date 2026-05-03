@@ -89,3 +89,16 @@ def fetch_vix(start: str, end: str, cache_dir: Path | None = None) -> pd.DataFra
     Index is naive dates (no tz).
     """
     return FredClient(cache_dir=cache_dir).fetch_series("VIXCLS", start, end)
+
+
+def fetch_tbill_3m(start: str, end: str, cache_dir: Path | None = None) -> pd.DataFrame:
+    """3-month Treasury bill rate (DGS3MO series, daily, in percent).
+
+    'close' column is the annualized rate as a PERCENT (e.g., 5.25 means 5.25%).
+    Used as the OFF-period cash yield in BAH-on-trend backtests.
+
+    To convert to a daily compounding factor:
+        annual_rate = df["close"] / 100.0
+        daily_factor = (1 + annual_rate) ** (1/252)
+    """
+    return FredClient(cache_dir=cache_dir).fetch_series("DGS3MO", start, end)

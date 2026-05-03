@@ -1,0 +1,39 @@
+Fetching QQQ + SPY + T-bill...
+
+============================================================================================
+# QQQ IBS-shorts overlay (OFF-regime only) | 2000-01-03 → 2026-04-15
+============================================================================================
+
+  Strategy                          Sortino      CAGR  Max|DD|       Final $     N trades
+  T-bill only                         0.00    +1.9%       0%     $  13,243        --
+  BAH-on-trend long (T-bill OFF)      3.85    +28.0%      11%     $5,281,157        --
+  IBS shorts (OFF only)               0.93    +6.4%      31%     $  41,129       260
+  Combined: BAH long + IBS shorts     3.11    +33.7%      20%     $16,475,383       260
+
+  Total trades: 260  |  Win rate: 63%  |  Avg P&L: $+85  |  Avg return: +0.51%  |  Avg hold: 4.2 days
+
+Bear regime             Window                       N   Win %   Total P&L   Avg Trade  Avg Hold
+  2000-2002 dotcom        2000-03-24→10-09   73    67%  $ +13,725  $    +188    3.8 d
+  2008-2009 GFC           2008-09-01→03-09   15    73%  $  +4,115  $    +274    4.8 d
+  2018-Q4 selloff         2018-10-01→12-24    5    40%  $    +362  $     +72    3.6 d
+  2020 COVID              2020-02-19→04-07    6   100%  $  +5,264  $    +877    1.7 d
+  2022 inflation          2022-01-03→10-13   33    70%  $  +7,922  $    +240    3.5 d
+
+============================================================================================
+# SPY IBS-shorts overlay (OFF-regime only) | 2000-01-03 → 2026-04-15
+============================================================================================
+
+  Strategy                          Sortino      CAGR  Max|DD|       Final $     N trades
+  T-bill only                         0.00    +1.9%       0%     $  13,243        --
+  BAH-on-trend long (T-bill OFF)      4.10    +20.2%       7%     $1,005,483        --
+  IBS shorts (OFF only)               1.32    +7.5%      21%     $  53,074       310
+  Combined: BAH long + IBS shorts     3.36    +26.9%      14%     $4,176,111       310
+
+  Total trades: 310  |  Win rate: 60%  |  Avg P&L: $+106  |  Avg return: +0.51%  |  Avg hold: 4.2 days
+
+Bear regime             Window                       N   Win %   Total P&L   Avg Trade  Avg Hold
+  2000-2002 dotcom        2000-03-24→10-09   78    65%  $  +3,595  $     +46    4.0 d
+  2008-2009 GFC           2008-09-01→03-09   22    86%  $ +14,106  $    +641    3.8 d
+  2018-Q4 selloff         2018-10-01→12-24    6    50%  $    -672  $    -112    4.3 d
+  2020 COVID              2020-02-19→04-07    8    62%  $ +10,824  $  +1,353    3.0 d
+  2022 inflation          2022-01-03→10-13   29    69%  $  +8,587  $    +296    3.6 d
