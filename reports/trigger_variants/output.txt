@@ -1,0 +1,80 @@
+Fetching QQQ, T-bill, VIX...
+  QQQ: 6609 bars; VIX: 6640 obs
+
+####################################################################################################
+# Test A — Faster-trigger variants | QQQ | 2000-01-03 → 2026-04-15 | T-bill OFF
+####################################################################################################
+
+--- Convention 1: flag[t] → ret[t] (MOC, prior framework) ---
+Variant                         Sortino      CAGR  AT CAGR   |DD|  Trans/yr   OFF in    OFF in
+                                                                             decline  recovery
+  v1: 50/200 SMA (baseline)        3.85    +28.0%   +26.7%     11%   6.28/yr     69%      23%
+  v2: 20/100 SMA                   6.48    +40.0%   +38.6%      6%  10.27/yr     63%      27%
+  v3: 50/200 + 10% DD breaker      3.96    +28.3%   +27.0%      7%   6.36/yr     69%      23%
+  v4: 20/50 SMA                    5.73    +38.9%   +37.4%      7%  10.12/yr     61%      28%
+  v5: 50/200 + 2× ATR(20) drop     6.27    +33.9%   +32.5%      5%   8.98/yr     63%      29%
+  v6: 50/200 + VIX > 30 panic      4.09    +28.4%   +27.1%      7%   6.51/yr     68%      24%
+
+--- Convention 2: flag[t-1] → ret[t] (no-lookahead, conservative) ---
+Variant                         Sortino      CAGR  AT CAGR   |DD|  Trans/yr   OFF in    OFF in
+                                                                             decline  recovery
+  v1: 50/200 SMA (baseline)        0.83    +6.3%   +5.4%     22%   6.28/yr     69%      23%
+  v2: 20/100 SMA                   0.75    +5.3%   +4.5%     22%  10.27/yr     63%      27%
+  v3: 50/200 + 10% DD breaker      0.80    +5.9%   +5.1%     22%   6.36/yr     69%      23%
+  v4: 20/50 SMA                    0.59    +4.3%   +3.6%     30%  10.12/yr     61%      28%
+  v5: 50/200 + 2× ATR(20) drop     0.70    +4.6%   +3.8%     22%   8.98/yr     63%      29%
+  v6: 50/200 + VIX > 30 panic      0.80    +5.9%   +5.0%     22%   6.51/yr     68%      24%
+
+####################################################################################################
+# Decline-event drawdown avoidance (BAH max DD vs strategy max DD over event window)
+####################################################################################################
+
+Variant                         2000-2002 dotcom    2008-2009 GFC       March 2020 COVID    2022 inflation      
+                                BAH→Strat (saved)   BAH→Strat (saved)   BAH→Strat (saved)   BAH→Strat (saved)   
+  v1: 50/200 SMA (baseline)           83%→  0% ( +83pp)      44%→  0% ( +44pp)      29%→  9% ( +19pp)      35%→  4% ( +30pp)  
+  v2: 20/100 SMA                      83%→ 15% ( +68pp)      44%→  0% ( +44pp)      29%→  7% ( +22pp)      35%→  9% ( +25pp)  
+  v3: 50/200 + 10% DD breaker         83%→  0% ( +83pp)      44%→  0% ( +44pp)      29%→  9% ( +19pp)      35%→  4% ( +30pp)  
+  v4: 20/50 SMA                       83%→ 30% ( +53pp)      44%→ 10% ( +34pp)      29%→  7% ( +22pp)      35%→  7% ( +27pp)  
+  v5: 50/200 + 2× ATR(20) drop        83%→  0% ( +83pp)      44%→  0% ( +44pp)      29%→  7% ( +22pp)      35%→  4% ( +30pp)  
+  v6: 50/200 + VIX > 30 panic         83%→  0% ( +83pp)      44%→  0% ( +44pp)      29%→  9% ( +19pp)      35%→  4% ( +30pp)  
+
+####################################################################################################
+# Locked decision criteria (all 4 must hold) — applied under BOTH conventions
+# A variant is robust only if it wins under both lookahead (1) and no-lookahead (2)
+####################################################################################################
+
+  Convention 1 (lookahead, MOC)
+    Baseline: Sortino 3.85, AT-CAGR +26.7%, |DD| 11%, Trans/yr 6.28
+    Variant                          ΔSortino   ΔAT-CAGR      ΔDD   TPY≤2x   PASS?
+    v2: 20/100 SMA                  ✓ +2.63  ✓ +11.9pp ✓   -5pp     ✓    WIN
+    v3: 50/200 + 10% DD breaker     ✗ +0.12  ✓  +0.3pp ✓   -4pp     ✓   fail
+    v4: 20/50 SMA                   ✓ +1.88  ✓ +10.7pp ✓   -4pp     ✓    WIN
+    v5: 50/200 + 2× ATR(20) drop    ✓ +2.42  ✓  +5.8pp ✓   -6pp     ✓    WIN
+    v6: 50/200 + VIX > 30 panic     ✗ +0.24  ✓  +0.4pp ✓   -4pp     ✓   fail
+
+  Convention 2 (no-lookahead)
+    Baseline: Sortino 0.83, AT-CAGR +5.4%, |DD| 22%, Trans/yr 6.28
+    Variant                          ΔSortino   ΔAT-CAGR      ΔDD   TPY≤2x   PASS?
+    v2: 20/100 SMA                  ✗ -0.08  ✗  -0.9pp ✓   -1pp     ✓   fail
+    v3: 50/200 + 10% DD breaker     ✗ -0.03  ✗  -0.3pp ✗   +0pp     ✓   fail
+    v4: 20/50 SMA                   ✗ -0.24  ✗  -1.8pp ✗   +8pp     ✓   fail
+    v5: 50/200 + 2× ATR(20) drop    ✗ -0.13  ✗  -1.6pp ✗   -0pp     ✓   fail
+    v6: 50/200 + VIX > 30 panic     ✗ -0.04  ✗  -0.4pp ✗   +0pp     ✓   fail
+
+  Convention 1 winners: ['v2: 20/100 SMA', 'v4: 20/50 SMA', 'v5: 50/200 + 2× ATR(20) drop']
+  Convention 2 winners: NONE
+  Robust winners (both): NONE
+
+####################################################################################################
+# Buy-and-hold sanity check (no-lookahead convention)
+# Does BAH-on-trend still beat straight buy-and-hold on Sortino under Convention 2?
+####################################################################################################
+
+  Vehicle                                   Sortino      CAGR   |DD|         Final $
+  QQQ buy-and-hold (no strategy)             0.58    +7.5%    83%     $    53,074
+  SPY buy-and-hold (benchmark)               0.57    +6.1%    56%     $    38,200
+  BAH-on-trend (Conv 2, no-lookahead)        0.83    +6.3%    22%     $    39,451
+  BAH-on-trend (Conv 1, prior framework)     3.85    +28.0%    11%     $ 5,281,157
+
+  → No variant wins under both conventions.
+    50/200 baseline holds. Lag is inherent to the strategy.
