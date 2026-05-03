@@ -1,0 +1,29 @@
+Fetching QQQ + T-bill...
+
+====================================================================================================
+# QQQ 2000-2026 (modern era, 26 years)
+====================================================================================================
+
+Convention                                Sortino      CAGR  AT-CAGR   |DD|  Trans/yr       Final $
+  Buy-and-hold (no strategy)                 0.57    +7.4%     (n/a)     83%        --  $    52,128
+  Conv 2 (MOC), zero costs                   0.82    +6.2%   +5.3%     22%  12.58/yr  $    38,748
+  Conv 2 (MOC), 1bp slippage/fill            0.81    +6.1%   +5.2%     23%  12.58/yr  $    37,490
+  Conv 2 (MOC), 5bp slippage/fill            0.74    +5.5%   +4.7%     25%  12.58/yr  $    32,853
+  Conv 3 (next-day open), zero costs         0.83    +6.2%   +5.3%     23%  12.58/yr  $    38,791
+  Conv 3 (next-day open), 1bp slippage       0.81    +6.1%   +5.2%     23%  12.58/yr  $    37,532
+  Conv 3 (next-day open), 5bp slippage       0.75    +5.5%   +4.7%     25%  12.58/yr  $    32,890
+
+Fetching ^GSPC + TB3MS for long history...
+
+====================================================================================================
+# ^GSPC 1928-2026 (full 98-year history)
+====================================================================================================
+
+Convention                                Sortino      CAGR  AT-CAGR   |DD|  Trans/yr       Final $
+  Buy-and-hold (no strategy)                 0.57    +6.0%     (n/a)     86%        --  $ 2,262,420
+  Conv 2 (MOC), zero costs                   0.97    +5.9%   +5.6%     37%  11.34/yr  $ 2,205,494
+  Conv 2 (MOC), 1bp slippage/fill            0.96    +5.8%   +5.5%     37%  11.34/yr  $ 1,975,907
+  Conv 2 (MOC), 5bp slippage/fill            0.88    +5.3%   +5.1%     38%  11.34/yr  $ 1,272,803
+  Conv 3 (next-day open), zero costs         0.93    +5.7%   +5.4%     33%  11.34/yr  $ 1,774,188
+  Conv 3 (next-day open), 1bp slippage       0.91    +5.6%   +5.3%     34%  11.34/yr  $ 1,589,463
+  Conv 3 (next-day open), 5bp slippage       0.84    +5.1%   +4.8%     35%  11.34/yr  $ 1,023,778
