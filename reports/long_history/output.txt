@@ -1,0 +1,58 @@
+Fetching ^GSPC + TB3MS...
+  ^GSPC: 24,436 bars, 1928-12-31 → 2026-04-13
+  TB3MS: 1108 obs, 1934-01-01 → 2026-04-01
+  Avg TB3MS over full period: 3.42% annual
+  TB3MS in 1966-1982 (secular bear): 7.07%
+
+##############################################################################################################
+# Long-history validation | ^GSPC (price-only) | Convention 1: flag[t] → ret[t] (MOC, prior framework)
+##############################################################################################################
+
+Period                                      Strategy              BAH-only             Lift
+                                   Sort  CAGR   |DD|     Sort  CAGR   |DD|     ΔSort  ΔCAGR
+  1928-1949 Depression+WWII       2.73 +17.7%  13%  0.11 -1.8%  86%  +2.63 +19.5pp
+  1950-1965 Post-war bull         4.84 +20.5%   6%  1.46 +11.3%  28%  +3.38  +9.2pp
+  1966-1982 Secular bear          3.70 +15.7%   7%  0.37 +2.5%  48%  +3.33 +13.2pp
+  1983-1999 Disinflationary       4.70 +29.5%   6%  1.34 +14.9%  34%  +3.36 +14.6pp
+  2000-2009 Dotcom+GFC            3.48 +16.3%   6%  -0.01 -2.6%  57%  +3.49 +19.0pp
+  2010-2017 Post-GFC              4.43 +22.0%   4%  1.14 +11.4%  19%  +3.29 +10.7pp
+  2018-2026 Modern                4.24 +24.9%   7%  0.96 +12.0%  34%  +3.28 +12.9pp
+  FULL 1928-2026                  3.80 +20.6%  13%  0.57 +6.0%  86%  +3.23 +14.6pp
+
+##############################################################################################################
+# Long-history validation | ^GSPC (price-only) | Convention 2: flag[t-1] → ret[t] (no-lookahead, honest)
+##############################################################################################################
+
+Period                                      Strategy              BAH-only             Lift
+                                   Sort  CAGR   |DD|     Sort  CAGR   |DD|     ΔSort  ΔCAGR
+  1928-1949 Depression+WWII       0.38 +2.4%  37%  0.11 -1.8%  86%  +0.27  +4.2pp
+  1950-1965 Post-war bull         1.92 +10.0%   9%  1.46 +11.3%  28%  +0.46  -1.3pp
+  1966-1982 Secular bear          1.95 +8.9%   8%  0.37 +2.5%  48%  +1.58  +6.4pp
+  1983-1999 Disinflationary       1.26 +8.5%  14%  1.34 +14.9%  34%  -0.08  -6.4pp
+  2000-2009 Dotcom+GFC            0.22 +1.0%  21%  -0.01 -2.6%  57%  +0.23  +3.6pp
+  2010-2017 Post-GFC              0.44 +2.3%  22%  1.14 +11.4%  19%  -0.70  -9.0pp
+  2018-2026 Modern                0.94 +6.0%  18%  0.96 +12.0%  34%  -0.02  -6.0pp
+  FULL 1928-2026                  0.97 +5.9%  37%  0.57 +6.0%  86%  +0.40  -0.0pp
+
+##############################################################################################################
+# Drawdown avoidance per decline event (Convention 2, honest)
+# BAH max DD over event window vs strategy max DD
+##############################################################################################################
+
+Event                        BAH |DD|   Strat |DD|     Saved
+  1929 Crash                       86%           0%     +86pp
+  1973-74 oil bear                 48%           3%     +45pp
+  1987 Black Monday                34%          10%     +24pp
+  2000-2002 dotcom                 49%          18%     +31pp
+  2008-2009 GFC                    47%           0%     +47pp
+  March 2020 COVID                 34%           5%     +29pp
+  2022 inflation                   25%           4%     +22pp
+
+##############################################################################################################
+# Secular-bear focus: 1966-1982 vs all other periods
+# Does the BAH-on-trend rule still beat BAH-only on Sortino during stagflation?
+##############################################################################################################
+
+  Convention                          Strategy              BAH-only               Verdict
+  Conv 1 (lookahead)      3.70 +15.7%   7%  0.37 +2.5%  48%        Lift confirmed
+  Conv 2 (no-lookahead)   1.95 +8.9%   8%  0.37 +2.5%  48%        Lift confirmed
