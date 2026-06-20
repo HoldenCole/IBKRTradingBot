@@ -32,10 +32,16 @@ logger.add(sys.stderr, level="INFO")
 import numpy as np
 import pandas as pd
 
-from src.data.databento_loader import DatabentoLoader, CME_COMMODITY_ROOTS
+from src.data.databento_loader import (
+    DatabentoLoader, CME_COMMODITY_ROOTS, collapse_to_trade_date,
+)
 
 START = "2010-06-06"
 END = "2026-06-20"
+
+# Milestone 1 validates the front-month series. Second month (.c.1), needed
+# only for Panama back-adjustment, is pulled in the back-adjustment milestone.
+PULL_SECOND_MONTH = False
 
 # Rough plausibility windows for the latest close (sanity only, not strict).
 PLAUSIBLE_LATEST = {
@@ -51,7 +57,14 @@ def validate(root: str, label: str, df0: pd.DataFrame, df1: pd.DataFrame) -> dic
         res["status"] = "NO DATA"
         return res
 
+    # Raw (as-fetched) vs trade-date-collapsed (Sunday sessions merged)
+    res["n_raw"] = len(df0)
+    res["n_sunday_raw"] = int((df0.index.dayofweek == 6).sum())
+    df0 = collapse_to_trade_date(df0)
     res["n_bars"] = len(df0)
+    res["n_sunday_post"] = int((df0.index.dayofweek == 6).sum())
+    yrs = (df0.index[-1] - df0.index[0]).days / 365.25
+    res["bars_per_year"] = len(df0) / yrs
     res["first"] = df0.index[0].date().isoformat()
     res["last"] = df0.index[-1].date().isoformat()
     res["last_close"] = float(df0["close"].iloc[-1])
@@ -93,7 +106,8 @@ def main() -> int:
 
     for root, label in CME_COMMODITY_ROOTS.items():
         df0 = loader.continuous(root, depth=0, start=START, end=END)
-        df1 = loader.continuous(root, depth=1, start=START, end=END)
+        df1 = (loader.continuous(root, depth=1, start=START, end=END)
+               if PULL_SECOND_MONTH else pd.DataFrame())
         r = validate(root, label, df0, df1)
         rows.append(r)
         logger.info(f"{root:<3} {label:<18} bars={r.get('n_bars','-'):>5} "
@@ -103,16 +117,18 @@ def main() -> int:
     print("\n" + "=" * 104)
     print("# Databento CME commodity pull — validation summary")
     print("=" * 104)
-    print(f"\n{'Root':<5}{'Label':<18}{'Bars':>6}{'C1':>6}  {'First':>10}  {'Last':>10}  "
-          f"{'LastClose':>10} {'Px?':>4} {'>7%days':>8} {'MaxDn':>8} {'Mono':>5}")
+    print(f"\n{'Root':<5}{'Label':<18}{'Raw':>6}{'Bars':>6}{'b/yr':>6}{'Sun':>5}  "
+          f"{'First':>10}  {'Last':>10}  {'LastClose':>10} {'Px?':>4} "
+          f"{'>7%d':>6} {'MaxDn':>7} {'Mono':>5}")
     for r in rows:
         if r.get("status") == "NO DATA":
             print(f"{r['root']:<5}{r['label']:<18}  NO DATA")
             continue
         pxok = "ok" if r["price_ok"] else ("?" if r["price_ok"] is None else "BAD")
-        print(f"{r['root']:<5}{r['label']:<18}{r['n_bars']:>6}{r['c1_bars']:>6}  "
+        print(f"{r['root']:<5}{r['label']:<18}{r['n_raw']:>6}{r['n_bars']:>6}"
+              f"{r['bars_per_year']:>6.0f}{r['n_sunday_post']:>5}  "
               f"{r['first']:>10}  {r['last']:>10}  {r['last_close']:>10.2f} {pxok:>4} "
-              f"{r['pct_days_gt7']:>7.1f}% {r['max_dn']:>+7.1%} "
+              f"{r['pct_days_gt7']:>5.1f}% {r['max_dn']:>+7.1%} "
               f"{'yes' if r['monotonic_dates'] else 'NO':>5}")
 
     # ---- Hygiene flags ----
@@ -125,7 +141,8 @@ def main() -> int:
         if r["n_zero_close"]: flags.append(f"{r['n_zero_close']} zero/neg close")
         if r["n_dupe_dates"]: flags.append(f"{r['n_dupe_dates']} dupe dates")
         if not r["monotonic_dates"]: flags.append("non-monotonic dates")
-        if r["c1_bars"] == 0: flags.append("NO second-month series")
+        if PULL_SECOND_MONTH and r["c1_bars"] == 0:
+            flags.append("NO second-month series")
         print(f"  {r['root']:<5} {'OK' if not flags else '; '.join(flags)}")
 
     # ---- CL 2020 episode ----

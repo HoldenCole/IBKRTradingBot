@@ -60,6 +60,59 @@ GLBX = "GLBX.MDP3"
 _GLBX_START = "2010-06-06"   # dataset inception
 
 
+def _six_month_windows(start: str, end: str) -> list[tuple[str, str]]:
+    """Split [start, end] into consecutive <=6-month [cs, ce) windows.
+
+    Databento streaming get_range drops on long ranges from this environment;
+    6-month chunks pull reliably. Windows are half-open in effect because the
+    loader dedups overlapping boundary dates after concatenation.
+    """
+    s = pd.Timestamp(start)
+    e = pd.Timestamp(end)
+    out: list[tuple[str, str]] = []
+    cur = s
+    while cur < e:
+        nxt = min(cur + pd.DateOffset(months=6), e)
+        out.append((cur.strftime("%Y-%m-%d"), nxt.strftime("%Y-%m-%d")))
+        cur = nxt
+    return out
+
+
+def collapse_to_trade_date(df: pd.DataFrame) -> pd.DataFrame:
+    """Collapse CME Sunday-evening sessions into the following trade date.
+
+    Databento `ohlcv-1d` buckets by UTC calendar day, so the CME Sunday-evening
+    electronic session (which belongs to Monday's CME trade date) appears as a
+    separate, tiny-volume Sunday bar. Left in place these ~partial-session bars
+    inflate the calendar (~310 bars/yr vs ~252) and distort SMA/Donchian/
+    momentum signals and realized-vol estimates.
+
+    Fix: reassign each Sunday (dow=6) bar's date to date+1 (Monday), then
+    aggregate any same-date bars OHLCV-correctly:
+        open = first, high = max, low = min, close = last, volume = sum
+    Holiday-Monday edge cases (Sunday session but Monday closed) leave the
+    merged bar labelled Monday rather than the next session — a handful of
+    days over 16 years; documented and immaterial for daily trend signals.
+
+    Returns a faithful one-bar-per-trade-date daily series. Applied on load;
+    the raw cache stays as-fetched.
+    """
+    if df is None or df.empty:
+        return df
+    d = df.copy()
+    dow = d.index.dayofweek
+    new_idx = d.index.where(dow != 6, d.index + pd.Timedelta(days=1))
+    d.index = pd.DatetimeIndex(new_idx)
+    d.index.name = "date"
+    agg = {}
+    for c, fn in (("open", "first"), ("high", "max"), ("low", "min"),
+                  ("close", "last"), ("volume", "sum")):
+        if c in d.columns:
+            agg[c] = fn
+    out = d.groupby(d.index).agg(agg).sort_index()
+    return out
+
+
 def _read_key(key_file: Path | None = None) -> str:
     """Load the Databento API key from env or the gitignored key file."""
     import os
@@ -117,19 +170,37 @@ class DatabentoLoader:
             raise ImportError("databento not installed: pip install databento") from exc
 
         client = db.Historical(_read_key(self.key_file))
-        logger.info(f"Databento fetch {symbol} {start}->{end} ({dataset})")
-        data = client.timeseries.get_range(
-            dataset=dataset,
-            symbols=[symbol],
-            stype_in="continuous",
-            schema="ohlcv-1d",
-            start=start,
-            end=end,
-        )
-        df = data.to_df()
-        out = self._normalize(df)
+        # Streaming get_range drops the connection on long ranges from this
+        # environment (works <=6mo, fails at 1yr with "Error streaming
+        # response"). Chunk into <=6-month windows with retries, concatenate.
+        frames = []
+        for cs, ce in _six_month_windows(start, end):
+            frames.append(self._fetch_chunk(client, dataset, symbol, cs, ce))
+        out = (pd.concat(frames) if frames else pd.DataFrame())
+        out = self._normalize(out) if not out.empty else \
+            pd.DataFrame(columns=["open", "high", "low", "close", "volume"])
         out.to_csv(cache)
         return out
+
+    @staticmethod
+    def _fetch_chunk(client, dataset: str, symbol: str, start: str, end: str,
+                     retries: int = 3) -> pd.DataFrame:
+        last_exc = None
+        for attempt in range(1, retries + 1):
+            try:
+                data = client.timeseries.get_range(
+                    dataset=dataset, symbols=[symbol], stype_in="continuous",
+                    schema="ohlcv-1d", start=start, end=end,
+                )
+                df = data.to_df()
+                logger.info(f"  {symbol} {start}->{end}: {len(df)} bars")
+                return df
+            except Exception as exc:  # streaming error -> retry
+                last_exc = exc
+                logger.warning(f"  {symbol} {start}->{end} attempt {attempt} "
+                               f"failed: {repr(exc)[:80]}")
+        raise RuntimeError(f"chunk {symbol} {start}->{end} failed after "
+                           f"{retries} tries: {last_exc!r}")
 
     @staticmethod
     def _normalize(df: pd.DataFrame) -> pd.DataFrame:
