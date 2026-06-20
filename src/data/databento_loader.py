@@ -106,7 +106,7 @@ def collapse_to_trade_date(df: pd.DataFrame) -> pd.DataFrame:
     d.index.name = "date"
     agg = {}
     for c, fn in (("open", "first"), ("high", "max"), ("low", "min"),
-                  ("close", "last"), ("volume", "sum")):
+                  ("close", "last"), ("volume", "sum"), ("instrument_id", "last")):
         if c in d.columns:
             agg[c] = fn
     out = d.groupby(d.index).agg(agg).sort_index()
@@ -218,7 +218,10 @@ class DatabentoLoader:
             idx = pd.to_datetime(d.index)
         d.index = pd.DatetimeIndex(idx).tz_localize(None).normalize()
         d.index.name = "date"
-        cols = [c for c in ["open", "high", "low", "close", "volume"] if c in d.columns]
+        # Keep instrument_id: roll detection (Panama back-adjustment) needs to
+        # know which underlying contract each bar belongs to.
+        cols = [c for c in ["open", "high", "low", "close", "volume", "instrument_id"]
+                if c in d.columns]
         d = d[cols]
         d = d[~d.index.duplicated(keep="last")].sort_index()
         return d
@@ -226,4 +229,6 @@ class DatabentoLoader:
     @staticmethod
     def _load_csv(path: Path) -> pd.DataFrame:
         df = pd.read_csv(path, parse_dates=["date"]).set_index("date")
-        return df[[c for c in ["open", "high", "low", "close", "volume"] if c in df.columns]]
+        cols = [c for c in ["open", "high", "low", "close", "volume", "instrument_id"]
+                if c in df.columns]
+        return df[cols]
