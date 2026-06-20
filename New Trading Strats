@@ -1,0 +1,193 @@
+Commodity Trend Strategy Research — Project Spec
+Purpose
+Evaluate whether trend-following strategies on commodity futures produce a viable trading strategy meeting absolute-return-with-bounded-drawdown criteria. The output is a go/no-go decision on commodity trend deployment, plus a clear understanding of which trend variants work and which don't.
+This is research, not deployment. The indices strategy remains the locked baseline; commodity trend either earns its place as an addition or replacement, or it doesn't.
+What we're testing
+Three trend strategy variants on the same commodity basket. The variants are designed to test different hypotheses about where trend-following edge lives in commodities. Comparing them tells us which family of trend signals matters, not just whether trend works overall.
+Commodity basket (locked)
+12 instruments across 6 sectors:
+Energy:
+
+CL — WTI crude oil
+BZ — Brent crude oil
+NG — natural gas
+HO — heating oil (ULSD)
+RB — RBOB gasoline
+
+Precious metals:
+
+GC — gold
+SI — silver
+
+Industrial metals:
+
+HG — copper
+
+Grains:
+
+ZC — corn
+ZS — soybeans
+ZW — wheat
+
+Softs:
+
+SB — sugar
+KC — coffee
+
+(That's 13. If data quality is an issue for any of these over the 26-year window, document and substitute. Don't drop the instrument silently.)
+Strategy variants
+All three use the same 12-instrument basket, same vol-targeted sizing, same T-bill allocation for capital on currently-OFF instruments. They differ only in the trend signal logic.
+Variant 1: Classic 50/200 SMA crossover
+Same logic as the indices strategy. Each instrument independently:
+
+ON when close > SMA(50) AND SMA(50) > SMA(200)
+OFF otherwise
+
+This is the baseline. It's well-validated on equity indices. The question for commodities is whether the same simple rule generalizes.
+Variant 2: Donchian channel breakout (CTA-classic)
+The original Turtle Trader signal, adapted for daily bars:
+
+ON when close > highest close of trailing 100 days
+OFF when close < lowest close of trailing 50 days
+Asymmetric: slower exit than entry — gives positions room to breathe
+
+This is the classic CTA trend signal that produced the 50-year track record of commodity trend-following. It catches different things than MA crossovers:
+
+Breakouts to new highs (MA crossovers lag)
+Asymmetric trend persistence (long trends in commodities can run further than equity trends)
+
+Testing this variant answers: is the right signal for commodities different from what works on equities?
+Variant 3: Vol-adjusted momentum
+A momentum signal that explicitly accounts for volatility:
+
+Compute 12-month return divided by 12-month realized volatility (Sharpe-style)
+ON when this ratio is in the top 50% of its trailing 24-month range
+OFF otherwise
+
+This is the academic version of trend-following, used in most published research (Moskowitz, Ooi, Pedersen "Time Series Momentum"). It's different from the others because it considers magnitude relative to volatility, not just direction.
+Testing this variant answers: does sophisticated trend signal beat simple price-based rules?
+Position sizing (same for all three variants)
+Vol-targeted, applied identically across variants so the comparison isolates signal differences.
+
+Compute each instrument's 60-day realized volatility daily
+Target portfolio annualized volatility: 15%
+Each ON position sized so its contribution to portfolio vol is target_vol / (N_on × instrument_vol), where N_on is the count of currently-ON positions
+Capital not deployed to commodity positions goes to T-bills earning current rates
+Recompute position sizes daily as vol estimates change
+Cap individual position size at 25% of portfolio to prevent single-instrument concentration
+
+Capital allocation assumption for backtest
+Model as if the strategy has its own dedicated allocation, not competing with the indices strategy. Start with $100k notional (large enough that integer-contract constraints don't dominate results). We'll address actual capital allocation between strategies after we see results.
+Required infrastructure
+Honest scoping needed before starting:
+
+Continuous contract data for 13 commodities, 2000-2026. Back-adjusted methodology, consistent across instruments. Source likely CME for US contracts, ICE for Brent. Verify availability and data quality before committing. Some specific contracts (BZ Brent on CME, RBOB pre-2006) may have shorter histories — document where data starts for each.
+Roll cost modeling per commodity. Each instrument rolls at different frequencies:
+
+
+Energy contracts (CL, BZ, NG, HO, RB): typically monthly
+Metals (GC, SI, HG): every 2 months
+Grains (ZC, ZS, ZW): roll around contract expiry (3-4 month cycles)
+Softs (SB, KC): variable
+
+Use realistic per-roll bid-ask spread estimates from historical CME data. Energy rolls cost more (~5-10 bps), metals less (~2-5 bps).
+
+Vol estimation module. 60-day rolling realized vol per instrument. Standard calculation: annualized standard deviation of daily log returns.
+Multi-position book management. Track up to 13 simultaneous positions with individual states (ON/OFF), sizes, P&L, vol estimates. Portfolio-level aggregation.
+Per-variant trend signal modules. Three separate signal generators (MA crossover, Donchian, vol-adjusted momentum), each producing daily ON/OFF flags per instrument.
+Benchmark for comparison. Equal-weight commodity basket buy-and-hold over same period. This is the strategy's benchmark — does trend-following beat passive commodity exposure?
+
+Backtest requirements
+Standard framework, 26-year backtest (2000-2026), three sub-periods:
+
+In-sample: 2018-2026
+Held-out: 2010-2017
+Regime-shift held-out: 2000-2009
+
+For each variant, report:
+Headline metrics:
+
+Total return, CAGR, Sortino, Sharpe, max drawdown
+After-tax CAGR (Section 1256 60/40 treatment for futures)
+Win rate at trade level
+
+Comparison to baselines:
+
+Lift over equal-weight commodity basket buy-and-hold
+Lift over indices strategy (the current locked baseline) for absolute return and Sortino
+
+Diversification analysis:
+
+Correlation of variant returns with indices strategy returns
+Correlation matrix across the three variants (do they agree or trade different things?)
+Per-sector contribution to total P&L
+Behavior during specific equity bear regimes: 2000-2002, 2008, 2020-March, 2022
+
+Diagnostic data:
+
+Per-instrument Sortino and total contribution
+Average position count over time (how diversified is the book at any given moment?)
+Per-sub-period results (does any variant only work in one regime?)
+Roll cost impact (what fraction of gross returns does rolling consume?)
+
+Decision criteria (locked before seeing results)
+Each variant gets evaluated independently against these criteria:
+Tier A (clear deployment candidate):
+
+Sortino > 1.5 across full 26-year sample
+Sortino > 1.0 in each sub-period
+Correlation with indices strategy < 0.3
+Max drawdown < 25%
+Robust across at least 4 of 6 sectors
+Lift over equal-weight commodity buy-and-hold > 0.5 Sortino
+
+Tier B (deployment candidate with caveats):
+
+Sortino > 1.0 across full sample
+Sortino > 0.7 in each sub-period
+Correlation with indices strategy < 0.4
+Max drawdown < 30%
+Robust across at least 3 sectors
+Lift over commodity buy-and-hold > 0.3 Sortino
+
+Tier C (interesting but not deployment-ready):
+
+Sortino > 0.7 across full sample
+Either fails one Tier B criterion or shows period-specific weakness
+
+Tier D: Anything else. Eliminated.
+What we're looking for in the comparison
+The three variants are designed to triangulate:
+
+If all three pass and produce similar results with high cross-variant correlation → trend-following on commodities is robust, signal choice doesn't matter much, pick the simplest one (Variant 1)
+If Variants 2 and 3 pass but Variant 1 fails → simple price-based trend doesn't capture commodity dynamics; need more sophisticated signals
+If Variant 1 passes but 2 and 3 fail → don't add complexity, simple wins
+If variants pass in different sectors (e.g., Variant 1 works in energy, Variant 2 in metals) → may need hybrid signal logic, or commodities aren't homogeneous enough for one rule
+If all three fail → commodity trend doesn't work in our sample as we've specified it; either the universe is wrong or the trend approach doesn't transfer
+
+The deliverable is interpretable findings, not just headline numbers.
+What we are NOT doing
+
+No parameter tuning. The signal definitions are locked. If 50/200 doesn't work for Variant 1, we don't try 30/100 or 70/250. The verdict is the verdict.
+No basket modification mid-test. The 13 instruments are locked. We don't drop the bad performers to make the basket look better.
+No regime overlays in this first round. We're testing pure trend signals. Regime filters can come later if a variant earns it.
+No leverage beyond the vol-targeting. The portfolio targets 15% vol; we don't lever to 30% to see if returns scale.
+
+Sequencing
+
+Data acquisition and infrastructure (estimate honestly — 1-2 weeks?)
+Variant 1 implementation and backtest
+Variant 2 implementation and backtest
+Variant 3 implementation and backtest
+Comparative analysis and writeup
+Decision: deploy, refine, or reject
+
+Variants run sequentially, not in parallel, so any infrastructure issues surface early and don't compound across all three.
+What to report back before starting
+Before writing any code:
+
+Data availability check for all 13 instruments across 2000-2026. Document where each starts.
+Total engineering effort estimate, broken down by component (data, vol module, position management, three signal modules, backtest engine extensions, reporting).
+Any methodology questions or concerns about the spec.
+
+Don't start until I confirm scope is reasonable. If the total estimate is >6 weeks, we discuss reducing scope before committing.
