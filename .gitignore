@@ -28,3 +28,8 @@ htmlcov/
 .idea/
 .vscode/
 data/intraday/
+
+# Licensed market data — never commit (Databento / Norgate redistribution restricted)
+data/commodities/
+# Secrets — API keys
+.secrets/
