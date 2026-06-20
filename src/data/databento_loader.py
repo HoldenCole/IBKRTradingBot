@@ -146,7 +146,7 @@ class DatabentoLoader:
         depth: int = 0,
         start: str = _GLBX_START,
         end: str = "2026-06-20",
-        roll: str = "c",
+        roll: str = "v",
         dataset: str = GLBX,
         force: bool = False,
     ) -> pd.DataFrame:
@@ -154,7 +154,11 @@ class DatabentoLoader:
 
         root  : CME root symbol, e.g. "CL"
         depth : 0 = front month, 1 = second month (needed for back-adjustment)
-        roll  : "c" calendar / "v" volume / "n" open-interest
+        roll  : "v" volume (default) / "c" calendar / "n" open-interest.
+                Volume-roll follows the most-liquid contract, which trades
+                every session. Calendar-roll lands on illiquid metal months
+                (silver Mar/May/Jul/Sep/Dec) producing no-trade gaps (SI lost
+                ~30% of days). Volume-roll is also the standard CTA convention.
         Returns date-indexed DataFrame [open, high, low, close, volume].
         Cached to CSV; pass force=True to re-download.
         """

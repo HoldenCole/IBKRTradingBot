@@ -46,7 +46,7 @@ PULL_SECOND_MONTH = False
 # Rough plausibility windows for the latest close (sanity only, not strict).
 PLAUSIBLE_LATEST = {
     "CL": (40, 130), "NG": (1, 15), "HO": (1.0, 5.0), "RB": (1.0, 5.0),
-    "GC": (1000, 4000), "SI": (10, 60), "HG": (2.0, 7.0),
+    "GC": (1000, 5000), "SI": (10, 90), "HG": (2.0, 8.0),
     "ZC": (300, 900), "ZS": (700, 2000), "ZW": (350, 1300),
 }
 
