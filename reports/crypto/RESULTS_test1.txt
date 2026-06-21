@@ -1,0 +1,51 @@
+================================================================================================
+# CRYPTO TEST 1 — tame-the-drawdown beta, 50/200 trend (equity-validated rule)
+# Costs: IBIT/ETHA 0.25% expense + 10bps/transition; T-bill 3% OFF; no look-ahead
+================================================================================================
+
+================================================================================================
+# BTC
+================================================================================================
+                            CAGR   MaxDD  Calmar  Sortino    Vol
+  buy-and-hold             +52%     83%    0.63     1.42    67%
+  trend 50/200 (net)       +59%     43%    1.38     2.06    42%
+  ON 39% of days | 10.8 transitions/yr | cost drag ~1.18%/yr
+  After-tax CAGR (37% ST floor): trend +53% vs BAH +46%
+
+  Era                    BAH Calmar  Trend Calmar  Trend MaxDD  improve?
+  2015-2016 recovery           1.69          2.41         25%       yes
+  2017 ICO boom               38.55         15.24         38%        no
+  2018 bear                   -0.90         -0.45         33%       yes
+  2019-2020 chop               1.34          0.62         43%        no
+  2020-21 retail boom          5.96          8.79         32%       yes
+  2022 contagion              -0.96          0.00          0%       yes
+  2023+ ETF era                0.93          0.88         26%        no
+
+  Robustness: improved Calmar in 4/7 eras; bears cut: True
+  >>> BTC TIER B <<<  (Calmar 1.38, MaxDD 43%, CAGR +59% vs BAH +52%)
+
+================================================================================================
+# ETH
+================================================================================================
+                            CAGR   MaxDD  Calmar  Sortino    Vol
+  buy-and-hold             +22%     94%    0.23     0.96    85%
+  trend 50/200 (net)       +34%     51%    0.67     1.35    44%
+  ON 29% of days | 11.0 transitions/yr | cost drag ~1.18%/yr
+  After-tax CAGR (37% ST floor): trend +28% vs BAH +17%
+
+  Era                    BAH Calmar  Trend Calmar  Trend MaxDD  improve?
+  2017 ICO boom             1997.45          0.00          0%        no
+  2018 bear                   -0.88          0.00          0%       yes
+  2019-2020 chop               1.14          0.89         38%        no
+  2020-21 retail boom         13.87          6.23         51%        no
+  2022 contagion              -0.91          0.00          0%       yes
+  2023+ ETF era                0.17          0.30         49%       yes
+
+  Robustness: improved Calmar in 3/7 eras; bears cut: True
+  >>> ETH TIER C <<<  (Calmar 0.67, MaxDD 51%, CAGR +34% vs BAH +22%)
+
+================================================================================================
+# Equity correlation (REPORTED, not gated — crypto's job here isn't diversification)
+================================================================================================
+  BTC trend strategy vs QQQ: +0.07
+  ETH trend strategy vs QQQ: +0.11
