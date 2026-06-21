@@ -65,8 +65,11 @@ def main() -> int:
     # norgatedata talks to a local service the NDU app provides. If NDU
     # isn't running we get a connection error on the first call.
     try:
-        # A cheap probe: ask for the data range of WTI crude.
-        nd.last_price_update("&CL_CCB")
+        # A cheap probe: ask for the last update time of WTI crude.
+        # NOTE: requires a PAID Norgate subscription for pre-2010 history —
+        # the free trial is hard-capped at 2 years (verified 2026-06-21), so
+        # this script is parked until/unless the subscription is upgraded.
+        nd.last_price_update_time("&CL_CCB")
     except Exception as exc:
         msg = repr(exc)[:200]
         print("ERROR: cannot reach Norgate Data via norgatedata.")
