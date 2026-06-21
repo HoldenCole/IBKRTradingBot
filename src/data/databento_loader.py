@@ -34,6 +34,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 from loguru import logger
 
@@ -111,6 +112,52 @@ def collapse_to_trade_date(df: pd.DataFrame) -> pd.DataFrame:
             agg[c] = fn
     out = d.groupby(d.index).agg(agg).sort_index()
     return out
+
+
+def panama_adjust(v0: pd.DataFrame, v1: pd.DataFrame) -> pd.DataFrame:
+    """Panama (difference) back-adjustment of a volume-roll continuous series.
+
+    Reusable across futures classes (commodities, bonds, FX). Detects rolls
+    from the front-month instrument_id changing; the gap at each roll is the
+    same-day old-front minus new-front (v0.close[t-1] - v1.close[t-1]); the
+    cumulative future gaps are subtracted from history so the series is
+    continuous at each seam and anchored to the present (latest close
+    unchanged). Difference (not ratio) adjustment — sign-safe.
+
+    Both v0 and v1 must carry 'instrument_id' (the loader preserves it) and be
+    trade-date collapsed. Returns the adjusted OHLC(V) frame.
+    """
+    if "instrument_id" not in v0.columns:
+        raise ValueError("v0 needs instrument_id for roll detection")
+    common = v0.index
+    iid = v0["instrument_id"]
+    rolls = common[iid.ne(iid.shift(1)) & iid.shift(1).notna()]
+    v1c = v1["close"].reindex(common)
+
+    gaps = {}
+    for t in rolls:
+        pos = common.get_loc(t)
+        if pos == 0:
+            continue
+        tm1 = common[pos - 1]
+        nf = v1c.loc[tm1]
+        if pd.isna(nf):
+            continue
+        gaps[t] = float(v0["close"].iloc[pos - 1]) - float(nf)
+
+    if not gaps:
+        return v0.copy()
+    gap_s = pd.Series(gaps).sort_index()
+    offs = np.zeros(len(common))
+    for k in range(len(common)):
+        offs[k] = float(gap_s[gap_s.index > common[k]].sum())
+    offset = pd.Series(offs, index=common)
+
+    adj = v0.copy()
+    for col in ("open", "high", "low", "close"):
+        if col in adj.columns:
+            adj[col] = adj[col] - offset
+    return adj
 
 
 def _read_key(key_file: Path | None = None) -> str:
