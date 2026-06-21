@@ -154,6 +154,90 @@ def vol_adj_momentum(
 
 
 # --------------------------------------------------------------------------
+# V3-LS — Long/short vol-adjusted momentum (Test 1, second pass)
+# --------------------------------------------------------------------------
+def vol_adj_momentum_ls(
+    returns: pd.DataFrame,
+    ret_window: int = 252,
+    range_window: int = 504,
+    annualization: int = 252,
+    long_q: float = 2.0 / 3.0,
+    short_q: float = 1.0 / 3.0,
+) -> pd.DataFrame:
+    """Long/short vol-adjusted momentum as a DIRECTION frame (-1/0/+1).
+
+    Same ratio as the long-flat V3:
+        ratio = 12m return / 12m annualized vol
+    Gated on the trailing 24-month [min,max] range of the ratio:
+        +1 (LONG)  when ratio > min + long_q * (max-min)   [top 1/3]
+        -1 (SHORT) when ratio < min + short_q * (max-min)   [bottom 1/3]
+         0 (FLAT)  in the middle third
+    Computed per-instrument (NaN-safe via _per_instrument with object dtype).
+    """
+    def _one(r: pd.Series) -> pd.Series:
+        tri = (1.0 + r).cumprod()
+        ret_12m = tri / tri.shift(ret_window) - 1.0
+        vol_12m = r.rolling(ret_window, min_periods=int(ret_window * 0.8)).std() \
+            * np.sqrt(annualization)
+        ratio = ret_12m / vol_12m.replace(0.0, np.nan)
+        lo = ratio.rolling(range_window, min_periods=int(range_window * 0.8)).min()
+        hi = ratio.rolling(range_window, min_periods=int(range_window * 0.8)).max()
+        rng = (hi - lo)
+        up = lo + long_q * rng
+        dn = lo + short_q * rng
+        dir_ = pd.Series(0.0, index=r.index)
+        dir_[ratio > up] = 1.0
+        dir_[ratio < dn] = -1.0
+        # blank where thresholds undefined
+        dir_[rng.isna() | ratio.isna()] = 0.0
+        return dir_
+
+    out = {}
+    for col in returns.columns:
+        s = returns[col].dropna()
+        if s.empty:
+            out[col] = pd.Series(0.0, index=returns.index)
+            continue
+        # direction is numeric; carry-forward on non-trading days, fill 0 in warmup
+        d = _one(s).reindex(returns.index).ffill().fillna(0.0)
+        out[col] = d
+    return pd.DataFrame(out, index=returns.index)
+
+
+# --------------------------------------------------------------------------
+# Carry — term-structure roll-yield signal (Test 2, second pass)
+# --------------------------------------------------------------------------
+def carry_signal(
+    front_close: pd.DataFrame,
+    second_close: pd.DataFrame,
+    short_threshold_monthly: float = -0.005,
+) -> pd.DataFrame:
+    """Term-structure carry as a DIRECTION frame (-1/0/+1).
+
+    ratio = (front - second) / front     (positive => backwardation)
+      +1 (LONG)  when ratio > 0           (backwardation, positive roll yield)
+      -1 (SHORT) when ratio < short_threshold (deep contango)
+       0 (FLAT)  otherwise
+
+    The threshold is a per-period (≈monthly) carry; front/second are adjacent
+    delivery months so the raw ratio is already ~monthly carry. Computed
+    per-instrument; carried forward on non-trading days.
+    """
+    common = front_close.columns.intersection(second_close.columns)
+    out = {}
+    for s in common:
+        f = front_close[s]
+        sec = second_close[s].reindex(f.index)
+        ratio = (f - sec) / f.replace(0.0, np.nan)
+        d = pd.Series(0.0, index=f.index)
+        d[ratio > 0] = 1.0
+        d[ratio < short_threshold_monthly] = -1.0
+        d = d.where(ratio.notna(), 0.0)
+        out[s] = d.reindex(front_close.index).ffill().fillna(0.0)
+    return pd.DataFrame(out, index=front_close.index)
+
+
+# --------------------------------------------------------------------------
 # Registry
 # --------------------------------------------------------------------------
 SIGNAL_LABELS = {

@@ -96,6 +96,97 @@ def _roll_dates_from_raw(raw_close_dir, symbols) -> dict[str, set]:
     return out
 
 
+def run_backtest_ls(
+    returns: pd.DataFrame,
+    direction: pd.DataFrame,        # -1 / 0 / +1 per instrument per day
+    sectors: dict[str, str],
+    config: EngineConfig | None = None,
+    roll_dates: dict[str, set] | None = None,
+) -> EngineResult:
+    """Vol-targeted LONG-SHORT commodity backtest (Test 1, second pass).
+
+    Futures-collateral accounting (standard managed-futures convention):
+    the full capital earns the T-bill rate (collateral yield) and the
+    vol-targeted futures book — long AND short — is an overlay on top:
+        net[t] = tbill_daily + sum_i w[t,i] * r[t,i] - cost[t]
+    where w is the SIGNED vol-targeted weight (negative = short). This
+    differs from the long-flat engine's "idle earns T-bill" model; it is the
+    correct treatment for a margined long-short futures book and is noted in
+    the findings so the comparison to the long-flat V3 is apples-to-context.
+
+    No same-bar look-ahead: direction at close[t-1] sizes the book that earns
+    return[t]. Costs = half-spread on |Δw| turnover + roll cost on held names
+    that roll. gross = sum|w|; n_on counts active (nonzero) positions.
+    """
+    from src.commodity.vol import vol_target_weights_signed
+
+    cfg = config or EngineConfig()
+    syms = list(returns.columns)
+    idx = returns.index
+    cov_hist = rolling_cov(returns, lookback=cfg.cov_lookback)
+    cov_dates = sorted(cov_hist.keys())
+    if not cov_dates:
+        raise ValueError("no covariance matrices — insufficient return history")
+    cov_idx_arr = np.array(cov_dates)
+    tbill_daily = (1.0 + cfg.tbill_annual) ** (1.0 / 252.0) - 1.0
+    spread_half = {s: SECTOR_SPREAD_BPS.get(sectors.get(s, "?"), 5.0) / 2.0 / 1e4
+                   for s in syms}
+    roll_bps = {s: SECTOR_ROLL_BPS.get(sectors.get(s, "?"), 4.0) / 1e4 for s in syms}
+    roll_dates = roll_dates or {s: set() for s in syms}
+
+    weights_prev = pd.Series(0.0, index=syms)
+    rows_w, pnl_attr = {}, pd.Series(0.0, index=syms)
+    daily_net = pd.Series(0.0, index=idx)
+    gross_hist = pd.Series(0.0, index=idx)
+    turn_hist = pd.Series(0.0, index=idx)
+    cost_hist = pd.Series(0.0, index=idx)
+    non_hist = pd.Series(0, index=idx)
+
+    for i, t in enumerate(idx):
+        if i == 0:
+            rows_w[t] = weights_prev.copy()
+            continue
+        tprev = idx[i - 1]
+        pos = np.searchsorted(cov_idx_arr, tprev, side="right") - 1
+        if pos < 0:
+            rows_w[t] = pd.Series(0.0, index=syms)
+            daily_net[t] = tbill_daily         # collateral yield, no positions yet
+            weights_prev = pd.Series(0.0, index=syms)
+            continue
+        cov = cov_hist[cov_idx_arr[pos]]
+        d_t = direction.loc[tprev].reindex(cov.columns).fillna(0.0)
+        w = vol_target_weights_signed(cov, d_t, target_vol=cfg.target_vol,
+                                      max_weight=cfg.max_weight).reindex(syms).fillna(0.0)
+        r_t = returns.loc[t].reindex(syms).fillna(0.0)
+        futures_ret = float((w * r_t).sum())
+
+        cost = 0.0
+        if cfg.apply_costs:
+            dw = (w - weights_prev).abs()
+            cost += float((dw * pd.Series(spread_half)).sum())
+            for s in syms:
+                if t in roll_dates.get(s, ()) and abs(weights_prev.get(s, 0.0)) > 0:
+                    cost += abs(weights_prev[s]) * roll_bps[s]
+
+        daily_net[t] = tbill_daily + futures_ret - cost
+        gross_hist[t] = float(w.abs().sum())
+        turn_hist[t] = float((w - weights_prev).abs().sum())
+        cost_hist[t] = cost
+        non_hist[t] = int((w != 0).sum())
+        pnl_attr = pnl_attr.add(w * r_t, fill_value=0.0)
+        rows_w[t] = w
+        weights_prev = w
+
+    equity = (1.0 + daily_net).cumprod()
+    weights_df = pd.DataFrame(rows_w).T.reindex(idx).fillna(0.0)
+    return EngineResult(
+        equity=equity, daily_returns=daily_net, gross_long=gross_hist,
+        weights=weights_df, turnover=turn_hist, cost_drag=cost_hist,
+        per_instrument_pnl=pnl_attr, n_on=non_hist, config=cfg,
+        meta={"mode": "long_short", "n_cov_matrices": len(cov_hist)},
+    )
+
+
 def run_backtest(
     close: pd.DataFrame,           # Panama-adjusted (for nothing here; kept for parity)
     returns: pd.DataFrame,         # adj.diff()/raw.shift() daily returns

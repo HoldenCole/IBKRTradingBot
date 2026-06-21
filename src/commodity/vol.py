@@ -163,6 +163,61 @@ def vol_target_weights(
     return out
 
 
+def vol_target_weights_signed(
+    cov: pd.DataFrame,
+    direction: pd.Series,
+    target_vol: float = 0.15,
+    max_weight: float = 0.25,
+) -> pd.Series:
+    """Long-SHORT vol-targeted weights from a direction vector (-1/0/+1).
+
+    Magnitude is inverse-vol per active instrument (equal risk before
+    correlation), signed by `direction`. The signed weight vector is then
+    scaled by target_vol / sqrt(w' Cov w) so the portfolio's realized vol
+    (full covariance, accounting for long-short offsets) equals target_vol.
+    Per-instrument |weight| cap applied after scaling.
+
+    Used by the long-short engine path (Test 1). A short position contributes
+    -|w_i| * r_i to the book return, exactly mirroring a long.
+    """
+    if cov is None or cov.empty:
+        return pd.Series(0.0, index=direction.index)
+
+    syms = list(cov.columns)
+    d = direction.reindex(syms).fillna(0.0)
+    active = [s for s in syms if d[s] != 0]
+    if not active:
+        return pd.Series(0.0, index=direction.index)
+    act_idx = np.array([syms.index(s) for s in active])
+
+    cov_arr = cov.values
+    sig = np.sqrt(np.maximum(np.diag(cov_arr)[act_idx], 0.0))
+    with np.errstate(divide="ignore"):
+        inv = np.where(sig > 0, 1.0 / sig, 0.0)
+    if inv.sum() <= 0 or not np.isfinite(inv.sum()):
+        return pd.Series(0.0, index=direction.index)
+
+    w = np.zeros(len(syms))
+    w[act_idx] = inv / inv.sum()          # normalized inverse-vol magnitude
+    w[act_idx] *= d.values[act_idx]       # apply +1/-1 sign
+
+    try:
+        sigma_un = float(np.sqrt(max(0.0, w @ cov_arr @ w)))
+    except Exception:
+        return pd.Series(0.0, index=direction.index)
+    if sigma_un <= 0 or not np.isfinite(sigma_un):
+        return pd.Series(0.0, index=direction.index)
+
+    w = w * (target_vol / sigma_un)
+    w = np.clip(w, -max_weight, max_weight)   # cap |w|, preserve sign
+
+    out = pd.Series(0.0, index=direction.index)
+    for idx, s in enumerate(syms):
+        if s in out.index:
+            out[s] = w[idx]
+    return out
+
+
 @dataclass
 class VolTargetingReport:
     """Diagnostic snapshot of a vol-targeting run."""

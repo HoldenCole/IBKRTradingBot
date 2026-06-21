@@ -1,0 +1,48 @@
+================================================================================================
+# SECOND PASS — TEST 1: Long-short V3 vol-adjusted momentum
+# Databento 2010-2026, 10 CME commodities, futures-collateral accounting
+================================================================================================
+
+## Headline (full sample, net of costs)
+  CAGR +5.7%  Sharpe 0.46  Sortino 0.67  MaxDD 27%  Vol 14%  AT-CAGR +4.6%
+  Avg active positions/day: 5.4  median gross |exposure|: 1.04
+  Annual turnover: 32.7x  cost drag: 1.22%/yr
+
+  [reference] long-FLAT V3 (first pass): Sortino 0.71, CAGR +5.3%, MaxDD 38%
+
+## Sub-period robustness (locked criterion: BOTH must be +Sortino)
+  2018-2026 (in-sample)      Sortino +0.71  CAGR +6.7%   [OK]
+  2013-2017 (held-out)       Sortino +0.69  CAGR +6.2%   [OK]
+
+## Per-sector P&L attribution (cumulative contribution %)
+  Energy       +59.6
+  Precious     +34.3
+  Industrial   +24.3
+  Grains       -23.4
+  -> 3 of 4 sectors positive
+  per-instrument: {'CL': np.float64(19.3), 'NG': np.float64(23.0), 'HO': np.float64(15.0), 'RB': np.float64(2.4), 'GC': np.float64(12.4), 'SI': np.float64(21.9), 'HG': np.float64(24.3), 'ZC': np.float64(2.4), 'ZS': np.float64(-3.1), 'ZW': np.float64(-22.7)}
+
+================================================================================================
+# PER-REGIME CORRELATION WITH EQUITY STRATEGY (the diversification test)
+================================================================================================
+
+  Full-sample correlation with equity strategy: -0.05
+
+  Regime                  Comm ret  Equity ret    Corr  N days
+  2014-16 oil crash        +33.5%      -8.4%   -0.06     452
+  2018-Q4 correction       +11.5%      -3.0%   +0.12      61
+  2020 March COVID         +22.4%      -8.2%   -0.11      34
+  2022 inflation bear       +6.5%      -3.4%   +0.01     203
+  2025 Liberation Day       -5.2%      -1.5%   -0.03      93
+
+  Interpretation: low/negative corr DURING equity drawdowns is the
+  value we want. High corr during crises = limited diversification.
+
+================================================================================================
+# TIER VERDICT (second-pass criteria)
+================================================================================================
+
+  Sortino 0.67 | MaxDD 27% | corr_equity -0.05 | sub-periods both+ True (+0.71,+0.69) | sectors+ 3
+
+  >>> TIER C <<<
+  Fails Tier B -> proceed to Test 2 (carry signal) per the decision tree.
