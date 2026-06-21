@@ -1,0 +1,43 @@
+============================================================================================
+# BOND TREND TEST 1 — 50/200 vol-targeted basket (ZN/ZB/ZF), 2010-2026
+============================================================================================
+
+  Universe: ZN (10yr note), ZB (30yr bond), ZF (5yr note)
+  Vol target 10%, T-bill 2% OFF, costs on, no look-ahead
+
+  Full sample: CAGR +1.2%  Sortino 0.47  Sharpe 0.32  MaxDD 9%  Vol 4%
+  Avg instruments ON/day 1.0, turnover 16.4x/yr
+
+  REGIME SPLIT (the load-bearing test):
+    pre-2020 declining-rate    Sortino +0.44  CAGR +1.2%  MaxDD 9%
+    post-2020 mixed regime     Sortino +0.53  CAGR +1.1%  MaxDD 4%
+    2022 ONLY (load-bearing)   Sortino +0.00  CAGR +2.0%  MaxDD 0%
+
+  2022 context — bond BUY-AND-HOLD returns (the thesis broke here):
+    ZN -14%  ZB -22%  ZF -10%
+    bond TREND in 2022: +2.0% (Sortino +0.00)
+
+  Equity correlation (full sample): -0.29
+
+  Equity-stress window    Bond ret  Equity ret    Corr
+/usr/local/lib/python3.11/dist-packages/numpy/lib/_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+/usr/local/lib/python3.11/dist-packages/numpy/lib/_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+  2018-Q4 correction        +0.5%     -22.8%    +nan
+  2020 March COVID          +8.0%     -16.3%   -0.72
+/usr/local/lib/python3.11/dist-packages/numpy/lib/_function_base_impl.py:3023: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+/usr/local/lib/python3.11/dist-packages/numpy/lib/_function_base_impl.py:3024: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+  2022 inflation bear       +1.6%     -32.4%    +nan
+  2025 Liberation Day       +0.9%      +2.3%   +0.07
+
+============================================================================================
+# VERDICT (locked criteria)
+============================================================================================
+
+  Full Sortino 0.47 | 2022 Sortino +0.00 (CAGR +2.0%) | 2018-Q4 +0.5% | corr -0.29 | stress-wins 4/4
+
+  >>> BOND TREND: TIER D <<<
+  Fails Tier B -> trigger Test 2 (FX carry + trend) per the decision tree.
