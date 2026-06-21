@@ -1,0 +1,85 @@
+====================================================================================================
+# CRYPTO CHARACTERIZATION (pure research) — BTC / ETH / LTC, 2014-2026
+====================================================================================================
+  BTC: 4295 bars, 2014-09-17 -> 2026-06-20
+  ETH: 3146 bars, 2017-11-09 -> 2026-06-20
+  LTC: 4295 bars, 2014-09-17 -> 2026-06-20
+
+====================================================================================================
+# Q1 — Buy-and-hold beta baseline (full sample)
+====================================================================================================
+
+Coin      CAGR    Vol  Sharpe  Sortino  Calmar   MaxDD x from peak
+BTC      +52%    67%    0.97     1.42    0.63     83%            
+ETH      +22%    85%    0.66     0.96    0.23     94%            
+LTC      +20%    99%    0.67     1.06    0.22     93%            
+
+  Read: enormous CAGR, but MaxDD ~70-95%. Calmar (CAGR/MaxDD) is the
+  honest risk-adjusted lens — buy-and-hold crypto is a low-Calmar bet.
+
+====================================================================================================
+# Q2 — Does a trend filter TAME THE DRAWDOWN? (long-flat vs buy-and-hold)
+====================================================================================================
+
+  BTC:
+    strategy                  CAGR   MaxDD  Calmar  Sortino
+    buy-and-hold             +52%     83%    0.63     1.42
+    trend 50/200             +58%     43%    1.34     2.03
+    trend 20/100             +54%     44%    1.22     2.16
+    vol-adj momentum         +29%     60%    0.49     1.38
+
+  ETH:
+    strategy                  CAGR   MaxDD  Calmar  Sortino
+    buy-and-hold             +22%     94%    0.23     0.96
+    trend 50/200             +33%     51%    0.65     1.32
+    trend 20/100             +23%     69%    0.34     1.09
+    vol-adj momentum         +15%     64%    0.24     0.83
+
+  LTC:
+    strategy                  CAGR   MaxDD  Calmar  Sortino
+    buy-and-hold             +20%     93%    0.22     1.06
+    trend 50/200             +15%     88%    0.18     0.87
+    trend 20/100             +44%     73%    0.60     1.53
+    vol-adj momentum         +23%     78%    0.30     1.07
+
+====================================================================================================
+# Q3 — Equity-correlation evolution (BTC daily returns vs QQQ)
+====================================================================================================
+
+  Full-sample BTC-QQQ correlation: +0.24
+
+  Era                       BTC-QQQ corr   BTC ret   QQQ ret
+  2015-2016 recovery               -0.00    +201%     +15%
+  2017 ICO boom                    +0.02   +1369%     +31%
+  2018 bear                        +0.12     -74%      -1%
+  2019-2020 chop                   +0.29    +188%     +80%
+  2020-21 retail boom              +0.27    +429%     +42%
+  2022 contagion                   +0.58     -64%     -33%
+  2023+ ETF era                    +0.34    +288%    +178%
+
+  Read: the diversification reality. If correlation rose from ~0 to
+  ~0.5+ post-2020, crypto is NOT an equity hedge in modern regimes.
+
+  BTC buy-and-hold during EQUITY-stress windows:
+  Window                   BTC ret   QQQ ret    corr
+  2018-Q4 correction         -38%     -23%   +0.11
+  2020 March COVID           -29%     -16%   +0.55
+  2022 inflation bear        -59%     -32%   +0.59
+  2025 Liberation Day        +12%      +2%   +0.45
+
+====================================================================================================
+# Q4 — Per-era breakdown (BTC: buy-and-hold vs trend 50/200, return & MaxDD)
+====================================================================================================
+
+  Era                        BAH ret   BAH DD  Trend ret  Trend DD
+  2015-2016 recovery          +201%     43%     +153%      24%
+  2017 ICO boom              +1369%     36%     +595%      38%
+  2018 bear                    -74%     82%      -16%      33%
+  2019-2020 chop              +188%     62%      +49%      43%
+  2020-21 retail boom         +429%     53%     +374%      32%
+  2022 contagion               -64%     67%       +0%       0%
+  2023+ ETF era               +288%     51%     +104%      25%
+
+====================================================================================================
+# Characterization complete — see findings doc for mandate recommendation
+====================================================================================================
