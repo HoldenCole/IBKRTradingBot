@@ -1,0 +1,74 @@
+2026-06-21 22:04:36.819 | DEBUG    | src.data.databento_loader:continuous:168 - Databento cache hit: CL_v_0__2010-06-06__2026-06-20.csv
+2026-06-21 22:04:36.827 | DEBUG    | src.data.databento_loader:continuous:168 - Databento cache hit: CL_v_1__2010-06-06__2026-06-20.csv
+2026-06-21 22:04:36.837 | DEBUG    | src.data.databento_loader:continuous:168 - Databento cache hit: NG_v_0__2010-06-06__2026-06-20.csv
+2026-06-21 22:04:36.845 | DEBUG    | src.data.databento_loader:continuous:168 - Databento cache hit: NG_v_1__2010-06-06__2026-06-20.csv
+2026-06-21 22:04:36.854 | DEBUG    | src.data.databento_loader:continuous:168 - Databento cache hit: HO_v_0__2010-06-06__2026-06-20.csv
+2026-06-21 22:04:36.863 | DEBUG    | src.data.databento_loader:continuous:168 - Databento cache hit: HO_v_1__2010-06-06__2026-06-20.csv
+2026-06-21 22:04:36.872 | DEBUG    | src.data.databento_loader:continuous:168 - Databento cache hit: RB_v_0__2010-06-06__2026-06-20.csv
+2026-06-21 22:04:36.881 | DEBUG    | src.data.databento_loader:continuous:168 - Databento cache hit: RB_v_1__2010-06-06__2026-06-20.csv
+2026-06-21 22:04:36.890 | DEBUG    | src.data.databento_loader:continuous:168 - Databento cache hit: GC_v_0__2010-06-06__2026-06-20.csv
+2026-06-21 22:04:36.898 | DEBUG    | src.data.databento_loader:continuous:168 - Databento cache hit: GC_v_1__2010-06-06__2026-06-20.csv
+2026-06-21 22:04:36.907 | DEBUG    | src.data.databento_loader:continuous:168 - Databento cache hit: SI_v_0__2010-06-06__2026-06-20.csv
+2026-06-21 22:04:36.916 | DEBUG    | src.data.databento_loader:continuous:168 - Databento cache hit: SI_v_1__2010-06-06__2026-06-20.csv
+2026-06-21 22:04:36.925 | DEBUG    | src.data.databento_loader:continuous:168 - Databento cache hit: HG_v_0__2010-06-06__2026-06-20.csv
+2026-06-21 22:04:36.934 | DEBUG    | src.data.databento_loader:continuous:168 - Databento cache hit: HG_v_1__2010-06-06__2026-06-20.csv
+2026-06-21 22:04:36.943 | DEBUG    | src.data.databento_loader:continuous:168 - Databento cache hit: ZC_v_0__2010-06-06__2026-06-20.csv
+2026-06-21 22:04:36.951 | DEBUG    | src.data.databento_loader:continuous:168 - Databento cache hit: ZC_v_1__2010-06-06__2026-06-20.csv
+2026-06-21 22:04:36.960 | DEBUG    | src.data.databento_loader:continuous:168 - Databento cache hit: ZS_v_0__2010-06-06__2026-06-20.csv
+2026-06-21 22:04:36.968 | DEBUG    | src.data.databento_loader:continuous:168 - Databento cache hit: ZS_v_1__2010-06-06__2026-06-20.csv
+2026-06-21 22:04:36.976 | DEBUG    | src.data.databento_loader:continuous:168 - Databento cache hit: ZW_v_0__2010-06-06__2026-06-20.csv
+2026-06-21 22:04:36.985 | DEBUG    | src.data.databento_loader:continuous:168 - Databento cache hit: ZW_v_1__2010-06-06__2026-06-20.csv
+================================================================================================
+# SECOND PASS — TEST 2: Carry (term-structure roll-yield)
+# Databento 2010-2026, 10 CME commodities, futures-collateral accounting
+================================================================================================
+
+## Headline (full sample, net of costs)
+  CAGR -5.0%  Sharpe -0.28  Sortino -0.39  MaxDD 66%  Vol 15%  AT-CAGR -5.0%
+  Avg active positions/day: 7.3  median gross |exposure|: 1.38  turnover 110.4x/yr
+
+## Sub-period robustness (BOTH must be +Sortino)
+  2018-2026 (in-sample)      Sortino -0.75  CAGR -8.9%  [NEGATIVE]
+  2013-2017 (held-out)       Sortino +0.54  CAGR +4.4%  [OK]
+
+## Per-sector P&L attribution (cumulative %)
+  Grains       -2.1
+  Industrial   -8.9
+  Energy       -9.4
+  Precious     -18.2
+  -> 0 of 4 sectors positive
+  per-instrument: {'CL': np.float64(0.0), 'NG': np.float64(-18.5), 'HO': np.float64(36.0), 'RB': np.float64(-27.1), 'GC': np.float64(-12.9), 'SI': np.float64(-5.4), 'HG': np.float64(-8.9), 'ZC': np.float64(-17.9), 'ZS': np.float64(16.6), 'ZW': np.float64(-0.8)}
+
+================================================================================================
+# CORRELATIONS — carry vs equity strategy AND vs Test 1 trend (KEY)
+================================================================================================
+
+  Carry vs EQUITY strategy:   -0.04
+  Carry vs TEST-1 trend:      +0.07
+  (Uncorrelated with BOTH => real third line. Correlated with either
+   => not adding new information.)
+
+## Per-regime: carry behavior during equity stress
+
+  Regime                 Carry ret  Equity ret    Corr     N
+  2014-16 oil crash        +12.1%      -8.4%   -0.02   452
+  2018-Q4 correction       -10.4%      -3.0%   +0.03    61
+  2020 March COVID          -0.5%      -8.2%   +0.17    34
+  2022 inflation bear      +18.8%      -3.4%   +0.04   203
+  2025 Liberation Day      -11.8%      -1.5%   -0.08    93
+
+================================================================================================
+# COMBINED trend + carry sleeve (50/50 equal-risk daily blend)
+================================================================================================
+
+  Combined Sortino 0.16  CAGR +0.7%  MaxDD 27%  corr_equity -0.06
+  Sub-periods: 2018-26 -0.03, 2013-17 +0.84
+
+================================================================================================
+# TIER VERDICT — carry standalone (second-pass criteria)
+================================================================================================
+
+  Sortino -0.39 | MaxDD 66% | corr_eq -0.04 | sub both+ False (-0.75,+0.54) | sectors+ 0
+
+  >>> Carry standalone: TIER D <<<
+  >>> Carry vs trend corr +0.07 — orthogonal, real third line <<<
