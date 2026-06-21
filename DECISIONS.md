@@ -369,3 +369,79 @@ verdicts; the report tells you which tier and which rule applied.
 - A backtest produces a result that "feels right" but fails the rule —
   forces an explicit conversation about whether the rule is too strict.
   Don't lower the bar without that conversation.
+
+---
+
+# Commodity Trend Research — closed (2026-06-21)
+
+Two-pass research round evaluating commodity-futures trend/carry strategies
+as a potential diversifier alongside the locked equity strategy. Ran on
+Databento data (10 CME commodities, 2010-2026); 3 ICE instruments + the
+2000-2009 sub-period deferred (Norgate trial 2-yr cap; paid $270 not worth
+it for a nice-to-have). Full trail in `reports/commodity_trend/`.
+
+## Outcome
+
+**First pass (long-flat):** three locked signal variants.
+- V1 50/200 SMA: Tier D (doesn't generalize from equities).
+- V2 Donchian 100/50: Tier D (the "classic CTA" signal lost money).
+- V3 vol-adj momentum: Tier C — only variant beating buy-and-hold, but
+  failed the 2013-2017 held-out sub-period.
+
+**Second pass (long-short, reframed mandate):** the commodity sleeve's job
+was redefined as *uncorrelated returns during equity stress, not matching
+Sortino*.
+- Test 1 — long-short V3 trend: **Tier C, but satisfies the actual
+  mandate.** Made money in 4 of 5 equity-stress windows (+33% / +11% /
+  +22% / +6%), −0.05 full-sample correlation with the equity strategy,
+  both sub-periods now positive (long-short shorting the 2014-16 oil crash
+  fixed the first-pass robustness failure), 27% max DD. Misses Tier B by
+  0.03 Sortino (0.67 vs 0.70).
+- Test 2 — carry (term-structure): **Tier D. CLOSED PERMANENTLY.** Loses
+  money (−5% CAGR, 110×/yr turnover). Genuinely orthogonal (+0.07 vs
+  trend, −0.04 vs equity) but an uncorrelated money-loser is useless — the
+  50/50 trend+carry blend was *worse* than trend alone.
+
+## Decisions
+
+1. **Carry is a closed question.** Do not revisit unless something
+   fundamental changes about how we model term structure, or a published
+   result shows the locked carry definition has improved structurally.
+
+2. **Commodity strategy is NOT deployed now.** Neither test cleared Tier B;
+   the pre-committed rule ("if neither clears Tier B, move on") is honored.
+
+3. **Long-short V3 trend is filed as DEFERRED deployment candidate** — see
+   `reports/commodity_trend/CANDIDATE_FOR_RESURRECTION.md`. This is not an
+   override of the pre-committed rule; it is recognizing the deployment
+   decision doesn't need to be made now. Re-evaluate when multi-strategy
+   becomes viable ($25k+) against then-current criteria and then-available
+   information (live equity results, new equity-stress events, crypto
+   results). Preserves both options at zero cost.
+
+4. **Infrastructure preserved.** `src/data/databento_loader.py`,
+   `src/commodity/*` (loader, signals, vol, engine, metrics), the runner
+   scripts, and the 28-test suite all stay for future use.
+
+## Methodological lesson (load-bearing for future strategy specs)
+
+The Test 1 spec said "judge on crisis diversification, **not** Sortino" but
+then set the Tier-B gate **on Sortino** (>0.70). That's an internal
+inconsistency: the locked numeric criterion was on the very metric the
+mandate de-emphasized, producing a 0.03-Sortino "near-miss" that is neither
+a clean pass nor a clean fail.
+
+**Rule for future strategy work:** when the mandate says "judge on metric X,
+not metric Y," the locked criteria must be expressed on **X**, not on Y. If
+the goal is crisis diversification, gate on crisis-period correlation and
+crisis-period return — not on full-sample Sortino. We won't repeat this
+framing error.
+
+## Triggers to revisit
+
+- Account reaches $25k+ (multi-strategy viable) → evaluate the deferred
+  Test 1 candidate.
+- A published structural improvement to commodity carry modeling → carry
+  could reopen (only then).
+- Full-history data (Norgate $270) acquired for some other reason → the
+  2000-2009 robustness test on long-short V3 becomes free to run.
