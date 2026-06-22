@@ -1,0 +1,44 @@
+================================================================================================
+# DOT-COM REGIME TEST — ^IXIC 50/200 trend, 1995-2026
+# 7918 bars, 1995-01-03 -> 2026-06-18
+# Honest proxy for NDX/QQQ regime survival, NOT a P&L claim
+================================================================================================
+
+## Full sample (1995-2026)
+                                    CAGR   MaxDD  Calmar  Sortino    Vol
+  IXIC buy-and-hold                +18%     78%    0.23     1.01    29%
+  IXIC 50/200 trend                +13%     22%    0.60     1.31    14%
+
+## Per-era (CAGR / MaxDD)
+  Era                                     IXIC BAH          IXIC trend
+  1999 dot-com melt-up                   +130%/13%            +85%/15%
+  2000-2002 dot-com bear                  -78%/78%            -21%/22%
+  2003-2007 recovery                     +157%/19%            +42%/16%
+  2008 GFC                                -56%/55%              -7%/8%
+  2009-2014 secular bull                 +273%/19%            +59%/13%
+  2015-2017 mid-cycle                     +46%/18%            +13%/15%
+  2018-Q4 correction                      -23%/23%              -2%/2%
+  2019-2020 chop+COVID                    +68%/30%            +13%/13%
+  2020-21 retail boom                     +39%/11%             +8%/14%
+  2022 inflation bear                     -33%/35%              -2%/5%
+  2023+ AI/ETF era                       +153%/24%            +78%/13%
+
+================================================================================================
+# DOT-COM REGIME SURVIVAL — locked criteria
+================================================================================================
+
+  1999 dot-com melt-up (1999-01 to 2000-03):
+    BAH return: +130%
+    Trend return: +85%  (66% participation)
+
+  2000-2002 dot-com bear (2000-03 to 2002-10):
+    BAH: -78% return, 78% max drawdown
+    Trend: -21% return, 22% max drawdown
+    -> Drawdown cut by 56pp
+
+  Locked criteria:
+    Bear DD < 40% (was 22%)           PASS
+    Meltup participation > 50% (66%)  PASS
+    Calmar improves vs BAH (0.60 vs 0.23)  PASS
+
+  >>> DOT-COM REGIME SURVIVAL: YES <<<
