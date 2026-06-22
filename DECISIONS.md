@@ -445,3 +445,104 @@ framing error.
   could reopen (only then).
 - Full-history data (Norgate $270) acquired for some other reason → the
   2000-2009 robustness test on long-short V3 becomes free to run.
+
+---
+
+# Diversifier Search — CLOSED as a structural empirical finding (2026-06-22)
+
+This entry records the close of a multi-round, multi-asset-class search for
+a deployable equity-stress diversifier. It is **not a failure to find
+something**; it is an empirical finding about **what is available in the
+retail systematic toolkit on tested asset classes**. The rationale for the
+long-biased portfolio is now explicit rather than implicit.
+
+## What was tested (~10 candidates, disciplined methodology)
+
+| Round | Candidate | Outcome | Notes |
+|---|---|---|---|
+| Equity early | IBS long-short on QQQ | Tier D | failed lift criterion |
+| Equity early | Overnight drift | Tier D | failed |
+| Equity early | VIX spike fade (VXX) | Tier D | VXX bleed dominated |
+| Equity v1 | Inverse-ETF OFF treatment | rejected | Sortino degradation |
+| Equity v1 | IBS shorts overlay | rejected | Sortino degradation |
+| Commodity 1 | V1 50/200 SMA trend (long-flat) | Tier D | didn't generalize |
+| Commodity 1 | V2 Donchian 100/50 trend (long-flat) | Tier D | lost money |
+| Commodity 1 | V3 vol-adj momentum (long-flat) | Tier C | held-out failure |
+| Commodity 2 | V3 long-short trend | **near-miss** | Tier C, deferred to $25k+ |
+| Commodity 2 | Carry (term-structure) | Tier D | closed permanently |
+| Bond | ZN/ZB/ZF 50/200 trend | Tier D (split) | real diversification properties; failed standalone Sortino |
+| FX 2A | G6 trend / carry / combined (naive) | Tier D | textbook carry-fails-in-stress pattern |
+| FX 2B | G6 carry — post-2022 high-rate sub-period | Tier D | recency hypothesis rejected by data |
+
+## The pattern across all tests
+
+Candidates failed in one or more of three ways:
+
+1. **Standalone Sortino too low** even when diversification properties were
+   right (bond trend: −0.29 corr with equity, won 4/4 stress windows, but
+   Sortino 0.47 — whipsaw tax in calm periods).
+2. **Equity correlation too positive** for a diversifier role (commodity
+   trend post-2010 ran +0.5+ in crises; crypto correlation rose from ~0 to
+   ~0.5+).
+3. **Both fail simultaneously** in the same crises (FX carry: loses
+   standalone, loses *more* during equity stress — textbook risk-off
+   unwind).
+
+**Particularly meaningful:** the FX recency argument was tested explicitly.
+Hypothesis: ZIRP era suppressed carry; post-2022 high-rate regime should
+work. The mechanism was specific (rate differentials returned). The data
+rejected it: post-2022 carry was *worse* (Sortino delta −0.14, stress wins
+1/3 → 0/3), because rate differentials *rearranged* rather than uniformly
+widened, leaving JPY-funded carry concentrated in exactly the configuration
+that hit the 2024 yen unwind.
+
+## The structural conclusion
+
+**Clean equity-stress diversifiers with deployable standalone returns are
+not available in the retail systematic toolkit on the asset classes we
+tested**, with one near-miss documented for re-examination at higher
+account size.
+
+The mechanism is plausible in hindsight:
+- "Clean" diversification (negative equity correlation in stress) tends to
+  belong to assets that pay for it the rest of the time (bonds in inflation
+  regimes, FX carry in unwinds).
+- "Standalone profitable" strategies tend to be long-biased growth assets
+  (equities, crypto), which by construction can't hedge equity stress.
+- The intersection — uncorrelated in crisis AND profitable standalone — is
+  the rare case. We did not find one in the tested universe.
+
+## The deployable architecture (replaces the diversifier-sleeve concept)
+
+**Long-biased trend-following on growth assets, with the trend rule's exit
+logic providing crash avoidance, not a separate diversifier sleeve.**
+
+Specifically:
+1. **Equity sleeve:** QQQ 50/200 + T-bill OFF (via SGOV) — locked, paper.
+2. **Crypto sleeve:** BTC 50/200 + T-bill OFF — IBIT now, MBT futures at
+   $25k+. Tier B under tame-the-drawdown mandate (Calmar 1.38, DD halved).
+3. **Implicit diversification mechanism:** the trend rule's exit. During
+   equity bears, **both sleeves sit in T-bills earning yield**. This is the
+   "diversification" — not from a separate hedge sleeve, but from the
+   composite portfolio sitting in cash during stress.
+
+During equity bears, the realized portfolio profile is:
+- Equity sleeve: in T-bills
+- Crypto sleeve: in T-bills (crypto bears coincide with equity bears post-2020)
+- Net: ~100% T-bills earning ~3-5%, no active crisis profit, no equity drawdown
+- This is the honest, defensible, evidence-based architecture given what the
+  research established is and isn't available.
+
+## Triggers to reopen the diversifier search
+
+- Account reaches $25k+ → evaluate the deferred commodity long-short V3
+  candidate (CANDIDATE_FOR_RESURRECTION.md).
+- A published or empirically-discovered new diversifier class becomes
+  available (e.g., a structural change in commodity carry modeling per the
+  earlier note).
+- New asset classes become retail-accessible (e.g., decentralized prediction
+  markets, perpetual swaps with documented carry/funding profiles).
+- Live trading reveals an unexpected gap that a diversifier could fill.
+
+Until any of those triggers fires, the search is closed and the long-biased
+two-sleeve architecture is the deployment plan.
