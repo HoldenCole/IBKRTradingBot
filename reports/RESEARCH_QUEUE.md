@@ -105,3 +105,23 @@ These were considered and declined:
 When (a) deployment paper trading is running stably (~2 weeks in), and
 (b) you have research capacity, pick the top item and scope it like the
 others.
+
+---
+
+# UPDATE 2026-06-22 — Queue CLEARED
+
+All three queued items closed. Results:
+
+1. **TQQQ trend → Tier D.** `reports/leverage/00_tqqq_trend.md`. Leveraged
+   ETF + trend filter doesn't produce a Calmar improvement over unlevered
+   QQQ trend. The decay penalty is partially mitigated but not enough.
+2. **MES vehicle one-pager → done.** `reports/leverage/01_mes_vehicle_analysis.md`.
+   Account-size threshold logic documented.
+3. **MES vs QQQ index choice → MNQ wins.** `reports/leverage/02_mes_vs_qqq_index_test.md`.
+   SPX trend Calmar half of NDX's — MES is a strategy change, not a vehicle
+   swap. Recommended path is MNQ at $50k+.
+
+**Queue is now empty.** Future research items go through the standard
+add-to-queue process when they emerge.
+
+Status: deployment focus is the only outstanding work stream.

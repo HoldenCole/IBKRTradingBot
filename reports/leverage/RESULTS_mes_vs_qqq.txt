@@ -1,0 +1,37 @@
+============================================================================================
+# MES vs QQQ index test — does 50/200 work on SPX as well as NDX?
+============================================================================================
+
+Data: SPY+QQQ 2010-2026, 4392 bars on common calendar
+
+  Strategy                     CAGR   MaxDD  Calmar  Sortino    Vol
+  QQQ buy-and-hold (NDX)      +30%     36%    0.85     1.68    25%
+  SPY buy-and-hold (SPX)      +19%     34%    0.55     1.29    21%
+  QQQ 50/200 trend            +12%     22%    0.52     1.18    14%
+  SPY 50/200 trend             +6%     23%    0.27     0.86    10%
+
+## Sub-period Sortino (both must be positive)
+  Period                       QQQ trend     SPY trend
+  2018-2026 (in-sample)           +1.58        +1.24
+  2010-2017 (held-out)            +0.72        +0.54
+
+## Equity-stress windows (qualitative match check)
+  Window                   QQQ trend ret   SPY trend ret
+  2018-Q4                         -2.7%          -4.1%  match
+  2020 March COVID                -8.1%          -4.1%  match
+  2022 inflation                  -1.9%          -1.6%  match
+  2025 Lib Day                    -0.9%          -1.7%  match
+
+============================================================================================
+# VERDICT
+============================================================================================
+
+  SPX Calmar within 0.20 of NDX:        False  (QQQ 0.52, SPY 0.27)
+  SPX MaxDD within 5pp of NDX:          True  (QQQ 22%, SPY 23%)
+  SPX positive Sortino in BOTH periods: True
+  Equity-stress qualitative match:      True
+
+  >>> SPX trend works AS WELL AS NDX: NO <<<
+  -> MES would introduce a STRATEGY change, not just a vehicle change.
+     Recommend MNQ (NDX futures) at $50k+ instead — same strategy, same
+     Section 1256 tax treatment, just higher account-size threshold.

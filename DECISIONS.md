@@ -546,3 +546,46 @@ During equity bears, the realized portfolio profile is:
 
 Until any of those triggers fires, the search is closed and the long-biased
 two-sleeve architecture is the deployment plan.
+
+---
+
+# Leverage Research — CLOSED (2026-06-22)
+
+Final research-queue items run before deployment focus. All three closed.
+
+## TQQQ trend (3x leveraged ETF) — Tier D
+
+- TQQQ 50/200 CAGR +21% (1.7× QQQ trend) BUT Calmar 0.38, MaxDD 55%.
+- Leverage amplifies whipsaw approximately as much as it amplifies returns;
+  Calmar doesn't improve. Per-era: 2015-2016 chop, QQQ trend lost −10%,
+  TQQQ trend lost −28% (3× whipsaw cost). Even in clean bull 2020-21,
+  TQQQ trend captured only ~2× QQQ trend (entries/exits eat the leverage).
+- The "leveraged-trend gives you upside without drawdown" thesis fails
+  empirically. Don't deploy.
+
+## MES vs QQQ index choice — MNQ wins
+
+- 50/200 on SPX (SPY proxy) produces Calmar 0.27 vs NDX 0.52 — half the
+  risk-adjusted return for similar drawdown. SPX trend WORKS, just worse.
+- Mechanism: NDX has higher structural drift (+30% BAH vs +19%) and more
+  persistent trends; the long-biased trend filter monetizes those better.
+- Vehicle recommendation: **stay on QQQ shares until ~$50k; switch to MNQ
+  (NDX futures) at $50k+, NOT MES (SPX futures).** MES would be a strategy
+  change in disguise.
+
+## MES vehicle one-pager — see report
+
+`reports/leverage/01_mes_vehicle_analysis.md` documents the full
+account-size threshold logic. Headline: ~10pp Section 1256 tax saving on
+ST gains + no-wash-sale + capital efficiency, but threshold is $50k+ for
+MNQ (the NDX-tracking variant) given contract notional ~$50k.
+
+## Updated vehicle decision (final)
+
+| Account size | Equity sleeve | Crypto sleeve |
+|---|---|---|
+| $8k - $25k | QQQ shares (IBKR Lite) | IBIT |
+| $25k - $50k | QQQ shares | MBT futures |
+| $50k+ | MNQ futures (NDX) | MBT futures |
+
+Research queue cleared. All items closed. Move to deployment focus.

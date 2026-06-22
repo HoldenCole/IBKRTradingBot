@@ -1,0 +1,30 @@
+================================================================================================
+# TQQQ TREND TEST — does 50/200 survive 3x leveraged-ETF decay?
+# TQQQ actual prices 2010-2026 (4113 bars; decay is IN the data, not modeled)
+================================================================================================
+
+  Strategy                        CAGR   MaxDD  Calmar  Sortino    Vol
+  QQQ buy-and-hold            CAGR   +29%  MaxDD   36%  Calmar  0.80  Sortino  1.62  Vol   25%
+  TQQQ buy-and-hold           CAGR   +70%  MaxDD   82%  Calmar  0.85  Sortino  1.55  Vol   74%
+  QQQ 50/200 (deployed)       CAGR   +12%  MaxDD   22%  Calmar  0.55  Sortino  1.24  Vol   14%   ON 60%, 20.2 trans/yr, cost 1.01%/yr
+  TQQQ 50/200 (the test)      CAGR   +21%  MaxDD   55%  Calmar  0.38  Sortino  0.95  Vol   38%   ON 54%, 19.9 trans/yr, cost 4.43%/yr
+
+## Per-era breakdown — TQQQ trend vs TQQQ BAH vs QQQ trend (CAGR, MaxDD)
+
+  Era                                 TQQQ BAH      TQQQ trend       QQQ trend
+  2011-2015 post-GFC recovery         +44%/44%         +1%/50%         +3%/18%
+  2015-2016 chop                      +14%/45%        -28%/49%        -10%/18%
+  2017 melt-up                       +119%/15%        +73%/21%         +22%/7%
+  2018-Q4 correction                  -97%/58%         -20%/6%         -11%/3%
+  2020 COVID + recovery               +69%/70%        +17%/45%        +14%/19%
+  2020-21 AI/retail boom             +202%/35%        +35%/45%        +17%/19%
+  2022 inflation bear                 -79%/81%         -9%/13%          -2%/4%
+  2023-2026 ETF/AI era                +93%/58%        +26%/32%        +21%/12%
+
+================================================================================================
+# VERDICT (locked criteria, set before the run)
+================================================================================================
+
+  TQQQ trend: Calmar 0.38 | MaxDD 55% | CAGR +21% (1.70x QQQ trend's +12%) | bears cut: True
+
+  >>> TIER D <<<
