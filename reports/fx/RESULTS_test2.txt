@@ -1,0 +1,58 @@
+================================================================================================
+# FX TEST 2 — G6 carry + trend on CME FX futures (6E/6J/6B/6A/6C/6N)
+# Databento 2010-2026, vol-targeted basket, costs on, no look-ahead
+================================================================================================
+
+  Coverage:
+    6E EUR/USD    4156 bars  2010-06-07 -> 2026-06-19
+    6J JPY/USD    4156 bars  2010-06-07 -> 2026-06-19
+    6B GBP/USD    4156 bars  2010-06-07 -> 2026-06-19
+    6A AUD/USD    4156 bars  2010-06-07 -> 2026-06-19
+    6C CAD/USD    4156 bars  2010-06-07 -> 2026-06-19
+    6N NZD/USD    4156 bars  2010-06-07 -> 2026-06-19
+
+  ## TREND 50/200 (long-flat)
+  Full sample: CAGR -2.0%  Sortino -0.62  Sharpe -0.47  MaxDD 34%  Vol 4%
+  Equity correlation: +0.15
+  Equity-stress window      FX ret  Equity ret    Corr
+  2018-Q4 correction        +0.5%     -22.8%    +nan
+  2020 March COVID          -0.1%     -16.3%   -0.24
+  2022 inflation bear       +0.6%     -32.4%   +0.12
+  2024-Aug yen unwind       -0.0%      +3.8%    +nan
+  2025 Liberation Day       +1.1%      +2.3%   -0.11
+  Stress wins: 3/5  -> TIER D
+
+  ## CARRY (long-short, basis-driven)
+  Full sample: CAGR -4.0%  Sortino -0.82  Sharpe -0.60  MaxDD 58%  Vol 6%
+  Equity correlation: +0.12
+  Equity-stress window      FX ret  Equity ret    Corr
+  2018-Q4 correction        +3.5%     -22.8%   -0.27
+  2020 March COVID          -2.7%     -16.3%   +0.40
+  2022 inflation bear       -6.9%     -32.4%   +0.00
+  2024-Aug yen unwind       -2.0%      +3.8%    +nan
+  2025 Liberation Day       -1.1%      +2.3%   -0.04
+  Stress wins: 1/5  -> TIER D
+
+  ## COMBINED (50/50 trend+carry)
+  Full sample: CAGR -2.9%  Sortino -0.99  Sharpe -0.75  MaxDD 46%  Vol 4%
+  Equity correlation: +0.17
+  Equity-stress window      FX ret  Equity ret    Corr
+  2018-Q4 correction        +2.0%     -22.8%   -0.27
+  2020 March COVID          -1.4%     -16.3%   +0.39
+  2022 inflation bear       -3.1%     -32.4%   +0.01
+  2024-Aug yen unwind       -1.0%      +3.8%    +nan
+  2025 Liberation Day       +0.1%      +2.3%   -0.12
+  Stress wins: 2/5  -> TIER D
+
+================================================================================================
+# FX TEST 2 VERDICT
+================================================================================================
+
+  Trend    -> Tier D  (Sortino -0.62, stress 3/5, corr +0.15)
+  Carry    -> Tier D  (Sortino -0.82, stress 1/5, corr +0.12)
+  Combined -> Tier D (Sortino -0.99, stress 2/5, corr +0.17)
+
+  >>> Best FX line: TREND = TIER D <<<
+  Fails Tier B -> per the master plan, accept that no separate crisis
+  hedge is deployable in the current research. Portfolio = equity trend +
+  BTC trend + T-bills during OFF; no separate diversifier sleeve.
