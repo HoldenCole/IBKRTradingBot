@@ -685,3 +685,73 @@ the sizing is adjusted. Final migration ladder:
 Per the pre-stated user rule: no more methodology iterations. The migration
 plan is validated with conservative sizing. Any future refinement happens
 operationally based on live trading evidence, not more backtests.
+
+---
+
+# Bear-Recovery Dynamic Allocation Overlay (2026-06-22) — TIER D
+
+Final research item. Tests whether a 70/30 BTC/QQQ initial weighting after
+bear-recovery triggers, rotating to balanced (100% BTC appreciation) then
+QQQ-heavy (250% appreciation), beats static 50/50 baseline.
+
+## Result: fails Sortino threshold by wide margin
+
+| Variant | Sortino improvement | Tier |
+|---|---:|:--:|
+| Primary (70/30, 100%, 250%) | +0.07 | D |
+| Initial 60/40 | +0.10 | D |
+| Initial 80/20 | +0.04 | D |
+| Rot1 50% | +0.27 | B (but neighbors fail -> overfit) |
+| Rot1 150% | +0.06 | D |
+| Rot2 200% | +0.03 | D |
+| Rot2 300% | +0.07 | D |
+
+The one passing variant (rot1 50%) achieves Tier B by rotating to 50/50
+SOONER — i.e., by being closer to the static baseline. That's an argument
+against the dynamic mechanism, not for it. Neighbor variants fail, so the
+overfit-downgrade rule applies even if it were primary.
+
+## Key findings
+
+1. Trigger fires 60 times in the sample (not 4 as user envisioned). The
+   30-day-both-off precondition is satisfied frequently in chop, not just
+   major bears. Most cycles are duds (peak BTC appreciation <10%) that
+   resolve before any rotation.
+
+2. The 4 spectacular cycles (2017-04, 2017-09, 2019-04, 2020-10) DO show
+   meaningful outperformance (+22pp, +43pp, +23pp, +16pp respectively).
+   But the dud cycles dilute the result.
+
+3. Dominance check (locked criterion): PASSED — outperformance is spread
+   across 4 cycles, no single cycle drives >50% of total. But this
+   doesn't save the verdict because Sortino fails first.
+
+4. CAGR improves +9pp (36% -> 45%) but volatility rises proportionally
+   (BTC-heavy = more vol), so Sortino barely moves.
+
+## Decision
+
+**No deployment change.** Static 50/50 with independent trend filters
+stays as deployed allocation. The bear-recovery overlay is not deployed.
+
+## What the test taught (worth keeping)
+
+- BTC's asymmetric recovery upside IS real (visible in the 4 major
+  cycles), but the trigger we can construct can't distinguish "spectacular
+  cycle" from "dud cycle" ex-ante.
+- Earlier rotation toward balanced 50/50 helps; later rotation toward
+  QQQ-heavy doesn't. This is consistent with "the baseline is approximately
+  optimal" — both directional deviations from 50/50 reduce Sortino.
+- The locked dominance criterion was the right framing — even though it
+  didn't bind here, it would have flagged 2020-2021 alone driving the
+  result if the strategy had landed at Tier B without it.
+
+## Research phase FINAL CLOSED
+
+This was the last research item. The deployed portfolio is locked:
+- Equity sleeve: QQQ shares (current) -> MNQ at $60k+
+- Crypto sleeve: IBIT (current) -> MBT at $25k+
+- Allocation: 50/50, independent trend filters per sleeve, T-bill OFF
+- No dynamic allocation overlay
+
+Operational deployment work is the only outstanding stream.
