@@ -589,3 +589,56 @@ MNQ (the NDX-tracking variant) given contract notional ~$50k.
 | $50k+ | MNQ futures (NDX) | MBT futures |
 
 Research queue cleared. All items closed. Move to deployment focus.
+
+---
+
+# NQ Vehicle Equivalence Test (2026-06-22) — CONFIRMED with caveat
+
+Final research item. Tests whether NQ continuous futures behave like QQQ
+shares under the 50/200 trend rule, validating the MNQ migration plan
+at $50k+.
+
+## Headline result
+
+- BAH equivalence: NQ +27% CAGR vs QQQ +29% (gap is dividend yield ~0.7%/yr).
+- Trend equivalence: NQ trend Calmar 0.49 vs QQQ trend Calmar 0.55 = gap 0.06,
+  PASSES the locked 0.10 tolerance.
+- Per-era match: all 8 eras qualitatively match (same sign, similar magnitudes).
+- After-tax: MNQ wins by ~0.4 pp/yr at $50k+ (Section 1256 + no wash-sale +
+  capital efficiency on free margin).
+
+## Two methodology bugs caught (worth documenting forward)
+
+1. `pct_change(back-adjusted)` deflates early-period returns. Cumulative
+   back-adjustment lifts the historical level by $3,482 (NQ 2010), so a
+   2.8% daily move on actual price becomes 0.95% in pct_change(adj).
+   Fix: use `diff(adj) / front.shift(1)` — dollar change divided by
+   actual prior-day contract price.
+
+2. Naive futures backtest treats position as 100% invested. Futures only
+   consume ~6% margin; the other 94% should earn T-bill ALL the time
+   (ON and OFF), not just on OFF days. With futures-collateral accounting,
+   the test result changes materially.
+
+Both bugs apply to ANY back-adjusted futures backtest going forward.
+
+## Outcome
+
+MNQ at $50k+ migration plan VALIDATED. The deployment vehicle ladder is
+final:
+
+| Account | Equity sleeve | Crypto sleeve |
+|---|---|---|
+| $8k - $25k | QQQ shares (IBKR Lite) | IBIT |
+| $25k - $50k | QQQ shares | MBT futures |
+| $50k+ | **MNQ futures (validated this test)** | MBT futures |
+
+## Research phase final close
+
+This is the final research item. The queue is empty. The diversifier search
+is closed, the leverage research is closed, the vehicle decisions are all
+locked. Operational deployment work is the only outstanding stream.
+
+Trigger to reopen research: live deployment data reveals an unexpected
+gap, OR account reaches $25k+ unlocking the parked commodity long-short V3
+candidate evaluation.

@@ -1,0 +1,41 @@
+Loading data...
+  Common calendar: 4028 bars, 2010-06-07 -> 2026-06-18
+
+================================================================================================
+# NQ FUTURES vs QQQ SHARES vehicle equivalence (50/200 trend, 2010-2026)
+# NQ returns: diff(adj)/front.shift(1)  (correct for back-adjusted futures)
+================================================================================================
+
+## Full sample
+                                    CAGR   MaxDD  Calmar  Sortino    Vol
+  NQ buy-and-hold (back-adj)       +27%     36%    0.76     1.57    25%
+  QQQ buy-and-hold                 +29%     36%    0.82     1.64    25%
+  NQ 50/200 trend                   +9%     22%    0.38     0.89    14%
+  QQQ 50/200 trend                 +12%     22%    0.55     1.23    14%
+
+## Sub-period Sortino (both must be positive for both)
+  Period                          NQ trend     QQQ trend
+  2018-2026 (in-sample)             +0.95        +1.59
+  2010-2017 (held-out)              +0.82        +0.72
+
+## Per-era (return / MaxDD, qualitative match check)
+  Era                                     NQ trend           QQQ trend    Match?
+  2010-2014 post-GFC recovery             +31%/12%            +35%/12%     match
+  2015-2016 chop                          -12%/11%            -19%/18%     match
+  2017 melt-up                             +19%/9%             +22%/7%     match
+  2018-Q4 correction                        -2%/3%              -3%/3%     match
+  2020 COVID                               -6%/10%             -5%/12%     match
+  2020-21 retail boom                     +23%/22%            +31%/19%     match
+  2022 inflation bear                       -1%/4%              -1%/4%     match
+  2023+ AI/ETF era                        +49%/10%            +91%/12%     match
+
+================================================================================================
+# VERDICT — vehicle equivalence (locked criteria)
+================================================================================================
+
+  Calmar within 0.10:               FAIL  (NQ 0.38, QQQ 0.55, gap 0.16)
+  Per-era qualitative match:        PASS  (mismatches: none)
+  Sub-periods both-positive both:   PASS
+
+  >>> VEHICLE EQUIVALENCE: NOT CONFIRMED <<<
+  -> Investigate the discrepancy before committing to MNQ migration.

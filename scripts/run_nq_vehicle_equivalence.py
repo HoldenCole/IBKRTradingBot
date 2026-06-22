@@ -64,12 +64,45 @@ def fetch_qqq() -> pd.Series:
     return df["Close"].astype(float)
 
 
-def load_nq_adjusted() -> pd.Series:
-    """Panama-adjusted NQ continuous close, trade-date collapsed."""
+def load_nq() -> tuple[pd.Series, pd.Series]:
+    """Returns (panama-adjusted close, raw front-month close), trade-date
+    collapsed. The adjusted series is for signal computation (gap-free); the
+    raw front is the correct denominator for daily returns on back-adjusted
+    futures (pct_change on adj would deflate early-period returns)."""
     loader = DatabentoLoader()
     v0 = collapse_to_trade_date(loader.continuous("NQ", depth=0, start=START, end=END))
     v1 = collapse_to_trade_date(loader.continuous("NQ", depth=1, start=START, end=END))
-    return panama_adjust(v0, v1)["close"]
+    adj = panama_adjust(v0, v1)["close"]
+    return adj, v0["close"]
+
+
+def run_nq_long_flat(adj: pd.Series, front: pd.Series, sig_on: pd.Series,
+                     tbill_annual: float = 0.03,
+                     transition_bps: float = 5.0) -> tuple[pd.Series, pd.Series, dict]:
+    """Long-flat engine specialized for back-adjusted futures.
+
+    Daily returns: diff(adj) / front.shift(1)  (correct for back-adjusted
+    series — see diagnostic in commit msg). Signal: prior-day, no look-ahead.
+    Costs: transition_bps per flip; T-bill on OFF.
+    """
+    common = adj.index.intersection(front.index).intersection(sig_on.index)
+    adj, front, sig_on = adj.loc[common], front.loc[common], sig_on.loc[common]
+
+    daily_ret_long = (adj.diff() / front.shift(1)).fillna(0.0)
+    sig_shifted = sig_on.shift(1).fillna(False).astype(bool)
+    tbill_daily = (1.0 + tbill_annual) ** (1.0 / 252.0) - 1.0
+    daily = daily_ret_long.where(sig_shifted, tbill_daily)
+
+    flips = sig_shifted.ne(sig_shifted.shift(1)).fillna(False)
+    daily = daily - flips.astype(float) * (transition_bps / 1e4)
+
+    equity = (1.0 + daily).cumprod()
+    info = {
+        "on_fraction": float(sig_shifted.mean()),
+        "n_transitions": int(flips.sum()),
+        "transitions_per_year": float(flips.sum() / (len(daily) / 252)),
+    }
+    return equity, daily, info
 
 
 def sub(s, a, b):
@@ -90,25 +123,30 @@ def run(close: pd.Series, sig_on: pd.Series, transition_bps: float):
 
 def main() -> int:
     print("Loading data...")
-    nq = load_nq_adjusted().dropna()
+    nq_adj, nq_front = load_nq()
     qqq = fetch_qqq().dropna()
-    common = nq.index.intersection(qqq.index)
-    nq, qqq = nq.loc[common], qqq.loc[common]
+    common = nq_adj.index.intersection(qqq.index)
+    nq_adj, nq_front, qqq = nq_adj.loc[common], nq_front.loc[common], qqq.loc[common]
     print(f"  Common calendar: {len(common)} bars, {common[0].date()} -> {common[-1].date()}")
 
     print("\n" + "=" * 96)
     print("# NQ FUTURES vs QQQ SHARES vehicle equivalence (50/200 trend, 2010-2026)")
+    print("# NQ returns: diff(adj)/front.shift(1)  (correct for back-adjusted futures)")
     print("=" * 96)
 
-    nq_sig = trend_signal(nq)
+    # Signal on Panama-adjusted (gap-free); returns on diff(adj)/front for NQ
+    nq_sig = trend_signal(nq_adj)
     qqq_sig = trend_signal(qqq)
 
-    nq_res = run(nq, nq_sig, transition_bps=5.0)
+    nq_eq, nq_daily, _ = run_nq_long_flat(nq_adj, nq_front, nq_sig)
     qqq_res = run(qqq, qqq_sig, transition_bps=5.0)
+    qqq_daily = qqq_res.daily_returns
 
-    nq_m = CM.compute(nq_res.daily_returns, nq_res.equity)
-    qqq_m = CM.compute(qqq_res.daily_returns, qqq_res.equity)
-    nq_bah = CM.compute(nq.pct_change().fillna(0))
+    nq_m = CM.compute(nq_daily, nq_eq)
+    qqq_m = CM.compute(qqq_daily, qqq_res.equity)
+    # BAH NQ: same correct-return convention (no signal, always long)
+    nq_bah_daily = (nq_adj.diff() / nq_front.shift(1)).fillna(0.0)
+    nq_bah = CM.compute(nq_bah_daily)
     qqq_bah = CM.compute(qqq.pct_change().fillna(0))
 
     print(f"\n## Full sample")
@@ -125,8 +163,8 @@ def main() -> int:
     print(f"  {'Period':<26}{'NQ trend':>14}{'QQQ trend':>14}")
     sub_ok = True
     for lbl, a, b in SUBPERIODS:
-        nm = CM.compute(sub(nq_res.daily_returns, a, b))
-        qm = CM.compute(sub(qqq_res.daily_returns, a, b))
+        nm = CM.compute(sub(nq_daily, a, b))
+        qm = CM.compute(sub(qqq_daily, a, b))
         if nm.sortino <= 0 or qm.sortino <= 0:
             sub_ok = False
         print(f"  {lbl:<26}{nm.sortino:>+13.2f}{qm.sortino:>+13.2f}")
@@ -136,8 +174,8 @@ def main() -> int:
     print(f"  {'Era':<28}{'NQ trend':>20}{'QQQ trend':>20}{'Match?':>10}")
     era_mismatches = []
     for lbl, a, b in ERAS:
-        nd = sub(nq_res.daily_returns, a, b)
-        qd = sub(qqq_res.daily_returns, a, b)
+        nd = sub(nq_daily, a, b)
+        qd = sub(qqq_daily, a, b)
         if len(nd) < 5:
             continue
         def stats(d):
