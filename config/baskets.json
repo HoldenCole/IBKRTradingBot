@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "stage": 1,
+  "comment": "Five-basket portfolio architecture. Weights are config-driven; changing the deployed allocation is a config edit, NOT a code change. Weights across enabled baskets must sum to 1.0. Stage 1 = Basket 2 (BTC) 50% + Basket 3 (QQQ) 50%.",
+  "rebalance": {
+    "policy": "drift_band",
+    "drift_band_pct": 0.10,
+    "comment": "Rebalance a basket back toward target weight only when its realized weight drifts >10% relative from target (e.g. 50% target, rebalance if it leaves 45-55% band). Avoids tax-inefficient calendar rebalancing. Reviewed at each daily close; acted on only at filter-state transitions where a trade is already happening (no standalone rebalance trades in Stage 1)."
+  },
+  "baskets": {
+    "1": {
+      "name": "High risk / return",
+      "role": "Aggressive return engine (leveraged growth)",
+      "weight": 0.0,
+      "enabled": false,
+      "strategies": [],
+      "filed_candidates": [
+        "TQQQ trend 50/200 — TESTED, Tier D (leverage amplifies whipsaw ~as much as return; no Calmar improvement). reports/leverage/00_tqqq_trend.md"
+      ]
+    },
+    "2": {
+      "name": "Higher returns with drawdown limits",
+      "role": "Tame-the-drawdown crypto beta",
+      "weight": 0.50,
+      "enabled": true,
+      "strategies": [
+        {
+          "id": "btc_trend_50_200",
+          "asset": "BTC",
+          "signal": "sma_crossover",
+          "params": { "fast": 50, "slow": 200 },
+          "convention": "close_t_minus_1_to_t",
+          "off_vehicle": "tbill",
+          "vehicle_by_account_usd": { "0": "IBIT", "25000": "MBT" },
+          "validated": "reports/crypto/01_test1_tame_drawdown.md (Tier B, Calmar 1.38, MaxDD 43% vs BAH 83%)"
+        }
+      ]
+    },
+    "3": {
+      "name": "Stability with returns",
+      "role": "Defensive equity beta (NDX trend)",
+      "weight": 0.50,
+      "enabled": true,
+      "strategies": [
+        {
+          "id": "qqq_trend_50_200",
+          "asset": "QQQ",
+          "signal": "sma_crossover",
+          "params": { "fast": 50, "slow": 200 },
+          "convention": "close_t_minus_1_to_t",
+          "off_vehicle": "tbill",
+          "vehicle_by_account_usd": { "0": "QQQ_SHARES", "60000": "MNQ" },
+          "validated": "reports/leverage/03_ixic_dotcom_regime.md + 04_nq_vehicle_equivalence.md + original equity validation"
+        }
+      ]
+    },
+    "4": {
+      "name": "Moderate growth with diversification",
+      "role": "Commodity-trend diversifier sleeve",
+      "weight": 0.0,
+      "enabled": false,
+      "strategies": [],
+      "filed_candidates": [
+        "Commodity long-short V3 vol-adj momentum — NEAR-MISS Tier C, deferred to $25k+ multi-strategy. Positive in 4/5 equity-stress windows, -0.05 equity corr. reports/commodity_trend/CANDIDATE_FOR_RESURRECTION.md"
+      ],
+      "activation_criteria": "Account >= $25k AND a fresh re-validation against then-current criteria (per the resurrection doc). Config-enable + set weight when criteria met."
+    },
+    "5": {
+      "name": "Complex multi-strategy diversification",
+      "role": "Crisis-hedge sleeve (uncorrelated-in-stress)",
+      "weight": 0.0,
+      "enabled": false,
+      "strategies": [],
+      "filed_candidates": [
+        "Bond trend 50/200 on ZN/ZB/ZF — TESTED Tier D on standalone Sortino (0.47) BUT real diversification properties: -0.29 equity corr, positive in 4/4 equity-stress windows, dodged the 2022 bond crash (+2% vs BAH -10/-22%). reports/bonds/00_test1_bond_trend.md"
+      ],
+      "activation_criteria": "Deploy small (5-10%) as a crisis overlay only if/when (a) account is large enough to tolerate a low-standalone-return sleeve for its diversification value, OR (b) live equity drawdowns make the crisis-hedge worth the calm-period bleed. The bond strategy's value is regime-conditional, not standalone."
+    }
+  }
+}

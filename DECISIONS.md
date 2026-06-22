@@ -755,3 +755,60 @@ This was the last research item. The deployed portfolio is locked:
 - No dynamic allocation overlay
 
 Operational deployment work is the only outstanding stream.
+
+---
+
+# Operational Deployment Begins (2026-06-22)
+
+Research phase formally closed. Five-basket architecture locked into the
+system. Operational build scoped.
+
+## Five-basket structure (config/baskets.json)
+
+| Basket | Role | Stage 1 weight | Strategy |
+|---|---|---:|---|
+| 1 | High risk/return | 0% (disabled) | empty — TQQQ tested Tier D |
+| 2 | Higher returns w/ drawdown limits | 50% | BTC trend 50/200 (IBIT→MBT) |
+| 3 | Stability w/ returns | 50% | QQQ trend 50/200 (shares→MNQ) |
+| 4 | Moderate growth w/ diversification | 0% (disabled) | commodity LS V3 filed ($25k+) |
+| 5 | Complex multi-strat diversification | 0% (disabled) | bond trend filed (crisis overlay) |
+
+Weights are CONFIG-DRIVEN (config/baskets.json). Stage transitions, basket
+activation, rebalancing = config edits, not code changes. Built today:
+src/deploy/baskets.py (loader + validation + sizing + vehicle resolution),
+8 passing tests. Enabled weights validated to sum to 1.0.
+
+Commodities + bonds filed in baskets 4/5 as config-activatable candidates
+(enabled=false, weight=0). Neither cleared Tier B standalone; available for
+a future deliberate small-sleeve diversifier decision, not Stage-1 deployed.
+
+## Operational decisions locked (the 3 Priority-1 gating items)
+
+1. FILL CONVENTION: next-day market-on-open (Convention 2). The "15pp/yr
+   spread" was a backtest-convention artifact; Convention 1 (same-bar) is
+   unachievable live. Signal at 4pm-ET close N, fill at open N+1. Live ≈
+   backtest (which already assumes the shift(1) lag).
+
+2. OFF-VEHICLE: SGOV (0.09% expense, 0-3mo T-bills, lowest fee + shortest
+   duration of the four candidates).
+
+3. TAX-LOT: specific-identification HIFO at IBKR. Wash-sale tracking for QQQ
+   SHARES only (futures §1256 exempt). Year-end reconcile vs 1099-B.
+
+## Honest scoping finding
+
+Existing src/runner + src/strategies + src/risk + src/positions were built
+for the ABANDONED options-strategy concept. Reuse: ibkr_adapter stock
+plumbing (partial), store.py atomic-save pattern, sim.py test pattern,
+data loaders. Rest is rewrite-simpler (the validated strategy is trivial
+operationally — daily SMA crossover, long/flat, 50/50).
+
+Timeline to paper-trading start: ~3 WEEKS (15 working days), not 2. The
+earlier 2-week estimate assumed more runner reuse than actually exists.
+Full breakdown in reports/deployment/OPERATIONAL_SCOPING.md.
+
+## Paper / go-no-go / abandonment criteria
+
+LOCKED, recorded in OPERATIONAL_SCOPING.md. 6-month paper minimum,
+static 50/50, IBKR paper. Go requires fills within 25% of backtest + no
+critical failures + no operator overrides + tax tracking working.
