@@ -1,0 +1,30 @@
+Loading data...
+  4028 bars, 2010-06-07 -> 2026-06-18
+
+================================================================================================
+# MARGIN SENSITIVITY — NQ trend Calmar across margin scenarios
+# Reference: QQQ trend Calmar = 0.59  (locked tolerance: gap < 0.10)
+================================================================================================
+
+  Scenario                                          CAGR   MaxDD  Calmar     Gap   Pass?
+  100% credit (theoretical, no margin)             +11%     22%    0.51   +0.08    PASS
+   94% credit (current normal-vol, ~6% margin)     +11%     22%    0.50   +0.09    PASS
+   90% credit (moderate, ~10% margin)              +11%     22%    0.50   +0.10    PASS
+   86% credit (historical elevated, ~14% margin, like Mar 2020)   +11%     22%    0.49   +0.10    FAIL
+   80% credit (stress, ~20% margin — extreme stress test)   +11%     22%    0.48   +0.11    FAIL
+    0% credit (naive — buggy baseline for context)    +9%     22%    0.38   +0.21    FAIL
+
+## Sub-period detail under the 3 realistic margin scenarios
+  Scenario                    2018-2026 Sort  2010-2017 Sort
+  94% credit                          +1.16          +1.11
+  90% credit                          +1.15          +1.10
+  86% credit                          +1.14          +1.09
+
+================================================================================================
+# VERDICT — margin-sensitivity robustness
+================================================================================================
+
+  Realistic scenarios (94/90/86 credit): 2/3 PASS locked 0.10 tolerance
+
+  >>> PARTIAL: passes at >= 94% credit only <<<
+     MNQ migration plan should be sized conservatively for elevated-margin regimes.
