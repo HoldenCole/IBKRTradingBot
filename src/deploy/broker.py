@@ -59,6 +59,12 @@ class Position:
 class OrderTicket:
     """The result of placing an order. order_id is broker-assigned;
     everything else is the strategy's record of what we asked for.
+
+    `strategy_id` is set by the deployment layer (orders.py / positioning.py)
+    AFTER place_order returns. It is the bridge that lets the orchestrator
+    attribute broker fills back to the right sleeve for ledger recording.
+    Empty string when the broker returns the ticket; populated by the time
+    it appears in a WorkflowResult / PositioningResult.
     """
     order_id: str
     symbol: str
@@ -69,6 +75,7 @@ class OrderTicket:
     avg_fill_price: float | None = None
     filled_quantity: float = 0.0
     note: str = ""
+    strategy_id: str = ""
 
 
 class StockBroker(Protocol):

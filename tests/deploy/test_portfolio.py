@@ -355,6 +355,36 @@ def test_whipsaw_realistic_qqq_sequence():
     assert total_raw + total_disallowed == pytest.approx(35.0)
 
 
+# ===== Persistence =====
+
+def test_ledger_save_load_roundtrip(tmp_path):
+    """Atomic save + load reconstructs open lots, realized sales, and the
+    cash-by-strategy ledger."""
+    L = Ledger()
+    L.record_buy(strategy_id="qqq", symbol="QQQ", quantity=10, price=500.0,
+                 trade_date=date(2024, 1, 1))
+    L.record_sell(strategy_id="qqq", symbol="QQQ", quantity=4, price=540.0,
+                  trade_date=date(2024, 6, 1))   # +$160 realized
+    L.record_buy(strategy_id="btc", symbol="IBIT", quantity=50, price=60.0,
+                 trade_date=date(2024, 2, 1))
+
+    p = tmp_path / "ledger.json"
+    L.save(p)
+    L2 = Ledger.load(p)
+    # Open lots survive
+    assert L2.open_shares_by_strategy("QQQ") == {"qqq": 6.0}
+    assert L2.open_shares_by_strategy("IBIT") == {"btc": 50.0}
+    # Realized P&L survives
+    assert L2.realized_pnl_by_strategy() == pytest.approx({"qqq": 160.0})
+
+
+def test_ledger_load_missing_file_returns_empty(tmp_path):
+    """First-run case: no file yet -> empty ledger."""
+    L = Ledger.load(tmp_path / "absent.json")
+    assert L.open_lots() == []
+    assert L.realized_sales() == []
+
+
 def test_snapshot_returns_full_state():
     L = Ledger()
     L.record_buy(strategy_id="qqq", symbol="QQQ", quantity=10, price=500.0,

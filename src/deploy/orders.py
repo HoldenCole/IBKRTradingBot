@@ -94,7 +94,7 @@ class WorkflowResult:
         return len(self.submitted) > 0
 
 
-def _resolve_symbol(spec: StrategySpec, equity_usd: float) -> str:
+def resolve_risk_symbol(spec: StrategySpec, equity_usd: float) -> str:
     """Convert a strategy's vehicle code (from baskets.json) to the broker
     symbol. Fails loudly for unsupported vehicles (e.g. futures in Stage 1)."""
     vehicle = spec.vehicle_for_account(equity_usd)
@@ -104,6 +104,10 @@ def _resolve_symbol(spec: StrategySpec, equity_usd: float) -> str:
         f"Vehicle {vehicle!r} not supported by Stage-1 stock broker. "
         f"Futures (MNQ/MBT) require a futures order path — not in scope until "
         f"account-size thresholds are reached.")
+
+
+# Back-compat alias for any internal callers.
+_resolve_symbol = resolve_risk_symbol
 
 
 def _strategy_lookup(cfg: BasketConfig) -> dict[str, tuple[str, StrategySpec]]:
@@ -261,11 +265,13 @@ async def execute_plans(
                     t = await broker.place_order(
                         plan.risk_symbol, plan.risk_side, plan.risk_quantity,
                         order_type)
+                    t.strategy_id = plan.strategy_id
                     result.submitted.append(t)
                 if plan.off_quantity > 0:
                     t = await broker.place_order(
                         plan.off_symbol, plan.off_side, plan.off_quantity,
                         order_type)
+                    t.strategy_id = plan.strategy_id
                     result.submitted.append(t)
             else:  # "enter"
                 # SELL off first, then BUY risk
@@ -273,11 +279,13 @@ async def execute_plans(
                     t = await broker.place_order(
                         plan.off_symbol, plan.off_side, plan.off_quantity,
                         order_type)
+                    t.strategy_id = plan.strategy_id
                     result.submitted.append(t)
                 if plan.risk_quantity > 0:
                     t = await broker.place_order(
                         plan.risk_symbol, plan.risk_side, plan.risk_quantity,
                         order_type)
+                    t.strategy_id = plan.strategy_id
                     result.submitted.append(t)
         except Exception as exc:
             result.errors.append(

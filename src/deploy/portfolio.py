@@ -34,9 +34,12 @@ import uuid
 from dataclasses import dataclass, field
 from datetime import date, timedelta
 from enum import Enum
+from pathlib import Path
 from typing import Iterable
 
 _log = logging.getLogger(__name__)
+
+_LEDGER_SCHEMA_VERSION = 1
 
 # Wash-sale window per IRC §1091: 30 days before AND 30 days after.
 _WASH_SALE_DAYS = 30
@@ -113,6 +116,57 @@ class LedgerSnapshot:
 
     def open_quantity(self, symbol: str) -> float:
         return sum(lot.quantity for lot in self.open_lots_by_symbol.get(symbol, ()))
+
+
+def _lot_to_dict(L: TaxLot) -> dict:
+    return {
+        "lot_id": L.lot_id, "strategy_id": L.strategy_id, "symbol": L.symbol,
+        "quantity": L.quantity, "original_quantity": L.original_quantity,
+        "cost_basis_per_share": L.cost_basis_per_share,
+        "open_date": L.open_date.isoformat(), "status": L.status.value,
+        "parent_lot_id": L.parent_lot_id,
+        "disallowed_wash_basis_addon": L.disallowed_wash_basis_addon,
+    }
+
+
+def _dict_to_lot(d: dict) -> TaxLot:
+    return TaxLot(
+        lot_id=d["lot_id"], strategy_id=d["strategy_id"], symbol=d["symbol"],
+        quantity=float(d["quantity"]),
+        original_quantity=float(d["original_quantity"]),
+        cost_basis_per_share=float(d["cost_basis_per_share"]),
+        open_date=date.fromisoformat(d["open_date"]),
+        status=LotStatus(d.get("status", "open")),
+        parent_lot_id=d.get("parent_lot_id"),
+        disallowed_wash_basis_addon=float(d.get("disallowed_wash_basis_addon", 0.0)),
+    )
+
+
+def _sale_to_dict(s: RealizedSale) -> dict:
+    return {
+        "sale_id": s.sale_id, "strategy_id": s.strategy_id, "symbol": s.symbol,
+        "sell_date": s.sell_date.isoformat(), "quantity": s.quantity,
+        "sale_price": s.sale_price, "cost_basis_per_share": s.cost_basis_per_share,
+        "open_date": s.open_date.isoformat(), "realized_pnl": s.realized_pnl,
+        "is_long_term": s.is_long_term, "closed_lot_id": s.closed_lot_id,
+        "wash_sale_disallowed_loss": s.wash_sale_disallowed_loss,
+        "wash_sale_replacement_lot_id": s.wash_sale_replacement_lot_id,
+    }
+
+
+def _dict_to_sale(d: dict) -> RealizedSale:
+    return RealizedSale(
+        sale_id=d["sale_id"], strategy_id=d["strategy_id"], symbol=d["symbol"],
+        sell_date=date.fromisoformat(d["sell_date"]),
+        quantity=float(d["quantity"]), sale_price=float(d["sale_price"]),
+        cost_basis_per_share=float(d["cost_basis_per_share"]),
+        open_date=date.fromisoformat(d["open_date"]),
+        realized_pnl=float(d["realized_pnl"]),
+        is_long_term=bool(d["is_long_term"]),
+        closed_lot_id=d["closed_lot_id"],
+        wash_sale_disallowed_loss=float(d.get("wash_sale_disallowed_loss", 0.0)),
+        wash_sale_replacement_lot_id=d.get("wash_sale_replacement_lot_id"),
+    )
 
 
 class Ledger:
@@ -276,6 +330,57 @@ class Ledger:
             realized_sales=list(self._realized),
             cash_by_strategy=dict(self._cash_by_strategy),
         )
+
+    # ----- persistence (atomic JSON, mirrors StateStore pattern) -----
+
+    def save(self, path: "Path") -> None:
+        """Atomic write of the ledger to JSON. Crash before rename leaves
+        the previous ledger intact; crash after rename has the new one."""
+        import json, os, tempfile
+        from pathlib import Path as _Path  # noqa: F401
+        path.parent.mkdir(parents=True, exist_ok=True)
+        payload = {
+            "schema_version": _LEDGER_SCHEMA_VERSION,
+            "open_lots": [_lot_to_dict(L) for lots in self._open.values()
+                          for L in lots],
+            "closed_lots": [_lot_to_dict(L) for L in self._closed],
+            "realized_sales": [_sale_to_dict(s) for s in self._realized],
+            "cash_by_strategy": dict(self._cash_by_strategy),
+        }
+        fd, tmp = tempfile.mkstemp(prefix=".tmp_", dir=path.parent)
+        try:
+            with os.fdopen(fd, "w") as f:
+                json.dump(payload, f, indent=2, sort_keys=True, default=str)
+                f.flush()
+                os.fsync(f.fileno())
+            os.replace(tmp, path)
+        except Exception:
+            if os.path.exists(tmp):
+                os.unlink(tmp)
+            raise
+
+    @classmethod
+    def load(cls, path: "Path") -> "Ledger":
+        """Load a ledger from disk. If the file doesn't exist, returns an
+        empty ledger — the first-run case."""
+        import json
+        L = cls()
+        if not path.exists():
+            return L
+        raw = json.loads(path.read_text())
+        if raw.get("schema_version") != _LEDGER_SCHEMA_VERSION:
+            raise RuntimeError(
+                f"Ledger schema v{raw.get('schema_version')} != expected "
+                f"v{_LEDGER_SCHEMA_VERSION}: {path}")
+        for d in raw.get("open_lots", []):
+            lot = _dict_to_lot(d)
+            L._open.setdefault(lot.symbol, []).append(lot)
+        for d in raw.get("closed_lots", []):
+            L._closed.append(_dict_to_lot(d))
+        for d in raw.get("realized_sales", []):
+            L._realized.append(_dict_to_sale(d))
+        L._cash_by_strategy = dict(raw.get("cash_by_strategy", {}))
+        return L
 
     # ----- wash-sale internals -----
 

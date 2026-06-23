@@ -121,11 +121,25 @@ authoritative tax document and should be reconciled against at filing time.
 This is by design (documented in `portfolio.py` and the tax workflow note).
 
 ### KL-4 — Futures vehicles (MNQ/MBT) intentionally unsupported in Stage 1
-`_resolve_symbol` raises `NotImplementedError` for futures vehicle codes.
-These activate only at the account-size thresholds in `baskets.json`
-($60k QQQ→MNQ, etc.) and require a separate futures order path. Failing
-loudly (rather than silently mis-routing a futures code as a stock) is the
-correct Stage-1 behavior.
+`resolve_risk_symbol` raises `NotImplementedError` for futures vehicle
+codes. These activate only at the account-size thresholds in
+`baskets.json` ($60k QQQ→MNQ, etc.) and require a separate futures order
+path. Failing loudly (rather than silently mis-routing a futures code as a
+stock) is the correct Stage-1 behavior.
+
+### KL-5 — Orchestrator records only fills it sees during its run
+`src/deploy/run.py` records FILLED tickets into the ledger immediately
+after `execute_plans` / `execute_positioning` returns. For MKT against the
+Sim broker (used in tests), every ticket fills synchronously inside the
+run — perfect coverage. For MOO against IBKR (the production order type)
+the fill lands at the NEXT session's opening auction, which is hours after
+this orchestrator returns. Today those tickets are deferred and the next
+day's reconcile will flag them as ORPHAN_POSITION.
+
+A pending-orders persistence layer (drain-on-startup: read pending
+tickets, poll `order_status`, record any FILLED into the ledger BEFORE
+reconcile runs) is the planned fix and a hard prerequisite for the IBKR
+paper-account dry-run.
 
 ---
 
