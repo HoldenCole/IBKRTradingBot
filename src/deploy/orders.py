@@ -38,6 +38,7 @@ from typing import Sequence
 
 from src.deploy.baskets import BasketConfig, StrategySpec
 from src.deploy.broker import OrderType, OrderTicket, Position, StockBroker
+from src.deploy.portfolio import Ledger
 from src.deploy.signal_state import SignalState, StateChange
 
 _log = logging.getLogger(__name__)
@@ -121,12 +122,23 @@ async def plan_orders(
     cfg: BasketConfig,
     broker: StockBroker,
     quotes: dict[str, float],
+    ledger: Ledger | None = None,
 ) -> list[OrderPlan]:
     """Build the order plan for a set of state changes. Pure: no orders
-    placed. The result can be inspected/logged before submit."""
+    placed. The result can be inspected/logged before submit.
+
+    `ledger`, when supplied, is the authoritative per-sleeve accounting
+    record. It is used to size OFF-vehicle (SGOV) sells per-sleeve: a sleeve
+    entering its risk asset sells only the SGOV *it* parked. Without it, the
+    planner falls back to sizing against the pooled broker SGOV balance,
+    which is only correct when a single sleeve is flipping (see CRITICAL-1
+    in the QA report)."""
     nav = await broker.nav()
     positions = await broker.positions()
     strats = _strategy_lookup(cfg)
+    sleeve_sgov_shares: dict[str, float] = (
+        ledger.open_shares_by_strategy(OFF_VEHICLE_SYMBOL) if ledger else {}
+    )
     plans: list[OrderPlan] = []
 
     for ch in changes:
@@ -181,11 +193,24 @@ async def plan_orders(
             sgov_quote = quotes.get(OFF_VEHICLE_SYMBOL)
             if sgov_quote is None:
                 raise RuntimeError(f"missing quote for {OFF_VEHICLE_SYMBOL}")
-            sgov_held = positions.get(OFF_VEHICLE_SYMBOL)
-            sgov_available_dollars = (sgov_held.quantity * sgov_quote
-                                      if sgov_held else 0.0)
-            sleeve_sgov_dollars = min(target_dollars, sgov_available_dollars)
-            off_qty = int(sleeve_sgov_dollars // sgov_quote)
+            if ledger is not None:
+                # Per-sleeve sizing: sell exactly the SGOV this sleeve parked.
+                # Entering means going fully back into the risk asset, so we
+                # liquidate this sleeve's entire SGOV position. This is the
+                # CRITICAL-1 fix — sizing against the sleeve's own holdings
+                # rather than the pooled broker balance avoids over-selling
+                # SGOV when multiple sleeves enter on the same day.
+                off_qty = int(sleeve_sgov_shares.get(ch.strategy_id, 0.0))
+                sleeve_sgov_dollars = off_qty * sgov_quote
+            else:
+                # Fallback (no ledger): size against the pooled broker SGOV
+                # balance, capped at the sleeve target. Only correct for a
+                # single flipping sleeve.
+                sgov_held = positions.get(OFF_VEHICLE_SYMBOL)
+                sgov_available_dollars = (sgov_held.quantity * sgov_quote
+                                          if sgov_held else 0.0)
+                sleeve_sgov_dollars = min(target_dollars, sgov_available_dollars)
+                off_qty = int(sleeve_sgov_dollars // sgov_quote)
 
             risk_quote = quotes.get(risk_symbol)
             if risk_quote is None:

@@ -243,6 +243,18 @@ class Ledger:
                 out[L.strategy_id] = out.get(L.strategy_id, 0.0) + L.quantity * px
         return out
 
+    def open_shares_by_strategy(self, symbol: str) -> dict[str, float]:
+        """{strategy_id: total open shares of `symbol`} attributed by
+        lot.strategy_id.
+
+        Used to size per-sleeve OFF-vehicle (SGOV) sells: a sleeve entering
+        the risk asset should sell only the SGOV *it* parked, not the pooled
+        broker balance shared across sleeves."""
+        out: dict[str, float] = {}
+        for lot in self._open.get(symbol, []):
+            out[lot.strategy_id] = out.get(lot.strategy_id, 0.0) + lot.quantity
+        return out
+
     def realized_pnl_by_strategy(self) -> dict[str, float]:
         out: dict[str, float] = {}
         for s in self._realized:
@@ -282,13 +294,19 @@ class Ledger:
         if not replacements:
             return
         replacement = replacements[0]
-        total_disallowed = -sale.realized_pnl  # positive dollar amount
-        per_share_addon = total_disallowed / replacement.original_quantity
+        total_loss = -sale.realized_pnl  # positive dollar amount
+        # Only the loss on the number of shares actually replaced is
+        # disallowed (IRC §1091). Replaced shares = min(sold, repurchased).
+        matched_shares = min(sale.quantity, replacement.original_quantity)
+        disallowed = total_loss * (matched_shares / sale.quantity)
+        # Spread the disallowed dollars over the replacement lot as a
+        # per-share basis addon (total addon == disallowed dollars).
+        per_share_addon = disallowed / replacement.original_quantity
         replacement.disallowed_wash_basis_addon += per_share_addon
-        sale.wash_sale_disallowed_loss = total_disallowed
+        sale.wash_sale_disallowed_loss = disallowed
         sale.wash_sale_replacement_lot_id = replacement.lot_id
         _log.info("wash-sale: $%.2f disallowed on sale %s; basis +$%.4f/share on lot %s",
-                  total_disallowed, sale.sale_id, per_share_addon, replacement.lot_id)
+                  disallowed, sale.sale_id, per_share_addon, replacement.lot_id)
 
     def _apply_pending_wash_sale(self, new_lot: TaxLot, buy_date: date) -> None:
         """When a buy occurs, check recent realized sales (within 30 days
@@ -312,14 +330,16 @@ class Ledger:
                 continue
             if sale.sell_date < cutoff:
                 continue
-            total_disallowed = -sale.realized_pnl
-            per_share_addon = total_disallowed / new_lot.original_quantity
+            total_loss = -sale.realized_pnl
+            matched_shares = min(sale.quantity, new_lot.original_quantity)
+            disallowed = total_loss * (matched_shares / sale.quantity)
+            per_share_addon = disallowed / new_lot.original_quantity
             new_lot.disallowed_wash_basis_addon += per_share_addon
-            sale.wash_sale_disallowed_loss = total_disallowed
+            sale.wash_sale_disallowed_loss = disallowed
             sale.wash_sale_replacement_lot_id = new_lot.lot_id
             _log.info("wash-sale (pending->matched): $%.2f from sale %s "
                       "to lot %s (+$%.4f/share)",
-                      total_disallowed, sale.sale_id, new_lot.lot_id, per_share_addon)
+                      disallowed, sale.sale_id, new_lot.lot_id, per_share_addon)
 
     def _find_wash_replacements(
         self, symbol: str, strategy_id: str, sell_date: date,

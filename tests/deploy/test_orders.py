@@ -14,6 +14,7 @@ from src.deploy.broker import OrderState, OrderType, SimStockBroker
 from src.deploy.orders import (
     OFF_VEHICLE_SYMBOL, execute_plans, plan_orders,
 )
+from src.deploy.portfolio import Ledger
 from src.deploy.signal_state import SignalState, StateChange
 
 
@@ -224,6 +225,54 @@ async def test_two_simultaneous_flips_planned_independently():
     # IBIT: floor(4000 / 60) = 66
     assert by_strat["qqq_trend_50_200"].risk_quantity == 7
     assert by_strat["btc_trend_50_200"].risk_quantity == 66
+
+
+@pytest.mark.asyncio
+async def test_enter_sizes_sgov_per_sleeve_from_ledger():
+    """CRITICAL-1 regression: when two sleeves enter on the same day, each
+    must sell only the SGOV *it* parked (tracked in the ledger), never the
+    pooled broker balance. Otherwise the planner over-orders SGOV sells and
+    the second order is rejected at the broker."""
+    cfg = BasketConfig.load()
+    b = SimStockBroker(starting_cash=10000.0)
+    b.set_quote(OFF_VEHICLE_SYMBOL, 100.0); b.set_quote("QQQ", 540.0)
+    b.set_quote("IBIT", 60.0)
+    # Pooled broker SGOV = 60 shares; the $4000 cash sliver inflates NAV to
+    # $10000 so each sleeve's target ($5000) exceeds its parked SGOV.
+    await b.place_order(OFF_VEHICLE_SYMBOL, "BUY", 60, OrderType.MKT)
+
+    # Ledger: each sleeve parked 30 SGOV (total 60 == broker pool).
+    L = Ledger()
+    L.record_buy(strategy_id="qqq_trend_50_200", symbol=OFF_VEHICLE_SYMBOL,
+                 quantity=30, price=100.0, trade_date=date(2024, 6, 19))
+    L.record_buy(strategy_id="btc_trend_50_200", symbol=OFF_VEHICLE_SYMBOL,
+                 quantity=30, price=100.0, trade_date=date(2024, 6, 19))
+
+    plans = await plan_orders([_enter_qqq(), _enter_btc()], cfg, b,
+                              _quotes(), ledger=L)
+    by_strat = {p.strategy_id: p for p in plans}
+    # Each sleeve sells exactly its own 30 SGOV...
+    assert by_strat["qqq_trend_50_200"].off_quantity == 30
+    assert by_strat["btc_trend_50_200"].off_quantity == 30
+    # ...so combined SGOV sells never exceed the 60 actually held.
+    assert sum(p.off_quantity for p in plans) == 60
+
+
+@pytest.mark.asyncio
+async def test_enter_without_ledger_can_oversize_pooled_sgov():
+    """Documents the CRITICAL-1 hazard the ledger fix addresses: without a
+    ledger the planner sizes each sleeve's SGOV sell against the *pooled*
+    broker balance, so two same-day flips each request the full target and
+    the combined sells exceed what is actually held. The orchestrator MUST
+    pass a ledger in production."""
+    cfg = BasketConfig.load()
+    b = SimStockBroker(starting_cash=10000.0)
+    b.set_quote(OFF_VEHICLE_SYMBOL, 100.0); b.set_quote("QQQ", 540.0)
+    b.set_quote("IBIT", 60.0)
+    await b.place_order(OFF_VEHICLE_SYMBOL, "BUY", 60, OrderType.MKT)
+    plans = await plan_orders([_enter_qqq(), _enter_btc()], cfg, b, _quotes())
+    # 50% * 10000 / 100 = 50 SGOV each -> 100 total > 60 held (the bug).
+    assert sum(p.off_quantity for p in plans) > 60
 
 
 @pytest.mark.asyncio

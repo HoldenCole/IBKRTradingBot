@@ -200,6 +200,53 @@ def test_wash_sale_applies_within_strategy_only():
     assert L.realized_sales()[0].wash_sale_disallowed_loss == 0.0
 
 
+def test_wash_sale_partial_replacement_disallows_only_replaced_shares():
+    """HIGH-1 regression: sell 100 QQQ at a loss, buy back only 30 within
+    the window. Per IRC §1091 only the loss on the 30 *replaced* shares is
+    disallowed; the loss on the other 70 shares is deductible.
+
+    Previously the code disallowed the FULL loss and bumped the small
+    replacement lot's basis by the entire amount — both wrong."""
+    L = Ledger()
+    L.record_buy(strategy_id="qqq", symbol="QQQ", quantity=100, price=500.0,
+                 trade_date=date(2024, 6, 1))
+    L.record_sell(strategy_id="qqq", symbol="QQQ", quantity=100, price=490.0,
+                  trade_date=date(2024, 7, 1))   # -$1000 loss ($10/share)
+    new_lot = L.record_buy(strategy_id="qqq", symbol="QQQ", quantity=30,
+                           price=495.0, trade_date=date(2024, 7, 6))
+    sale = L.realized_sales()[0]
+    # Only 30 of 100 shares replaced -> disallow 30 * $10 = $300 (not $1000).
+    assert sale.wash_sale_disallowed_loss == pytest.approx(300.0)
+    assert sale.wash_sale_replacement_lot_id == new_lot.lot_id
+    # Per-share addon spreads the $300 over the 30-share replacement lot:
+    # $300 / 30 = $10/share (NOT $1000/30 = $33.33).
+    assert new_lot.disallowed_wash_basis_addon == pytest.approx(10.0)
+    # Total basis bump equals the disallowed dollars.
+    assert (new_lot.disallowed_wash_basis_addon
+            * new_lot.original_quantity) == pytest.approx(300.0)
+
+
+def test_wash_sale_partial_replacement_pre_existing_lot():
+    """HIGH-1 regression, _maybe_flag_wash_sale path: a replacement lot
+    bought BEFORE the loss sale (within window) and smaller than the sale
+    only disallows the loss on the replaced shares."""
+    L = Ledger()
+    # Replacement lot bought first (10 shares), then a larger position.
+    early = L.record_buy(strategy_id="qqq", symbol="QQQ", quantity=10,
+                         price=495.0, trade_date=date(2024, 6, 20))
+    L.record_buy(strategy_id="qqq", symbol="QQQ", quantity=100, price=500.0,
+                 trade_date=date(2024, 5, 1))
+    # Sell 50 at a loss; HIFO consumes the $500 lot. The 10-share $495 lot
+    # bought within 30 days prior is the replacement.
+    sales = L.record_sell(strategy_id="qqq", symbol="QQQ", quantity=50,
+                          price=480.0, trade_date=date(2024, 6, 25))
+    # Loss is (480-500)*50 = -$1000 ($20/share). Only 10 shares replaced ->
+    # disallow 10 * $20 = $200.
+    loss_sale = next(s for s in sales if s.realized_pnl < 0)
+    assert loss_sale.wash_sale_disallowed_loss == pytest.approx(200.0)
+    assert early.disallowed_wash_basis_addon == pytest.approx(20.0)  # 200 / 10
+
+
 def test_wash_sale_chain_with_subsequent_sell_recognizes_disallowed_loss():
     """Lot A bought $500, sold $450 (loss -$500 disallowed).
     Lot B bought $460 (basis bumped to $510 effective).
