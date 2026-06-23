@@ -53,6 +53,9 @@ from src.deploy.daily_check import (
 from src.deploy.orders import (
     OFF_VEHICLE_SYMBOL, execute_plans, plan_orders, resolve_risk_symbol,
 )
+from src.deploy.pending import (
+    DrainResult, PendingOrder, PendingOrderStore, drain_pending,
+)
 from src.deploy.portfolio import Ledger
 from src.deploy.positioning import execute_positioning, plan_positioning
 from src.deploy.reconcile import Reconciliation, reconcile_startup
@@ -75,9 +78,12 @@ class OrchestratorResult:
     exit code; tests assert against its fields."""
     trading_date: date
     reconciliation: Reconciliation
+    drain: DrainResult | None = None
+    drained_fills: list[OrderTicket] = field(default_factory=list)
     daily_check: DailyCheckResult | None = None
     placed_tickets: list[OrderTicket] = field(default_factory=list)
     recorded_fills: list[OrderTicket] = field(default_factory=list)
+    newly_pending: list[PendingOrder] = field(default_factory=list)
     report: PortfolioReport | None = None
     report_path: Path | None = None
     history_path: Path | None = None
@@ -107,6 +113,7 @@ class OrchestratorConfig:
     ledger_path: Path
     history_path: Path
     reports_dir: Path
+    pending_store: PendingOrderStore | None = None
     first_run: bool = False
     order_type: OrderType = OrderType.MOO
     now_utc: datetime | None = None
@@ -209,6 +216,38 @@ async def run_once(c: OrchestratorConfig) -> OrchestratorResult:
     result = OrchestratorResult(trading_date=c.trading_date,
                                 reconciliation=Reconciliation())
 
+    # --- Step 0: drain pending orders (BEFORE reconcile) ---
+    # Overnight MOO orders placed by a prior run fill at this session's open.
+    # Recording those fills into the ledger now means reconcile compares a
+    # consistent picture instead of halting on the expected settlement.
+    if c.pending_store is not None:
+        drain = await drain_pending(
+            c.pending_store, c.broker, c.ledger, c.trading_date)
+        result.drain = drain
+        result.drained_fills = drain.recorded
+        result.errors.extend(drain.errors)
+        # Surface terminal (rejected/cancelled overnight) and unknown orders.
+        for t in drain.terminal:
+            if t.state == OrderState.REJECTED:
+                a = alert_critical(
+                    f"Overnight order REJECTED: {t.side} {t.quantity:g} {t.symbol}",
+                    f"order_id={t.order_id} strategy={t.strategy_id} "
+                    f"note={t.note}")
+                c.alerter.send(a)
+                result.alerts.append(a)
+        for po in drain.unknown:
+            a = alert_critical(
+                f"Pending order unknown to broker: {po.order_id}",
+                f"{po.side} {po.quantity:g} {po.symbol} "
+                f"(strategy={po.strategy_id}, placed {po.placed_trading_date}). "
+                f"Broker has no record — investigate before next run.")
+            c.alerter.send(a)
+            result.alerts.append(a)
+        # Persist the ledger (overnight fills) and the trimmed pending set
+        # so reconcile and any crash-after-this see the resolved state.
+        c.ledger.save(c.ledger_path)
+        c.pending_store.save()
+
     # --- Step 1: reconcile broker vs ledger ---
     reconciliation = await reconcile_startup(c.broker, c.ledger)
     result.reconciliation = reconciliation
@@ -272,10 +311,24 @@ async def run_once(c: OrchestratorConfig) -> OrchestratorResult:
         c.alerter.send(a)
         result.alerts.append(a)
 
-    # --- Step 5: record fills, save ledger ---
-    recorded, _deferred = _record_fills_into_ledger(
+    # --- Step 5: record synchronous fills; persist deferred as pending ---
+    recorded, deferred = _record_fills_into_ledger(
         c.ledger, placed, c.trading_date)
     result.recorded_fills = recorded
+    # Deferred SUBMITTED orders (MOO awaiting next-session open) are
+    # persisted so the next run's drain (Step 0) can resolve them. Without
+    # a pending store they're lost and would surface as ORPHAN_POSITIONs.
+    if c.pending_store is not None:
+        for t in deferred:
+            if t.state == OrderState.SUBMITTED and t.strategy_id:
+                po = PendingOrder.from_ticket(t, c.trading_date, c.now_utc)
+                c.pending_store.add(po)
+                result.newly_pending.append(po)
+        c.pending_store.save()
+    elif any(t.state == OrderState.SUBMITTED for t in deferred):
+        _log.warning("%d order(s) left SUBMITTED but no pending_store "
+                     "configured; they will not be drained next run",
+                     sum(1 for t in deferred if t.state == OrderState.SUBMITTED))
     c.ledger.save(c.ledger_path)
 
     # --- Step 6: portfolio report + history + drawdown ---
@@ -297,6 +350,34 @@ async def run_once(c: OrchestratorConfig) -> OrchestratorResult:
     c.alerter.send(summary)
     result.alerts.append(summary)
     return result
+
+
+def _seed_sim_broker_quotes(
+    broker, cfg: BasketConfig, provider: CloseSeriesProvider,
+    trading_date: date, nominal_equity: float,
+) -> None:
+    """The SimStockBroker is a test double with no market data. For the
+    `--broker sim` CLI path to be runnable (smoke-testing the wiring against
+    live Yahoo closes), seed it with the latest close per risk symbol plus a
+    fixed SGOV quote. The production path uses `--broker ibkr`, which sources
+    quotes from the market and needs no seeding."""
+    for basket in cfg.baskets.values():
+        if not basket.enabled:
+            continue
+        for spec in basket.strategies:
+            symbol = resolve_risk_symbol(spec, nominal_equity)
+            try:
+                closes = provider.closes(spec.asset, trading_date, 5)
+                if closes is None or closes.empty:
+                    continue
+                px = float(closes.iloc[-1])
+            except Exception as exc:
+                _log.warning("could not seed sim quote for %s: %r", symbol, exc)
+                continue
+            broker.set_quote(symbol, px)
+            broker.set_open_price(symbol, px)
+    broker.set_quote(OFF_VEHICLE_SYMBOL, 100.0)
+    broker.set_open_price(OFF_VEHICLE_SYMBOL, 100.0)
 
 
 async def _get_sgov_quote(broker: StockBroker) -> float:
@@ -322,6 +403,7 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
                    default=Path("config/baskets.json"))
     p.add_argument("--state", type=Path, default=Path("state/signal_state.json"))
     p.add_argument("--ledger", type=Path, default=Path("state/ledger.json"))
+    p.add_argument("--pending", type=Path, default=Path("state/pending.json"))
     p.add_argument("--history", type=Path, default=Path("state/history.csv"))
     p.add_argument("--reports-dir", type=Path, default=Path("state/reports"))
     p.add_argument("--trading-date", type=date.fromisoformat, default=None,
@@ -356,10 +438,19 @@ def main(argv: list[str] | None = None) -> int:
     store = StateStore(args.state)
     store.load()
     ledger = Ledger.load(args.ledger)
+    pending_store = PendingOrderStore(args.pending)
+    pending_store.load()
+
+    trading_date = args.trading_date or _default_trading_date()
+
+    from src.deploy.providers import YahooCloseProvider
+    provider: CloseSeriesProvider = YahooCloseProvider()
 
     if args.broker == "sim":
         from src.deploy.broker import SimStockBroker
         broker: StockBroker = SimStockBroker(starting_cash=args.sim_cash)
+        _seed_sim_broker_quotes(broker, cfg, provider, trading_date,
+                                nominal_equity=args.sim_cash)
     else:
         # ib_insync connect lives here (and not in IBKRStockBroker) so the
         # adapter itself stays test-importable without the package.
@@ -369,9 +460,6 @@ def main(argv: list[str] | None = None) -> int:
         ib.connect("127.0.0.1", 7497, clientId=1)
         broker = IBKRStockBroker(ib=ib)
 
-    from src.deploy.providers import YahooCloseProvider
-    provider: CloseSeriesProvider = YahooCloseProvider()
-
     if args.dry_run:
         alerter: Alerter = CapturingAlerter()
     else:
@@ -380,16 +468,18 @@ def main(argv: list[str] | None = None) -> int:
     cfg_obj = OrchestratorConfig(
         cfg=cfg, store=store, ledger=ledger, broker=broker,
         provider=provider, alerter=alerter,
-        trading_date=args.trading_date or _default_trading_date(),
+        trading_date=trading_date,
         ledger_path=args.ledger, history_path=args.history,
-        reports_dir=args.reports_dir, first_run=args.first_run,
-        order_type=OrderType(args.order_type),
+        reports_dir=args.reports_dir, pending_store=pending_store,
+        first_run=args.first_run, order_type=OrderType(args.order_type),
     )
     result = asyncio.run(run_once(cfg_obj))
 
+    drained = len(result.drained_fills)
     print(f"[{result.trading_date}] reconcile={result.reconciliation.summary}; "
-          f"placed={len(result.placed_tickets)} "
+          f"drained={drained} placed={len(result.placed_tickets)} "
           f"recorded={len(result.recorded_fills)} "
+          f"pending={len(result.newly_pending)} "
           f"alerts={len(result.alerts)} errors={len(result.errors)} "
           f"halted={result.halted}")
     if result.report_path:

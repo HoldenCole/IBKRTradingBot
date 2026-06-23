@@ -21,6 +21,7 @@ from src.deploy.baskets import BasketConfig
 from src.deploy.broker import OrderState, OrderType, SimStockBroker
 from src.deploy.daily_check import CloseSeriesProvider
 from src.deploy.orders import OFF_VEHICLE_SYMBOL
+from src.deploy.pending import PendingOrderStore
 from src.deploy.portfolio import Ledger
 from src.deploy.run import OrchestratorConfig, run_once
 from src.deploy.signal_state import SignalState
@@ -241,3 +242,80 @@ async def test_first_run_tolerates_residual_broker_positions(tmp_path):
     assert result.halted is False
     assert result.exit_code == 0
     assert result.daily_check is not None
+
+
+# ===== KL-5: MOO order placed day T, drained day T+1 before reconcile =====
+
+@pytest.mark.asyncio
+async def test_moo_order_drained_next_run_before_reconcile(tmp_path):
+    """The full KL-5 lifecycle with MOO order type:
+
+    Day T (first run): both signals ON -> positioning places MOO BUY orders
+    that stay SUBMITTED. They are persisted to the pending store; the ledger
+    records nothing yet.
+
+    Overnight: the MOO orders fill at the next session's open (session_open).
+    Now the broker holds shares the ledger doesn't know about.
+
+    Day T+1 (steady-state run): drain (Step 0, BEFORE reconcile) polls the
+    broker, records the overnight fills into the ledger, so reconcile sees a
+    consistent picture and does NOT halt on an ORPHAN_POSITION.
+    """
+    day_t = date(2024, 6, 20)
+    day_t1 = date(2024, 6, 21)
+
+    # Series that rise and end near the broker's quotes so sizing is clean.
+    qqq_series = _trend_up_series(day_t1, start_px=400.0, slope=(540 - 400) / 259)
+    btc_series = _trend_up_series(day_t1, start_px=30.0, slope=(60 - 30) / 259)
+    provider = _StubProvider({"QQQ": qqq_series, "BTC": btc_series})
+
+    broker = _build_broker(starting_cash=8000.0)
+    # MOO orders fill at these opening prices on session_open().
+    broker.set_open_price("QQQ", float(qqq_series.iloc[-1]))
+    broker.set_open_price("IBIT", float(btc_series.iloc[-1]))
+    broker.set_open_price(OFF_VEHICLE_SYMBOL, 100.0)
+
+    # Shared state objects across the two runs.
+    store = StateStore(tmp_path / "signal_state.json")
+    ledger = Ledger()
+    pending = PendingOrderStore(tmp_path / "pending.json")
+    common = dict(
+        cfg=BasketConfig.load(), store=store, ledger=ledger, broker=broker,
+        provider=provider, alerter=CapturingAlerter(),
+        ledger_path=tmp_path / "ledger.json",
+        history_path=tmp_path / "history.csv",
+        reports_dir=tmp_path / "reports", pending_store=pending,
+    )
+
+    # --- Day T: first run, MOO ---
+    res_t = await run_once(OrchestratorConfig(
+        trading_date=day_t, first_run=True, order_type=OrderType.MOO,
+        now_utc=datetime(2024, 6, 20, 20, 1, tzinfo=timezone.utc), **common))
+    assert res_t.exit_code == 0
+    # MOO orders submitted, not filled -> nothing recorded, both pending.
+    assert all(t.state == OrderState.SUBMITTED for t in res_t.placed_tickets)
+    assert res_t.recorded_fills == []
+    assert len(res_t.newly_pending) == 2
+    assert ledger.open_lots() == []
+    # Pending persisted to disk.
+    assert (tmp_path / "pending.json").exists()
+
+    # --- Overnight: the MOO orders fill at the open ---
+    broker.session_open()
+    assert "QQQ" in await broker.positions()      # broker now holds shares
+    assert ledger.open_lots() == []               # ledger still empty
+
+    # --- Day T+1: steady-state run; drain must record fills pre-reconcile ---
+    res_t1 = await run_once(OrchestratorConfig(
+        trading_date=day_t1, first_run=False, order_type=OrderType.MOO,
+        now_utc=datetime(2024, 6, 21, 20, 1, tzinfo=timezone.utc), **common))
+
+    # Drain recorded the two overnight fills...
+    assert len(res_t1.drained_fills) == 2
+    # ...so reconcile saw a consistent ledger and did NOT halt.
+    assert res_t1.halted is False
+    assert res_t1.exit_code == 0
+    assert "qqq_trend_50_200" in ledger.open_shares_by_strategy("QQQ")
+    assert "btc_trend_50_200" in ledger.open_shares_by_strategy("IBIT")
+    # Pending store drained empty.
+    assert pending.is_empty

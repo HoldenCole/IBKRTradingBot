@@ -127,19 +127,30 @@ codes. These activate only at the account-size thresholds in
 path. Failing loudly (rather than silently mis-routing a futures code as a
 stock) is the correct Stage-1 behavior.
 
-### KL-5 — Orchestrator records only fills it sees during its run
-`src/deploy/run.py` records FILLED tickets into the ledger immediately
-after `execute_plans` / `execute_positioning` returns. For MKT against the
-Sim broker (used in tests), every ticket fills synchronously inside the
-run — perfect coverage. For MOO against IBKR (the production order type)
-the fill lands at the NEXT session's opening auction, which is hours after
-this orchestrator returns. Today those tickets are deferred and the next
-day's reconcile will flag them as ORPHAN_POSITION.
+### KL-5 — Overnight MOO fills bridged across runs — RESOLVED
+*(Originally a known limitation; closed by `src/deploy/pending.py`.)*
 
-A pending-orders persistence layer (drain-on-startup: read pending
-tickets, poll `order_status`, record any FILLED into the ledger BEFORE
-reconcile runs) is the planned fix and a hard prerequisite for the IBKR
-paper-account dry-run.
+`src/deploy/run.py` records FILLED tickets into the ledger immediately
+after `execute_plans` / `execute_positioning` returns. For MKT that fills
+synchronously inside the run. For MOO (the production order type) the fill
+lands at the NEXT session's opening auction — hours after the orchestrator
+returns — so the placing run cannot record it.
+
+**Fix shipped.** `PendingOrderStore` atomically persists submitted-but-
+unresolved orders (with their `strategy_id`, which the broker doesn't
+track). `drain_pending` runs as **Step 0 of every run, BEFORE reconcile**:
+it polls the broker for each pending order and
+  - FILLED → records into the ledger as of the current trading date, drops
+    from pending;
+  - REJECTED/CANCELLED → drops, surfaced as a CRITICAL alert;
+  - SUBMITTED → kept pending;
+  - unknown to the broker → kept pending and surfaced (never silently lost).
+
+Because the drain records overnight fills before reconcile compares ledger
+vs broker, the previously-expected ORPHAN_POSITION halt no longer occurs.
+Covered end-to-end by `test_moo_order_drained_next_run_before_reconcile`
+(MOO placed day T, filled overnight, drained + recorded day T+1, reconcile
+clean). This removes the last blocker for the IBKR paper-account dry-run.
 
 ---
 
