@@ -812,3 +812,102 @@ Full breakdown in reports/deployment/OPERATIONAL_SCOPING.md.
 LOCKED, recorded in OPERATIONAL_SCOPING.md. 6-month paper minimum,
 static 50/50, IBKR paper. Go requires fills within 25% of backtest + no
 critical failures + no operator overrides + tax tracking working.
+
+---
+
+# Deployment Decisions LOCKED (2026-06-22 confirmation)
+
+User confirmed scoping doc + the three Priority-1 decisions. Recording the
+locked state and the basket-activation paths for future-me.
+
+## Locked decisions (no further iteration)
+
+1. **Fill convention:** next-day market-on-open. Signal computed at 4pm ET
+   close[N], order placed for open[N+1]. Matches the Convention 2
+   discipline used in all validated backtests.
+
+2. **OFF vehicle:** SGOV (iShares 0-3 Month Treasury Bond ETF). Lowest
+   expense ratio (0.09%), shortest duration, deeply liquid.
+
+3. **Tax-lot method:** specific-identification HIFO at IBKR. Wash-sale
+   tracking ONLY for QQQ shares (futures §1256 are wash-sale-exempt).
+
+4. **Rebalancing:** drift-band 10% relative, acted on ONLY at filter
+   transitions where a trade is already happening. No standalone
+   rebalance trades in Stage 1. Minimizes tax drag.
+
+5. **Paper-trading parameters:** 6 months minimum, IBKR paper account
+   verified for QQQ + IBIT, full fill-quality + slippage + timing capture,
+   end-of-period reconciliation report.
+
+## Build sequence approved
+
+15 working days from decisions-locked through integration dry-run, with a
+1.5d buffer for IBKR paper API surprises. Weekly status updates. Immediate
+escalation if the estimate slips by more than 1 week.
+
+## Diversifier basket activation paths (future-me reference)
+
+Both baskets 4 and 5 are filed in config/baskets.json as enabled=false,
+weight=0. Activating them is a config edit (no code change required), but
+the *decision* to activate is not automatic. Documenting the paths here so
+the criteria are explicit:
+
+### Basket 4 — Commodity long-short V3 (activation path)
+
+- **Candidate:** vol-adj-momentum long-short on the 10 CME commodities
+  (Tier C near-miss, 4/5 equity-stress wins, −0.05 corr).
+  See `reports/commodity_trend/CANDIDATE_FOR_RESURRECTION.md`.
+- **Trigger to evaluate activation:** account reaches **$25k+**.
+- **Required before activation:**
+  1. Fresh re-validation under then-current criteria (the test framework
+     is preserved in `src/commodity/`; can be re-run with new windows).
+  2. Decide sizing: small (5-10%), to be funded by trimming Baskets 2 and 3
+     proportionally so the enabled total stays at 1.0.
+  3. Cost re-estimation: commodity-trend turnover is higher than QQQ/BTC;
+     verify the after-tax CAGR still beats the cash drag.
+- **NOT triggered by:** live equity drawdowns alone (commodity trend wasn't
+  shown to hedge equity stress specifically — it had positive returns in
+  4 of 5 stress windows, but correlation was −0.05, not strongly negative).
+
+### Basket 5 — Bond trend (activation path)
+
+- **Candidate:** 50/200 trend on ZN/ZB/ZF vol-targeted basket. Tier D on
+  standalone Sortino (0.47) BUT real diversification: −0.29 equity corr,
+  4/4 stress wins, dodged 2022 bond crash (+2% vs BAH −10/−22%).
+  See `reports/bonds/00_test1_bond_trend.md`.
+- **Trigger to evaluate activation:** conscious decision that the crisis-
+  hedge value is worth the calm-period bleed (the strategy nets ~T-bill
+  standalone; the value is regime-conditional).
+- **Required before activation:**
+  1. Live equity drawdown has happened and the operator finds the QQQ-trend
+     "go to cash" defensive behavior insufficient (i.e., wants something
+     that ACTIVELY profits in crises, not just sits in T-bills).
+  2. Sizing: 5-10% maximum (consistent with the bond strategy's marginal
+     standalone return).
+  3. Accept that in calm regimes, the bond sleeve will roughly track T-bill
+     (whipsaw + carry roughly cancel) — that's the cost of carrying the
+     hedge.
+- **NOT triggered by:** account size alone (unlike Basket 4). The
+  diversification value scales with portfolio size, but the activation
+  decision is about operator preference for active vs implicit
+  diversification, not size.
+
+### Why these are separate decisions, not one rule
+
+Basket 4 activation is empirical (re-validate the strategy and turn it on
+if it still works). Basket 5 activation is philosophical (do you want a
+small actively-profiting crisis hedge, or does the QQQ-trend implicit
+diversification suffice?). The two questions don't collapse into a single
+trigger.
+
+## What does NOT require deployment-spec changes
+
+Activating baskets 4 or 5 is a config edit. No code changes, no schema
+changes, no new infrastructure. The sizing layer, order placement, position
+tracking, P&L reporting all read from `config/baskets.json` and adapt to
+whatever the configured allocation is.
+
+That separation is the whole point of the basket architecture: the
+research can produce new strategy candidates, and *deploying* one of them
+is a config flip + rebalance, not a re-engineering pass.
