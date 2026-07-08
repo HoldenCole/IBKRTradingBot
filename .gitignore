@@ -33,3 +33,6 @@ data/intraday/
 data/commodities/
 # Secrets — API keys
 .secrets/
+
+# Re-pullable public price cache (Yahoo/FRED) — run_timeframe_test.py auto-pulls
+data/cache/

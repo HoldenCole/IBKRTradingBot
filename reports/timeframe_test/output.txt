@@ -1,0 +1,115 @@
+####################################################################################################
+# TIMEFRAME VARIATION TEST — 4 signal frequencies on the trend rule
+# Convention 2 (no look-ahead), T-bill OFF (TB3MS), costs on.
+# Tax: ST 37% / LT 20%. Costs: equity 5bps/flip, BTC 10bps/flip + 0.25%/yr expense.
+####################################################################################################
+
+====================================================================================================
+ASSET: equity  (^GSPC)   1927-12-30 -> 2026-04-13   (98.3 yr, 24,686 bars)
+====================================================================================================
+  Buy&hold reference: CAGR=+6.3% Sortino=0.59 Calmar=0.07 maxDD=-86%
+
+  Variation                        CAGR  Sortino  Calmar  maxDD  Whip/yr  AT-CAGR
+  1. Daily 50/200 (baseline)     +5.5%     0.89    0.14   -38%    11.39    +3.7%
+  2. Weekly 10/40                +5.1%     0.80    0.14   -36%     6.50    +3.5%
+  3. Weekly 50/200               +6.4%     0.97    0.26   -24%     2.33    +5.1%
+  4. Daily 50/200 acted weekly   +5.3%     0.84    0.13   -42%     5.87    +3.7%
+
+  Locked criteria vs daily 50/200 baseline (need: ΔSortino≥+0.30 OR ΔCalmar≥+0.15; whipsaw ≥30% fewer; AT-CAGR comparable/better):
+  2. Weekly 10/40                ΔSortino=-0.09 ΔCalmar=-0.00 whip-red=+43% ΔAT-CAGR=-0.2%  [fail: perf=n whip=Y at=Y]
+  3. Weekly 50/200               ΔSortino=+0.08 ΔCalmar=+0.12 whip-red=+80% ΔAT-CAGR=+1.4%  [fail: perf=n whip=Y at=Y]
+  4. Daily 50/200 acted weekly   ΔSortino=-0.05 ΔCalmar=-0.02 whip-red=+48% ΔAT-CAGR=-0.0%  [fail: perf=n whip=Y at=Y]
+
+  Per-period Sortino  (robustness — must not depend on one regime):
+  Period                             1       2       3       4
+  1928-1949 Depression+WWII       0.36    0.21    0.65    0.23
+  1950-1965 Post-war bull         1.81    1.86    1.41    1.91
+  1966-1982 Secular bear          1.86    1.60    0.94    1.57
+  1983-1999 Disinflationary       1.12    1.03    1.57    1.16
+  2000-2009 Dotcom+GFC            0.11    0.05    0.12    0.30
+  2010-2017 Post-GFC              0.33    0.65    0.79    0.45
+  2018-2026 Modern                0.85    0.65    0.83    0.52
+
+  Per-period whipsaw (transitions/yr):
+  Period                             1       2       3       4
+  1928-1949 Depression+WWII        9.3     5.5     1.0     5.0
+  1950-1965 Post-war bull         10.0     5.3     3.1     4.6
+  1966-1982 Secular bear           7.1     5.1     2.9     5.1
+  1983-1999 Disinflationary       16.5     9.7     2.1     8.4
+  2000-2009 Dotcom+GFC            11.2     6.2     2.7     5.2
+  2010-2017 Post-GFC              17.0     7.8     2.1     8.0
+  2018-2026 Modern                13.3     7.5     3.4     6.5
+
+  Per-period Calmar:
+  Period                             1       2       3       4
+  1928-1949 Depression+WWII       0.06    0.03    0.15    0.03
+  1950-1965 Post-war bull         1.05    0.99    0.59    1.03
+  1966-1982 Secular bear          0.99    0.70    0.27    0.59
+  1983-1999 Disinflationary       0.46    0.42    0.71    0.41
+  2000-2009 Dotcom+GFC            0.02    0.01    0.03    0.10
+  2010-2017 Post-GFC              0.06    0.18    0.31    0.13
+  2018-2026 Modern                0.28    0.26    0.43    0.19
+
+  Stress-window max drawdown (lower=better; B&H shown for context):
+  Event                   B&H       1       2       3       4
+  1929 Crash              86%      6%     11%      0%     11%
+  1973-74 oil bear        48%      3%      3%     15%      3%
+  1987 Black Monday       34%     10%     13%     16%     13%
+  2000-2002 dotcom        49%     18%     14%     18%     14%
+  2008-2009 GFC           47%      0%      0%      0%      0%
+  2020 COVID              34%      5%     13%     13%     13%
+  2022 inflation          25%      4%      3%     11%      3%
+
+====================================================================================================
+ASSET: btc  (BTC-USD)   2014-09-17 -> 2026-04-14   (11.6 yr, 4,228 bars)
+====================================================================================================
+  Buy&hold reference: CAGR=+55.2% Sortino=1.46 Calmar=0.66 maxDD=-83%
+
+  Variation                        CAGR  Sortino  Calmar  maxDD  Whip/yr  AT-CAGR
+  1. Daily 50/200 (baseline)    +59.6%     2.07    1.38   -43%    10.89   +43.8%
+  2. Weekly 10/40               +54.7%     1.85    1.15   -47%     5.53   +41.9%
+  3. Weekly 50/200              +21.1%     1.00    0.32   -66%     1.21   +16.7%
+  4. Daily 50/200 acted weekly  +60.6%     2.06    1.42   -43%     5.70   +44.9%
+
+  Locked criteria vs daily 50/200 baseline (need: ΔSortino≥+0.30 OR ΔCalmar≥+0.15; whipsaw ≥30% fewer; AT-CAGR comparable/better):
+  2. Weekly 10/40                ΔSortino=-0.21 ΔCalmar=-0.23 whip-red=+49% ΔAT-CAGR=-1.9%  [fail: perf=n whip=Y at=n]
+  3. Weekly 50/200               ΔSortino=-1.07 ΔCalmar=-1.06 whip-red=+89% ΔAT-CAGR=-27.1%  [fail: perf=n whip=Y at=n]
+  4. Daily 50/200 acted weekly   ΔSortino=-0.00 ΔCalmar=+0.04 whip-red=+48% ΔAT-CAGR=+1.0%  [fail: perf=n whip=Y at=Y]
+
+  Per-period Sortino  (robustness — must not depend on one regime):
+  Period                             1       2       3       4
+  2015-2016 recovery              2.08    1.92    0.00    2.05
+  2017 ICO boom                   4.25    4.66    0.00    4.84
+  2018 bear                      -0.68   -0.62    0.00   -0.66
+  2019-2020 chop                  1.13    0.85    0.50    1.34
+  2020-21 retail boom             4.43    3.61    3.37    3.92
+  2022 contagion                  0.00    0.00   -0.98    0.00
+  2023+ ETF era                   1.48    1.03    1.43    1.08
+
+  Per-period whipsaw (transitions/yr):
+  Period                             1       2       3       4
+  2015-2016 recovery              10.5     3.5     0.0     4.5
+  2017 ICO boom                   14.0     6.0     0.0     8.0
+  2018 bear                        5.0     3.0     0.0     3.0
+  2019-2020 chop                  12.6     6.9     2.9     5.7
+  2020-21 retail boom             12.0     6.9     1.7     6.9
+  2022 contagion                   0.0     0.0     2.0     0.0
+  2023+ ETF era                   15.2     8.5     0.6     8.5
+
+  Per-period Calmar:
+  Period                             1       2       3       4
+  2015-2016 recovery              2.31    1.83    0.00    2.18
+  2017 ICO boom                  14.67   22.66    0.00   22.27
+  2018 bear                      -0.35   -0.47    0.00   -0.36
+  2019-2020 chop                  0.59    0.51    0.04    0.78
+  2020-21 retail boom             8.47    5.48    5.89    6.23
+  2022 contagion                  0.00    0.00   -0.66    0.00
+  2023+ ETF era                   1.06    0.57    1.08    0.57
+
+  Stress-window max drawdown (lower=better; B&H shown for context):
+  Event                   B&H       1       2       3       4
+  2018 bear               82%     33%     37%      0%     33%
+  2020 COVID              52%     11%      0%     52%     13%
+  2021 May crash          53%     23%     31%     50%     31%
+  2022 LUNA/3AC           60%      0%      0%      9%      0%
+  2022 FTX collapse       26%      0%      0%      0%      0%
