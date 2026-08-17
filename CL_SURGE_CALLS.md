@@ -37,6 +37,22 @@ Same 10-year test, trigger CL up >2%, hold 5 sessions, non-overlapping:
 
 The uptrend filter alone (no surge trigger) yields only +10 bps/5d — the surge adds real selection within uptrends. Positive in all three eras is the key property; none of the unfiltered variants achieve it.
 
+### The intraday-only variant (the user's actual hand trade)
+
+Clarified 2026-08-17: the hand trade is intraday — CL1 crosses +X% *during the session*, buy the calls, out same day. Tested as: first intraday crossing of +1/1.5/2% (vs prior 16:00 ET CL) → buy USO at that bar → exit EOD or +2h.
+
+| Sample | Cross +1.5% → EOD | n | Win |
+|---|---|---|---|
+| Last 20 days (1-min) | **+61 bps** | 10 | 70% |
+| Last 60 days (30-min) | **+67 bps** | 18 | 61% |
+| Full 2.4 years (hourly) | **−0.0 bps** | 182 | 54% |
+
+- By year (2.4y sample): 2024 +9 bps, 2025 −6 bps, **2026 full-year −1 bps** — even 2026 as a whole is flat; the profits are concentrated in roughly the last two months (July–Aug 2026 oil tape).
+- Methodology checks: hourly data on the last 60 days reproduces the recent edge (+46 bps), so the flat long-run result is not a granularity artifact. Entry speed matters — the edge decays +61 → +33 → +16 bps with 0/30/60-min entry delays — so an automated version must buy within minutes of the crossing.
+- The trend filter does **not** rescue the intraday variant (uptrend days: +0.4 bps over 2.4y). Unlike the multi-day hold, same-day continuation has no era-stable expression found in this analysis.
+
+**Verdict on intraday-only:** the recent hand-trading profits are genuine — the last ~2 months paid this trade well — but 2.4 years of data says it is a hot streak in a favorable tape, not a durable standalone edge. After option spreads it is net-negative in expectation over the full sample. The durable expression of the same instinct is the multi-day trend-filtered version above. Recommended path: paper-trade both variants in parallel and let live forward data decide; do not put real money on the intraday variant on the strength of the recent streak.
+
 ### Honest statistical assessment
 
 t ≈ 1.1 with 77 events in 10 years is **suggestive, not significant**. The economics are plausible (this is energy trend-following with a breakout trigger — the mechanism behind 50 years of CTA returns, and the same family as `New Trading Strats`' Variant 2). The options expression adds convexity: modeled OTM calls turned the 2024–26 sample's drift into ~$250–550 avg per $1k premium per event (t ≈ 2.2–2.4 *with overlapping events* — the non-overlap t is the honest one). This must earn its way through paper trading; the backtest alone does not justify live capital.
