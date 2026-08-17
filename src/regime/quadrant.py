@@ -62,6 +62,8 @@ def quadrant_series(spy_daily: pd.Series, dbc_daily: pd.Series) -> pd.Series:
     Index = month-end stamps; value = the quadrant IN FORCE for the month
     that follows each stamp. Months without enough history are dropped.
     """
+    if spy_daily.empty or dbc_daily.empty:
+        return pd.Series(dtype=object)
     spy_m = spy_daily.resample("ME").last()
     dbc_m = dbc_daily.resample("ME").last()
     out = {}
