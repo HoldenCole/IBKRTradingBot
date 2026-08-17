@@ -51,6 +51,16 @@ Clarified 2026-08-17: the hand trade is intraday — CL1 crosses +X% *during the
 - Methodology checks: hourly data on the last 60 days reproduces the recent edge (+46 bps), so the flat long-run result is not a granularity artifact. Entry speed matters — the edge decays +61 → +33 → +16 bps with 0/30/60-min entry delays — so an automated version must buy within minutes of the crossing.
 - The trend filter does **not** rescue the intraday variant (uptrend days: +0.4 bps over 2.4y). Unlike the multi-day hold, same-day continuation has no era-stable expression found in this analysis.
 
+#### The same-hour scalp variant (full hand-trade mechanics)
+
+Further clarified: the actual hand trade uses *small* triggers (~0.5% or less), exits the moment CL turns, adds when CL dips and resumes, holds usually within the hour, max 4 hours. Mechanical translation tested:
+
+- **CL-flip exit** (close when CL retraces 0.2–0.3% from its post-entry high): fires on noise within a median of 5–17 minutes on every event — captures ~0 bps even on the favorable recent tape. CL's routine minute-scale wiggle is the same size as the exit trigger; "the trend changed" cannot be distinguished from noise at this threshold mechanically.
+- **Control on the same entries** (recent 20 days): plain 1–2h fixed holds made +31 to +51 bps — on this tape, the sitting was the profit, and the fast exit was a cost.
+- **Long-run, short holds** (2.4y, entry at +0.5% intraday crossing): 1h hold **−6.7 bps**/event (t=−1.7), 2h hold −6.2 bps — negative in *every year*, including 2026. After option spreads, decisively negative.
+
+**Verdict on the same-hour scalp:** no mechanical edge found in any sample, including the period where the hand trading was profitable. The hand P&L is attributable to discretionary tape/day selection (plus favorable limit fills) on a small number of trades in a hot tape — which is a skill, but not one this rule specification captures. Do not automate as described.
+
 **Verdict on intraday-only:** the recent hand-trading profits are genuine — the last ~2 months paid this trade well — but 2.4 years of data says it is a hot streak in a favorable tape, not a durable standalone edge. After option spreads it is net-negative in expectation over the full sample. The durable expression of the same instinct is the multi-day trend-filtered version above. Recommended path: paper-trade both variants in parallel and let live forward data decide; do not put real money on the intraday variant on the strength of the recent streak.
 
 ### Honest statistical assessment
