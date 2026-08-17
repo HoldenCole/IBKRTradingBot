@@ -50,6 +50,19 @@ T-bills / stand down. Refusing to trade is the demonstrated best play in G−I+.
 
 ---
 
+## Portfolio-level performance of the gated IBS suite (2007–2026)
+
+Daily return series, 100% of capital per trade, one position per book, flat when idle; SPY benchmark includes dividends. Full year-by-year tables in the session record.
+
+| | CAGR | Sharpe | Sortino | maxDD | Exposure |
+|---|---|---|---|---|---|
+| Gated IBS 50/50 SPY+QQQ (1x) | +1.6% | 0.51 | 0.20 | −11% | 9% of days |
+| SPY buy & hold | +10.8% | 0.62 | 0.76 | −55% | 100% |
+| **SPY + gated IBS overlay (1x)** | **+12.6%** | **0.68** | **0.84** | −55% | — |
+| SPY + 2x overlay | +14.4% | 0.73 | 0.89 | −55% | — |
+
+**Interpretation (honest):** standalone at 1x, the strategy does not compete with buy-and-hold — it is in the market only ~9% of days, so a real per-trade edge (+13–19 bps, 70% win) compounds to only ~1.6%/yr unlevered. Its correct role is an **overlay**: daily correlation to SPY is 0.19, so adding it on top of core exposure raised CAGR by +1.8%/yr per 1x of overlay and improved Sharpe and Sortino, with the overlay year ≥ SPY-alone in 18 of 20 years (worst: 2015, −5.9%). The options-based execution in STRATEGIES.md is precisely the natural financing of this overlay (defined-risk leverage on episodic signals). Ungated IBS for reference: +2.4% CAGR but lower Sharpe (0.45) — the gate trades absolute return for quality, as intended for an overlay.
+
 ## Rules
 
 - Gates apply at **entry time only**; open positions run their normal exits (Policy A, consistent with STRATEGIES.md).
