@@ -2,6 +2,8 @@
 
 Source-of-truth spec for the CL1/USO bot. Same authority rules as `STRATEGIES.md`: if this document conflicts with general best practice, this document wins.
 
+> **STATUS (2026-08-17): validated against real data — NO EDGE FOUND. Do not paper- or live-trade this strategy as specified. See "Backtest Findings" at the bottom.** The spec is preserved for reference and the infrastructure is reusable for the next strategy.
+
 ---
 
 ## The Edge
@@ -110,3 +112,49 @@ Gates, all required:
 - Overnight positioning ahead of the USO open
 - Sub-minute / HFT-style latency competition (we trade minutes-scale convergence, not microstructure)
 - BNO/UCO/SCO or other oil ETFs
+
+---
+
+## Backtest Findings (2026-08-17)
+
+Tested on real data: 20 trading days of 1-min bars (Yahoo, USO + CL=F front month), 60 days of 30-min bars, and ~580 trading days of hourly bars.
+
+### 1. Intraday lag does not exist at minute scale
+
+- 1-min return correlation USO vs CL: **0.988** — USO tracks CL essentially instantly
+- Lead-lag correlation (CL return at t−1 vs USO return at t): **−0.015** — nothing to front-run at 1-min resolution
+- Share backtest, all costs off (pure signal test): **155 trades, gross PnL ≈ −$66 at $1k/position** — the signal has no gross edge; z "converges" via the spread's own statistics adapting, not via a price reversion we can capture
+
+### 2. Size sweep (shares, with costs: 2bps slippage + IBKR fixed pricing)
+
+| Size | Trades | Net PnL (20 days) | Win rate |
+|---|---|---|---|
+| $1,000 | 155 | −$279 | 17% |
+| $2,000 | 155 | −$415 | 23% |
+| $4,000 | 155 | −$687 | 25% |
+| $8,000 | 155 | −$1,224 | 30% |
+
+Losses **scale with size** — confirming the problem is the signal, not the commission minimums.
+
+### 3. Options execution is strictly worse
+
+ATM 7-DTE options (BS-priced vs realized vol, 3%-of-premium spread, $0.65/contract, −50% premium stop, limit-fill modeling): **−$1,933 at $1k sizing** over the same period. The option's bid-ask is charged ~155 times on top of a no-edge signal. Defined-risk structure can bound losses per trade; it cannot create an edge.
+
+### 4. The overnight gap is priced
+
+Event study of USO's open vs the overnight CL move (16:00 → 9:30):
+
+- Exact window, ~50 days: gap-vs-overnight beta 0.97, **R² = 0.99** — the open prices the overnight move almost perfectly
+- Residual → forward-return correlation ≈ 0 in both samples; fading the residual on ~580 days: **negative** mean returns, |t| < 1.1
+
+### Verdict
+
+The time difference between CL and USO's trading clocks is real, but it is **fully arbitraged** — authorized participants and market makers keep USO pinned to its CL-implied value continuously, and the open auction prices the overnight move. There is no retail-capturable convergence at minute or daily scale in this data.
+
+**Conditions to revisit:** a structural dislocation regime (e.g., April 2020-style contango blowout, halted arbitrage, USO premium/discount to NAV persisting for days). Consider a NAV-premium monitor as a cheap standing alert rather than an active strategy.
+
+### What survives for reuse
+
+- The full framework (broker, orders, guardrails, backtester, options model, Yahoo data fetcher)
+- The `FairValueModel` residual-spread machinery — applicable to any pair with a genuine lead-lag or NAV-dislocation mechanism
+- The validation discipline: signal-only (costless) backtest first; if gross edge ≈ 0, no execution scheme can save it

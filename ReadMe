@@ -107,7 +107,7 @@ Expected output: account summary, a test SPY quote, and `Connected: True`.
 
 | Strategy | Spec | Status |
 |---|---|---|
-| `cl1_uso_spread` — CL1/USO time-difference convergence | `CL1_USO_STRATEGY.md` | built; needs real-data backtest + paper validation |
+| `cl1_uso_spread` — CL1/USO time-difference convergence | `CL1_USO_STRATEGY.md` | **rejected** — real-data backtest found no edge (see spec doc findings) |
 
 ```bash
 # Pull 30 days of 1-min bars for USO + front-month CL from IBKR

@@ -61,20 +61,34 @@ def cmd_fetch_data(settings, days: int) -> None:
                 "python -m src.main --backtest --cl data/cl_1min.csv --uso data/uso_1min.csv")
 
 
-def cmd_backtest(cl_path: str, uso_path: str, position_usd: float) -> None:
-    from src.backtest.engine import BacktestConfig, run_backtest
+def cmd_backtest(
+    cl_path: str, uso_path: str, sizes: list[float], execution: str
+) -> None:
     from src.data.market_data import load_bars
 
     cl = load_bars(cl_path)
     uso = load_bars(uso_path)
     logger.info(f"Loaded {len(cl)} CL bars, {len(uso)} USO bars")
-    result = run_backtest(cl, uso, BacktestConfig(position_usd=position_usd))
-    print(result.summary())
-    if not result.trades.empty:
-        out = Path("logs") / "backtest_trades.csv"
+
+    last_trades = None
+    for size in sizes:
+        if execution == "options":
+            from src.backtest.options_engine import OptionsBacktestConfig, run_options_backtest
+
+            result = run_options_backtest(cl, uso, OptionsBacktestConfig(position_usd=size))
+        else:
+            from src.backtest.engine import BacktestConfig, run_backtest
+
+            result = run_backtest(cl, uso, BacktestConfig(position_usd=size))
+        print(result.summary())
+        print()
+        last_trades = result.trades
+
+    if last_trades is not None and not last_trades.empty:
+        out = Path("logs") / f"backtest_trades_{execution}.csv"
         out.parent.mkdir(exist_ok=True)
-        result.trades.to_csv(out, index=False)
-        print(f"\nTrade log written to {out}")
+        last_trades.to_csv(out, index=False)
+        print(f"Trade log ({execution}, ${sizes[-1]:.0f}) written to {out}")
 
 
 def cmd_run(settings) -> None:
@@ -92,6 +106,14 @@ def main() -> None:
     parser.add_argument("--cl", default="data/cl_1min.csv", help="CL 1-min CSV for --backtest")
     parser.add_argument("--uso", default="data/uso_1min.csv", help="USO 1-min CSV for --backtest")
     parser.add_argument("--position-usd", type=float, default=None)
+    parser.add_argument(
+        "--sweep", default=None,
+        help="comma-separated position sizes for --backtest, e.g. 1000,2000,4000",
+    )
+    parser.add_argument(
+        "--execution", choices=["shares", "options"], default="shares",
+        help="backtest execution model (default: shares)",
+    )
     parser.add_argument("--strategy", choices=["cl1_uso_spread"])
     parser.add_argument("--mode", choices=["paper", "live"], default=None)
     parser.add_argument("--i-understand-the-risk", action="store_true", dest="risk_ack")
@@ -113,7 +135,11 @@ def main() -> None:
     elif args.fetch_data:
         cmd_fetch_data(settings, args.days)
     elif args.backtest:
-        cmd_backtest(args.cl, args.uso, args.position_usd or settings.max_position_usd)
+        if args.sweep:
+            sizes = [float(s) for s in args.sweep.split(",")]
+        else:
+            sizes = [args.position_usd or settings.max_position_usd]
+        cmd_backtest(args.cl, args.uso, sizes, args.execution)
     elif args.strategy:
         cmd_run(settings)
     else:
