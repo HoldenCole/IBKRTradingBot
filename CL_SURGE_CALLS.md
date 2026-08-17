@@ -63,6 +63,17 @@ Further clarified: the actual hand trade uses *small* triggers (~0.5% or less), 
 
 **Verdict on intraday-only:** the recent hand-trading profits are genuine — the last ~2 months paid this trade well — but 2.4 years of data says it is a hot streak in a favorable tape, not a durable standalone edge. After option spreads it is net-negative in expectation over the full sample. The durable expression of the same instinct is the multi-day trend-filtered version above. Recommended path: paper-trade both variants in parallel and let live forward data decide; do not put real money on the intraday variant on the strength of the recent streak.
 
+### Systematic grid sweep (2026-08-17)
+
+264 variants tested on the 2.4y hourly sample (`research/grid_2024_2026_hourly.csv`): direction families {follow-long, follow-short, fade-long, fade-short} × trigger {move since prior 16:00, rolling 1h move} × thresholds {0.3–2%} × exits {1h/2h/4h/EOD holds, 0.5%/1% trailing stops}. Pre-registered pass rule: positive in every year, not just overall. At |t|>2, ~13 false positives are expected by chance from a grid this size.
+
+**Family verdicts:**
+
+- **Follow (CL up → long USO / CL down → short USO)** — the lead-lag thesis: no era-stable variant above +12 bps; the core cells are flat to negative every year. Trailing stops do not rescue it. Leverage/size scale PnL linearly and cannot change its sign.
+- **Fade-short (CL up → short USO):** weakly positive (+4–7 bps/event), not compelling after costs.
+- **Fade-long (CL down ≥1–2% intraday → long USO, hold to EOD):** the only strong cluster — +43 bps/event at the 2% threshold (t=3.2, n=131, win 60%, positive all three years: +26/+34/+63), robust across thresholds and every exit style including trailing stops (+34 bps, t=2.5). BUT: (a) the 2.4y sample contains no crash regime, and fading oil selloffs is precisely the trade that dies in one; (b) the 10-year daily cousin (CL down >2% yesterday → long USO open→close) is negative in **every era** with a worst day of −7.2%; (c) the recent 60 days confirm only weakly (+11 bps). Status: **research candidate only.** Requires 5+ years of intraday data (through 2020 and 2022) before any capital, paper included.
+- **Pair spread (long USO / short CL exposure on z-divergence):** already tested exhaustively as the original strategy — no edge; USO/CL 1-min correlation 0.988 with zero lead-lag at every offset tested (±5 min, ±hours).
+
 ### Honest statistical assessment
 
 t ≈ 1.1 with 77 events in 10 years is **suggestive, not significant**. The economics are plausible (this is energy trend-following with a breakout trigger — the mechanism behind 50 years of CTA returns, and the same family as `New Trading Strats`' Variant 2). The options expression adds convexity: modeled OTM calls turned the 2024–26 sample's drift into ~$250–550 avg per $1k premium per event (t ≈ 2.2–2.4 *with overlapping events* — the non-overlap t is the honest one). This must earn its way through paper trading; the backtest alone does not justify live capital.
