@@ -249,6 +249,40 @@ Findings:
 
 **Weakest-link ranking after this round:** G-cell concentration downgraded from "unvalidated" to "tested and quantified". New top weaknesses: (1) execution gap — the crash brake has no live daily monitor and the forward ledger has n=1 month; (2) classifier rebound lag (no upside analogue to the crash brake); (3) taxes in the user's taxable-only implementation.
 
+## CORRECTION: crash brake retracted; rebound accelerator rejected (2026-08-21)
+
+While testing the rebound accelerator (the brake's upside mirror: while in S/D, jump to the G cell when SPY closes back above its 200-day SMA), its results were implausibly large — which exposed a **one-day look-ahead in the intra-month simulation**: signals evaluated at day-t close were earning day-t returns on the new weights. Trading at the signal-day close means the new position earns from day t+1 — and crash/bounce days cluster exactly so as to matter.
+
+**Honest T+1 rerun (modern era, v4 + conditional-S):**
+
+| | CAGR | Sortino | maxDD |
+|---|---|---|---|
+| MOD monthly-only (no intra-month mechanisms) | **+14.2%** | **1.43** | **−15%** |
+| MOD + crash brake (T+1) | +13.9% | 1.42 | −15% |
+| MOD + brake + accelerator (T+1) | +14.4% | 1.44 | **−20%** |
+| AGG monthly-only | **+22.2%** | **1.10** | **−35%** |
+| AGG + brake (T+1) | +21.9% | 1.11 | −39% |
+| AGG + brake + accelerator (T+1) | +23.0% | 1.11 | **−46%** |
+
+Verdicts:
+- **Crash brake: RETRACTED.** Its previously reported benefit (Refinement grid II, and the pre-2007 brake validation) was entirely the look-ahead artifact. Honestly executed it is neutral-to-harmful. It was never wired into live code (pending the daily monitor) — no live impact. 
+- **Rebound accelerator: REJECTED.** Small CAGR gain, large drawdown cost, both eras.
+- **Corrected official numbers (monthly-only, v4 + conditional-S):** modern MOD +14.2%/1.43/−15%, AGG +22.2%/1.10/−35%; pre-2007 replication +11.4%/0.84/−24% vs S&P +11.0%/0.56/−48% — **the out-of-sample validation of the framework survives**; only the brake's claimed contribution was fake.
+- Cell-level conclusions (conditional-S, D-gold, R-tilt, G-engine verdicts) compared variants under identical execution and are unaffected in direction; their headline magnitudes shift with the corrected baseline.
+- **Operational consequence: the system is monthly-complete.** No daily monitor is needed; the intra-month "execution gap" is closed by deletion, not construction. The remaining forward work is letting the ledger accumulate.
+- Lesson recorded: intra-month mechanisms need T+1 execution modeling from the first test; monthly mechanics were never affected (signals from prior month-end, executed at month start).
+
+## Tax execution habits, quantified (2026-08-21)
+
+Lot-level simulation of the MOD rotation, 2007–2026, real contribution schedule, comparing naive execution (FIFO lots, full monthly rebalance) vs tax-aware execution (HIFO lot selection + contributions-buy-the-underweights-first + harvesting lots >5% underwater):
+
+| Bracket | Naive final | Tax-aware final | Improvement |
+|---|---|---|---|
+| 24% ST / 15% LT | $1,314k | $1,335k | **+$20.5k (+1.6%)** |
+| 35% ST / 23.8% LT | $1,150k | $1,177k | **+$26.9k (+2.3%)** |
+
+Worth doing (it is one IBKR setting plus two habits), worth ~0.1pp/yr — but not transformative: total taxes paid are nearly identical; the gain is deferral compounding. The dominant tax decision remains structural (turnover level and account type), already settled: keep model speed, accept the drag, apply the habits.
+
 ## Findings
 
 1. **The 33/33/33 TQQQ/GLD/TLT mix the user read about is real but mislabeled as balanced**: +19.7% CAGR and Sortino 1.13, but −51% max drawdown and beta ≈ 1.0. Its failure mode is precisely a regime event: **2022 (−41.9%)**, when inflation broke the bond leg at the same time the levered equity leg fell — the two "ballasts" and the engine all sank together. 2008 was −34%.
