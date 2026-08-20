@@ -125,6 +125,14 @@ Monotonicity check (2026 reflation cells held all year): MOD +22.9% → AGG +33.
 - **Rebalance timing:** delaying execution 3, 5, or 10 trading days after month start moves CAGR by ~±1pp with no consistent direction (VAGG actually improves at +10d). No knife-edge timing dependence.
 - **$8k account feasibility:** whole-share replication of the MOD reflation cell mis-allocates only 1.5% of the account at current prices; with IBKR fractional shares, ~0. All tiers' tickers trade well under $800/share. The rotation is fully tradable at current account size.
 
+## Switch cadence, turnover, and taxes (2026-08-20)
+
+Measured on the locked switch, 2007–2026: **3.2 regime switches/year; median regime lasts 2 months** (mean 3.7, max 15); 52% of regimes last ≤2 months (whipsaw). Reflation persists longest (5.4mo avg), Deflation shortest (2.3mo). One-way turnover: ~300%/yr (MOD), ~263%/yr (AGG) — with median 2-month holds, nearly all switch-realized gains are short-term for tax purposes.
+
+**Tested mitigation — 2-month confirmation delay** (rotate only after the new regime persists 2 months): halves switches (1.5/yr) and turnover (~139%/yr) with CAGR intact (MOD 13.3→13.5%), **but materially worsens drawdowns (MOD −15%→−19%; AGG −37%→−52%)** — the delay holds risk assets through the first two months of every crash regime, which is precisely when the framework earns its keep. Verdict: do NOT slow the model to save taxes; the crash protection is the product.
+
+**Correct tax answer is account location, not model speed:** run the rotation inside tax-advantaged accounts (Roth IRA / 401k / HSA) where turnover is free; hold low-turnover sleeves (indices strategy, buy-and-hold cores) in taxable. In a taxable account at top marginal rates, ~300% ST turnover implies roughly 2–5pp/yr of tax drag — larger than any design refinement in this document. Secondary taxable mitigations: let contributions do the rebalancing (dominant while inflows are large relative to balance), trade only allocation deltas, and harvest the frequent whipsaw losses against gains.
+
 ## Findings
 
 1. **The 33/33/33 TQQQ/GLD/TLT mix the user read about is real but mislabeled as balanced**: +19.7% CAGR and Sortino 1.13, but −51% max drawdown and beta ≈ 1.0. Its failure mode is precisely a regime event: **2022 (−41.9%)**, when inflation broke the bond leg at the same time the levered equity leg fell — the two "ballasts" and the engine all sank together. 2008 was −34%.
