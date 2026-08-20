@@ -133,6 +133,24 @@ Measured on the locked switch, 2007–2026: **3.2 regime switches/year; median r
 
 **Correct tax answer is account location, not model speed:** run the rotation inside tax-advantaged accounts (Roth IRA / 401k / HSA) where turnover is free; hold low-turnover sleeves (indices strategy, buy-and-hold cores) in taxable. In a taxable account at top marginal rates, ~300% ST turnover implies roughly 2–5pp/yr of tax drag — larger than any design refinement in this document. Secondary taxable mitigations: let contributions do the rebalancing (dominant while inflows are large relative to balance), trade only allocation deltas, and harvest the frequent whipsaw losses against gains.
 
+## Rotation-timing grid: smoothing, drift, asymmetric switching (2026-08-20)
+
+User hypothesis: the median-2-month regime is noise; smoothing the switch and letting winners run should cut turnover without losing much. Tested in one pass — 4 switching rules × 2 execution styles × MOD/AGG:
+
+| Rule (MOD) | CAGR | Sortino | maxDD | switches/yr | turnover/yr |
+|---|---|---|---|---|---|
+| Monthly baseline | +13.1% | 1.33 | **−15%** | 3.2 | 312% |
+| Symmetric 2-mo confirmation | +13.3% | 1.21 | −19% | 1.5 | 153% |
+| **Asymmetric (instant to S/D, 2-mo confirm to G/R)** | +12.6% | 1.30 | **−14%** | 2.1 | 197% |
+| Hysteresis ±2% bands | +13.5% | 1.27 | −19% | 2.1 | 211% |
+
+Findings:
+
+1. **The flickers are load-bearing.** Every rule that delays risk-OFF transitions (symmetric confirmation, hysteresis) improves CAGR slightly and cuts turnover ~35%, but blows out drawdowns (MOD −15%→−19%; AGG −37%→−52%). The 1-month "noise" regimes are disproportionately the first month of real crashes. The classifier is not a macro-narrative detector; it is a risk trigger that happens to organize by regime — slowing it to match the narrative destroys the protection.
+2. **Asymmetric switching is the one viable smoother**: exiting to defense instantly but requiring 2 months' confirmation before re-risking preserves (slightly improves) drawdown, cuts switches 3.2→2.1/yr and turnover by a third, at a cost of ~0.5pp CAGR on MOD. On AGG the cost is 2.7pp (levered re-entries missed) — not worth it for leveraged tiers. Status: optional variant for CONS/MOD (late-glide ages); rejected for AGG/VAGG.
+3. **Let-winners-run (drift execution) is nearly a no-op**: ±0.1–0.6pp CAGR, turnover only ~10pp lower — regimes are too short for intra-regime rebalancing to matter. Adopt it anyway (free, defers intra-regime sells) together with contribution-based touch-ups: with 2–5 month regimes, intra-regime drift is small enough that new contributions can do all within-regime rebalancing; switch turnover (the dominant cost) is unavoidable by construction.
+4. After-tax note: the annual-taxation approximation under-credits low-turnover variants' deferral benefit; directionally the asym variant's tax edge is slightly better than shown.
+
 ## Findings
 
 1. **The 33/33/33 TQQQ/GLD/TLT mix the user read about is real but mislabeled as balanced**: +19.7% CAGR and Sortino 1.13, but −51% max drawdown and beta ≈ 1.0. Its failure mode is precisely a regime event: **2022 (−41.9%)**, when inflation broke the bond leg at the same time the levered equity leg fell — the two "ballasts" and the engine all sank together. 2008 was −34%.
