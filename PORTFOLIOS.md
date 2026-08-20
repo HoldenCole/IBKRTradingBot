@@ -5,7 +5,7 @@ Companion to `REGIMES.md`. All results: daily data 2007-06 → 2026-08 (includes
 ## Evidence quality — read first
 
 - **Static mixes and the indices strategy are honest backtests of pre-specified rules.**
-- **The "Regime" portfolios are in-sample designs**: their quadrant playbooks were chosen after seeing this sample's quadrant payoff table, so their numbers are upward-biased. Treat as upper bounds until validated on data that didn't inform the design (pre-2007, or forward paper).
+- **The "Regime" portfolios are in-sample designs**: their quadrant playbooks were chosen after seeing this sample's quadrant payoff table, so their numbers are upward-biased. UPDATE 2026-08-20: the framework (switch + cell structure + crash brake) has now passed a full out-of-sample replication on 1987–2007 — see the validation section below. Precise tier-level numbers remain in-sample; the framework-level claim (index returns at ~1/3 the drawdown) is validated on two disjoint 20-year samples.
 
 ## The menu
 
@@ -171,6 +171,32 @@ Verdicts:
 3. **Intra-month crash brake** (daily tripwire: if SPY closes >5% below its 200-day SMA while in G or R, go to the tier's S cell until the next monthly classification): the clear win — improves BOTH return and risk on both tiers (+0.5 to +2.0pp CAGR, Sortino 1.33→1.43 / 1.00→1.13, AGG DD −37%→−33%) for ~0.4 extra switches/yr. It covers the monthly cadence's known blind spot (fast crashes between observations, e.g. Feb-Mar 2020). Single pre-stated spec, no parameter sweep. **Adopted** — requires a daily check in live implementation (the monthly paper Routine cannot brake intra-month; live spec pending a daily monitor).
 4. **Vol targeting: rejected.** The rotation already de-risks by regime; layering inverse-vol scaling double-counts and costs 2.2–4.3pp CAGR for ~1–4pp of DD.
 5. **Combined operating spec** (tranche + brake): MOD +13.0%/Sortino 1.41/−14%; AGG +21.5%/1.17/−36% — the best risk-adjusted configuration found to date. Caveat: refinements iterate on the same sample; effects of this size (0.5–2pp) should be treated as directional until the forward ledger accumulates.
+
+## OUT-OF-SAMPLE VALIDATION: 1987–2007 replication (2026-08-20)
+
+The framework transplanted to two decades of data that no design decision ever touched, using era-appropriate instruments (VFINX/VUSTX/Fidelity gold-energy-staples funds; GSCI spot for the inflation axis; identical locked switch rule; MOD-structure cells; same crash-brake spec):
+
+| 1987-03 → 2007-05 | CAGR | Sortino | maxDD |
+|---|---|---|---|
+| **MOD-proxy rotation + crash brake** | **+11.5%** | **0.99** | **−17%** |
+| MOD-proxy rotation (no brake) | +10.8% | 0.83 | −24% |
+| S&P 500 fund B&H | +11.0% | 0.56 | −48% |
+| 60/40 | +10.3% | 0.73 | −25% |
+
+Everything replicated out-of-sample:
+
+- **The core claim held**: index-level returns at roughly one-third of the index drawdown, Sortino ~1.8x the index.
+- **The behavioral signature is identical to 2007–2026**: pays an insurance premium in raging bulls (1995–99: +18.9%/yr vs SPX +28.4%), collects in busts (2000/2001/2002: **+9.5% / +5.4% / +4.7%** while the S&P lost −9% / −12% / −22%; 1987: +0.5% vs −11.1%).
+- **The switch cadence is a stable property, not sample noise**: 3.4 switches/yr out-of-sample vs 3.2 in-sample — the "flickering" the user questioned is how this thing behaves in every era.
+- **The crash brake validated out-of-sample too**: +0.7pp CAGR and maxDD −24%→−17% (Black Monday aftermath, 1990, 1998, dot-com).
+
+Caveats: proxy funds carry higher fees than ETFs (conservative bias — in our favor); cells are structural transplants, not identical allocations; single alternative sample. Nonetheless this upgrades the framework's evidence tier: the central claim now holds on two disjoint 20-year windows spanning 1987–2026.
+
+## Refinement grid III: cell-level tilts and cash sweep (2026-08-20)
+
+- **R-cell momentum tilt** (overweight the strongest of XLE/GLD(GDX)/DBC by trailing 6-month momentum, 45/32.5/22.5 split of the cell's commodity sleeve): +0.2 to +0.4pp CAGR, risk flat. Adopted (principled cross-sectional momentum, monotone across both tiers).
+- **D-cell duration selection** (TLT vs IEF by 6m momentum): no effect. Not adopted.
+- **Cash sweep**: SHY beat rolled T-bills by +0.35%/yr on the cash sleeve over 2007–2026. SHY confirmed as the cash instrument.
 
 ## Findings
 
