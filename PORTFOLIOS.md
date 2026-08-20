@@ -228,6 +228,27 @@ The same test surfaced the real D-cell gap: **gold earned +24.7% (modern) and +3
 
 Cumulative note: the pre-2007 replication with all adopted upgrades (conditional-S, brake, v4-D) now runs +13.1%/Sortino 1.22/−15% vs the original +11.5%/0.99/−17% — the refinements improve the era they were not designed on, which is the pattern genuine improvements should show.
 
+## G-cell engine test: momentum selection — tested, NOT adopted (2026-08-21)
+
+The last unvalidated performance driver: G-cell = fixed QQQ. Tested (pre-registered): engine = best 12-month momentum among {QQQ, SPY, EFA, EEM} (pre-2007 menu: NDX, SPX, Vanguard Intl, Fidelity EM), 6m variant also run and disclosed.
+
+**In G-months:** modern — fixed QQQ +23.4%/yr vs select +17.0% (any switch away from QQQ cost money in QQQ's era); pre-2007 — select +29.7% vs fixed NDX +23.8% (rode NDX through the 90s, correctly rotated to EM/Intl 2003–07). **Full-tier:**
+
+| | Modern MOD | Modern AGG | Pre-2007 proxy |
+|---|---|---|---|
+| G = fixed QQQ/NDX | **+14.9% / 1.54** | **+24.6% / 1.25** | +14.7% / 1.16 |
+| G = 12m momentum select | +13.5% / 1.40 | +20.6% / 1.07 | **+16.3% / 1.32** |
+
+Findings:
+
+1. **This is insurance, not a free win** — unlike conditional-S duration or D-cell gold, selection is symmetric: pays in ex-US eras, costs in US-tech eras (−1.4pp modern MOD, −4.0pp modern AGG where leverage amplifies selection lag). Era-consistency does improve (select's Sortino band 1.32–1.40 vs fixed's 1.16–1.54).
+2. **The original concern was partly wrong**: fixed Nasdaq IN G-MONTHS delivered ~23–24%/yr in BOTH eras, and full-tier +14.7% even through the ex-US 2000s — because G-months (US growth on, inflation off) structurally select for Nasdaq-friendly conditions. The G-cell's QQQ bet is less era-fragile than it looks.
+3. Practical: 2x/3x international ETFs (EFO/EET) are tiny/illiquid — AGG/VAGG implementations of select are shaky regardless.
+
+**Decision: keep fixed QQQ; shelf the select variant as a validated contingency.** Revisit trigger (pre-registered): if the 12m-momentum pick differs from QQQ for 3+ consecutive G-classified months, run the comparison on live data and decide then — the switch to select would be an evidence-backed documented move, not a panic improvisation.
+
+**Weakest-link ranking after this round:** G-cell concentration downgraded from "unvalidated" to "tested and quantified". New top weaknesses: (1) execution gap — the crash brake has no live daily monitor and the forward ledger has n=1 month; (2) classifier rebound lag (no upside analogue to the crash brake); (3) taxes in the user's taxable-only implementation.
+
 ## Findings
 
 1. **The 33/33/33 TQQQ/GLD/TLT mix the user read about is real but mislabeled as balanced**: +19.7% CAGR and Sortino 1.13, but −51% max drawdown and beta ≈ 1.0. Its failure mode is precisely a regime event: **2022 (−41.9%)**, when inflation broke the bond leg at the same time the levered equity leg fell — the two "ballasts" and the engine all sank together. 2008 was −34%.
