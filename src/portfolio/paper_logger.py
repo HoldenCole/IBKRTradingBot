@@ -1,22 +1,21 @@
-"""Monthly paper logger for the quadrant rotation portfolios.
+"""Monthly paper logger for the quadrant rotation portfolios (matrix v3).
 
 Run once a month (any day; idempotent per calendar month):
 
     python -m src.main --paper-log
 
 Each run:
-1. Fetches daily closes for SPY and DBC, classifies the quadrant in
-   force for the CURRENT month (ex-ante: month-end data through the
-   last completed month, via the locked switch in src/regime/quadrant).
-2. Appends one row to paper/ledger.csv — month, quadrant, matrix
-   version, per-tier target allocations — unless the month is already
-   logged. The ledger is committed to git: it is the forward evidence.
-3. Marks the ledger to market: daily adjusted closes for all matrix
-   tickers since inception, each tier rebalanced to its logged targets
-   on each entry's logged_at date, performance reported vs SPY.
-
-The ledger only ever appends. Allocations are snapshotted into the row
-so later matrix revisions (v3, ...) can never repaint history.
+1. Fetches daily closes, truncates to COMPLETED months only (ex-ante:
+   the quadrant and all resolution signals for month T use data through
+   the end of month T-1, even when run mid-month).
+2. Classifies the quadrant via the locked switch, computes the v3
+   resolution signals — TLT 10-month trend flag (conditional-duration
+   S cell) and 6-month commodity momentum (reflation tilt).
+3. Appends one row to paper/ledger.csv — month, quadrant, signals,
+   matrix version, per-tier RESOLVED allocations — unless the month is
+   already logged. Append-only: snapshots make later matrix revisions
+   unable to repaint history.
+4. Marks the ledger to market vs SPY.
 """
 
 from __future__ import annotations
@@ -28,19 +27,49 @@ from pathlib import Path
 import pandas as pd
 from loguru import logger
 
-from src.portfolio.matrix import MATRIX_VERSION, TIERS, all_tickers, allocation
-from src.regime.quadrant import Quadrant, quadrant_series
+from src.portfolio.matrix import (
+    MATRIX_VERSION,
+    R_TILT,
+    TIERS,
+    all_tickers,
+    resolve_allocation,
+)
+from src.regime.quadrant import SMA_MONTHS, Quadrant, classify
 
 LEDGER_PATH = Path("paper/ledger.csv")
-LEDGER_COLUMNS = ["month", "logged_at", "quadrant", "matrix_version", "allocations"]
+LEDGER_COLUMNS = ["month", "logged_at", "quadrant", "matrix_version", "signals", "allocations"]
+MOMENTUM_MONTHS = 6
 
 
-def classify_current_month(spy_daily: pd.Series, dbc_daily: pd.Series) -> Quadrant:
-    """Quadrant in force now = classification from the last completed month."""
-    series = quadrant_series(spy_daily, dbc_daily)
-    if series.empty:
+def completed_month_closes(daily: pd.Series, today: date) -> pd.Series:
+    """Month-end closes using ONLY months completed before `today`'s month."""
+    cutoff = pd.Timestamp(today.replace(day=1))
+    return daily[daily.index < cutoff].resample("ME").last().dropna()
+
+
+def compute_signals(prices: dict[str, pd.Series], today: date) -> dict:
+    """Quadrant + v3 resolution signals from completed-month data."""
+    spy_m = completed_month_closes(prices["SPY"], today)
+    dbc_m = completed_month_closes(prices["DBC"], today)
+    quadrant = classify(spy_m, dbc_m)
+    if quadrant is None:
         raise RuntimeError("not enough history to classify the quadrant")
-    return series.iloc[-1]
+
+    tlt_m = completed_month_closes(prices["TLT"], today)
+    tlt_up = None
+    if len(tlt_m) >= SMA_MONTHS:
+        tlt_up = bool(tlt_m.iloc[-1] > tlt_m.tail(SMA_MONTHS).mean())
+
+    momentum: dict[str, float] = {}
+    trio_assets = {a for trio in R_TILT.values() for a in trio}
+    for asset in sorted(trio_assets):
+        if asset not in prices:
+            continue
+        m = completed_month_closes(prices[asset], today)
+        if len(m) > MOMENTUM_MONTHS:
+            momentum[asset] = round(float(m.iloc[-1] / m.iloc[-(MOMENTUM_MONTHS + 1)] - 1), 4)
+
+    return {"quadrant": quadrant, "tlt_trend_up": tlt_up, "commodity_momentum": momentum}
 
 
 def load_ledger(path: Path = LEDGER_PATH) -> pd.DataFrame:
@@ -53,33 +82,39 @@ def append_entry(
     quadrant: Quadrant,
     today: date,
     path: Path = LEDGER_PATH,
+    tlt_trend_up: bool | None = None,
+    commodity_momentum: dict[str, float] | None = None,
 ) -> bool:
-    """Append this month's row. Returns False if the month is already logged."""
+    """Append this month's row with resolved allocations. False if logged."""
     ledger = load_ledger(path)
     month = today.strftime("%Y-%m")
-    if (ledger["month"] == month).any():
+    if not ledger.empty and (ledger["month"] == month).any():
         logger.info(f"{month} already logged — nothing to do")
         return False
-    allocs = {tier: allocation(tier, quadrant) for tier in TIERS}
+    allocs = {
+        tier: resolve_allocation(tier, quadrant, tlt_trend_up, commodity_momentum)
+        for tier in TIERS
+    }
     row = {
         "month": month,
         "logged_at": today.isoformat(),
         "quadrant": quadrant.name,
         "matrix_version": MATRIX_VERSION,
+        "signals": json.dumps(
+            {"tlt_trend_up": tlt_trend_up, "commodity_momentum": commodity_momentum or {}}
+        ),
         "allocations": json.dumps(allocs),
     }
     ledger = pd.concat([ledger, pd.DataFrame([row])], ignore_index=True)
     path.parent.mkdir(exist_ok=True)
     ledger.to_csv(path, index=False)
-    logger.info(f"Logged {month}: {quadrant.name} (matrix {MATRIX_VERSION})")
+    logger.info(f"Logged {month}: {quadrant.name} (matrix {MATRIX_VERSION}, tlt_up={tlt_trend_up})")
     return True
 
 
 def mark_to_market(ledger: pd.DataFrame, prices: pd.DataFrame) -> pd.DataFrame:
     """Per-tier paper performance since ledger inception.
 
-    `prices`: daily adjusted closes for every ticker appearing in the
-    ledger, covering at least the first logged_at date through now.
     Each entry's allocation is held (daily-rebalanced to target) from
     its logged_at until the next entry's logged_at.
     """
@@ -118,26 +153,36 @@ def mark_to_market(ledger: pd.DataFrame, prices: pd.DataFrame) -> pd.DataFrame:
 
 
 def run_paper_log(path: Path = LEDGER_PATH) -> None:
-    """Fetch, classify, append, and report. Network required."""
+    """Fetch, classify, resolve, append, and report. Network required."""
     from src.data.yahoo import fetch_yahoo_daily
 
-    spy = fetch_yahoo_daily("SPY", "2y")
-    dbc = fetch_yahoo_daily("DBC", "2y")
-    quadrant = classify_current_month(spy, dbc)
-    logger.info(f"Quadrant in force for {date.today():%Y-%m}: {quadrant.name}")
+    today = date.today()
+    signal_tickers = sorted({"SPY", "DBC", "TLT"} | {a for t in R_TILT.values() for a in t})
+    prices = {t: fetch_yahoo_daily(t, "2y") for t in signal_tickers}
+    sig = compute_signals(prices, today)
+    quadrant = sig["quadrant"]
+    logger.info(
+        f"Quadrant in force for {today:%Y-%m}: {quadrant.name} "
+        f"(tlt_up={sig['tlt_trend_up']}, mom={sig['commodity_momentum']})"
+    )
     for tier in TIERS:
-        logger.info(f"  {tier:>5} target: {allocation(tier, quadrant)}")
-    append_entry(quadrant, date.today(), path)
+        logger.info(f"  {tier:>5} target: "
+                    f"{resolve_allocation(tier, quadrant, sig['tlt_trend_up'], sig['commodity_momentum'])}")
+    append_entry(quadrant, today, path,
+                 tlt_trend_up=sig["tlt_trend_up"],
+                 commodity_momentum=sig["commodity_momentum"])
 
     ledger = load_ledger(path)
-    # Fetch every ticker any ledger row references (not just the current
-    # matrix) so old entries stay markable after future matrix revisions.
     referenced: set[str] = set(all_tickers()) | {"SPY"}
     for blob in ledger["allocations"]:
         for tier_alloc in json.loads(blob).values():
             referenced.update(tier_alloc)
-    prices = pd.DataFrame({t: fetch_yahoo_daily(t, "2y") for t in sorted(referenced)})
-    report = mark_to_market(ledger, prices)
+    px = dict(prices)
+    for t in sorted(referenced):
+        if t not in px:
+            px[t] = fetch_yahoo_daily(t, "2y")
+    frame = pd.DataFrame(px)
+    report = mark_to_market(ledger, frame)
     if report.empty:
         if ledger.empty:
             print("Ledger empty — nothing to mark to market yet.")
