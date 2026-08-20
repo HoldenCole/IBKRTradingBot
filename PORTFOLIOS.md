@@ -151,6 +151,27 @@ Findings:
 3. **Let-winners-run (drift execution) is nearly a no-op**: ±0.1–0.6pp CAGR, turnover only ~10pp lower — regimes are too short for intra-regime rebalancing to matter. Adopt it anyway (free, defers intra-regime sells) together with contribution-based touch-ups: with 2–5 month regimes, intra-regime drift is small enough that new contributions can do all within-regime rebalancing; switch turnover (the dominant cost) is unavoidable by construction.
 4. After-tax note: the annual-taxation approximation under-credits low-turnover variants' deferral benefit; directionally the asym variant's tax edge is slightly better than shown.
 
+## Refinement grid II: execution day, tranching, crash brake, vol targeting (2026-08-20)
+
+Four pre-stated micro-refinements, one pass, MOD & AGG:
+
+| Variant (MOD / AGG) | CAGR | Sortino | maxDD |
+|---|---|---|---|
+| Baseline (exec day 1) | +13.1% / +19.7% | 1.33 / 1.00 | −15% / −37% |
+| Exec day 8 / 15 / 22 | 12.0–13.9% / 19.4–23.2% | — | −18..−19% / −45..−50% |
+| 4-tranche staggered | +12.6% / +20.5% | 1.27 / 1.06 | −16% / −39% |
+| **+ Intra-month crash brake** | **+13.6% / +21.7%** | **1.43 / 1.13** | **−15% / −33%** |
+| + Vol-target overlay | +10.9% / +15.4% | 1.24 / 0.91 | −14% / −32% |
+| **Tranche + brake combo** | +13.0% / +21.5% | 1.41 / **1.17** | **−14% / −36%** |
+
+Verdicts:
+
+1. **Execution-day sensitivity is real**, mostly in drawdown (AGG: −37% on day 1 but −45..−50% on other days) — day-1 results contain timing luck. This makes single-day execution a fragility, and motivates:
+2. **Tranching (4 sleeves on staggered weeks)**: averages away timing luck; lands near the good outcomes without betting on a calendar day. Adopted.
+3. **Intra-month crash brake** (daily tripwire: if SPY closes >5% below its 200-day SMA while in G or R, go to the tier's S cell until the next monthly classification): the clear win — improves BOTH return and risk on both tiers (+0.5 to +2.0pp CAGR, Sortino 1.33→1.43 / 1.00→1.13, AGG DD −37%→−33%) for ~0.4 extra switches/yr. It covers the monthly cadence's known blind spot (fast crashes between observations, e.g. Feb-Mar 2020). Single pre-stated spec, no parameter sweep. **Adopted** — requires a daily check in live implementation (the monthly paper Routine cannot brake intra-month; live spec pending a daily monitor).
+4. **Vol targeting: rejected.** The rotation already de-risks by regime; layering inverse-vol scaling double-counts and costs 2.2–4.3pp CAGR for ~1–4pp of DD.
+5. **Combined operating spec** (tranche + brake): MOD +13.0%/Sortino 1.41/−14%; AGG +21.5%/1.17/−36% — the best risk-adjusted configuration found to date. Caveat: refinements iterate on the same sample; effects of this size (0.5–2pp) should be treated as directional until the forward ledger accumulates.
+
 ## Findings
 
 1. **The 33/33/33 TQQQ/GLD/TLT mix the user read about is real but mislabeled as balanced**: +19.7% CAGR and Sortino 1.13, but −51% max drawdown and beta ≈ 1.0. Its failure mode is precisely a regime event: **2022 (−41.9%)**, when inflation broke the bond leg at the same time the levered equity leg fell — the two "ballasts" and the engine all sank together. 2008 was −34%.
