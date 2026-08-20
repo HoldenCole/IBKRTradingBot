@@ -97,6 +97,12 @@ def cmd_run(settings) -> None:
     LiveRunner(settings).run()
 
 
+def cmd_paper_log() -> None:
+    from src.portfolio.paper_logger import run_paper_log
+
+    run_paper_log()
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="IBKR trading bot — CL1/USO spread")
     parser.add_argument("--check-connection", action="store_true")
@@ -115,6 +121,10 @@ def main() -> None:
         help="backtest execution model (default: shares)",
     )
     parser.add_argument("--strategy", choices=["cl1_uso_spread"])
+    parser.add_argument(
+        "--paper-log", action="store_true",
+        help="classify the current quadrant, append to paper/ledger.csv, mark to market",
+    )
     parser.add_argument("--mode", choices=["paper", "live"], default=None)
     parser.add_argument("--i-understand-the-risk", action="store_true", dest="risk_ack")
     args = parser.parse_args()
@@ -130,7 +140,9 @@ def main() -> None:
         logger.warning("LIVE MODE — real money. Position cap ${:.0f}, daily loss cap ${:.0f}",
                        settings.max_position_usd, settings.max_daily_loss_usd)
 
-    if args.check_connection:
+    if args.paper_log:
+        cmd_paper_log()
+    elif args.check_connection:
         cmd_check_connection(settings)
     elif args.fetch_data:
         cmd_fetch_data(settings, args.days)

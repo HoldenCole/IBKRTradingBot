@@ -1,0 +1,2 @@
+month,logged_at,quadrant,matrix_version,allocations
+2026-08,2026-08-20,REFLATION,v2,"{""CONS"": {""SPY"": 0.21, ""XLE"": 0.175, ""GLD"": 0.175, ""DBC"": 0.14, ""SHY"": 0.3}, ""MOD"": {""SPY"": 0.3, ""XLE"": 0.25, ""GLD"": 0.25, ""DBC"": 0.2}, ""AGG"": {""QLD"": 0.3, ""XLE"": 0.25, ""GDX"": 0.25, ""DBC"": 0.2}, ""VAGG"": {""TQQQ"": 0.3, ""ERX"": 0.25, ""GDX"": 0.25, ""DBC"": 0.2}}"
