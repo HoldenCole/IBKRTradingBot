@@ -218,6 +218,16 @@ The user's challenge: "there's got to be SOMETHING that makes money in stagflati
 
 Full-period impact (with crash brake): MOD +13.6%→**+14.6%**, Sortino 1.43→**1.50**, DD −15→−14%; AGG +21.7%→**+23.5%**, Sortino 1.13→1.18. The S quadrant flips from dead weight to a contributor.
 
+## D-cell test: conditional duration rejected, gold adopted (2026-08-20)
+
+Hypothesis (symmetry with the S-cell): D-cell duration should also be trend-conditional. **Rejected by the data** — modern D-months: unconditional TLT +7.0% vs conditional +5.5%; pre-2007: +6.4% vs +7.3% (wash). Reason: 70–96% of D-months already have bonds trending up — "deflation" under this classifier essentially IS the bond-friendly regime; it does not split into sub-types the way stagflation does. Unconditional duration stays.
+
+The same test surfaced the real D-cell gap: **gold earned +24.7% (modern) and +30.8% (pre-2007) annualized in D-months** — two-sample consistent and only 0–20% of the old cells. Equities in D are also positive both eras (+32%/+50% modern rebounds, +9.7% pre-2007), partially rehabilitating a MODERATE rebound slice (not the old 50% TQQQ barbell).
+
+**v4 D-cells (pre-registered, single spec, validated both eras):** duration core intact, gold to 25–30%, 10–15% equity slice with monotone octane (SPY→SPY→QQQ→QLD). Results: modern MOD +14.5→**+14.9%** (Sortino 1.50→**1.54**), AGG +23.4→**+24.6%** (Sortino 1.19→**1.25**, DD −34→−33); pre-2007 replication unchanged (+13.1%, Sortino 1.22→1.23 — no degradation). Adopted; wired into `matrix.py` as v4 ahead of the September ledger run.
+
+Cumulative note: the pre-2007 replication with all adopted upgrades (conditional-S, brake, v4-D) now runs +13.1%/Sortino 1.22/−15% vs the original +11.5%/0.99/−17% — the refinements improve the era they were not designed on, which is the pattern genuine improvements should show.
+
 ## Findings
 
 1. **The 33/33/33 TQQQ/GLD/TLT mix the user read about is real but mislabeled as balanced**: +19.7% CAGR and Sortino 1.13, but −51% max drawdown and beta ≈ 1.0. Its failure mode is precisely a regime event: **2022 (−41.9%)**, when inflation broke the bond leg at the same time the levered equity leg fell — the two "ballasts" and the engine all sank together. 2008 was −34%.

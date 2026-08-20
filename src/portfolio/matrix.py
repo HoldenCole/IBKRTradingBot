@@ -1,4 +1,4 @@
-"""Playbook matrix v3 — locked allocation per (risk tier, quadrant).
+"""Playbook matrix v4 — locked allocation per (risk tier, quadrant).
 
 Design rules (PORTFOLIOS.md): MOD defines WHAT each regime owns; CONS
 dilutes with cash; AGG/VAGG escalate octane only. v3 changes (validated
@@ -11,6 +11,13 @@ on both the 2007-2026 and 1987-2007 samples):
 - R (reflation) cells: cross-sectional momentum tilt — the cell's
   commodity trio is reweighted 45/32.5/22.5 by trailing 6-month
   momentum at resolution time.
+
+v4 change (validated on both eras, no pre-2007 degradation):
+- D (deflation) cells: gold raised to 25-30% (gold earned +25%/+31%
+  annualized in D-months in the two samples) and a 10-15% equity
+  rebound slice added (positive in both eras); duration stays
+  UNCONDITIONAL — the trend filter was tested and rejected for D
+  (70-96% of D-months already have bonds trending up).
 
 All tickers are real ETFs so the paper ledger marks to market without
 simulation. The IBS options overlay is a separate sleeve, not part of
@@ -25,7 +32,7 @@ G, R, Q_S, D = Quadrant.GROWTH, Quadrant.REFLATION, Quadrant.STAGFLATION, Quadra
 
 _MOD_R = {"SPY": 0.30, "XLE": 0.25, "GLD": 0.25, "DBC": 0.20}
 
-MATRIX_VERSION = "v3"
+MATRIX_VERSION = "v4"
 
 # Placeholder resolved by resolve_allocation(): TLT in a bond uptrend,
 # SHY (cash) otherwise. Fail-closed: unknown trend -> cash.
@@ -36,25 +43,25 @@ MATRIX: dict[str, dict[Quadrant, dict[str, float]]] = {
         G: {"SPY": 0.40, "IEF": 0.40, "GLD": 0.20},
         R: {**{k: round(v * 0.7, 3) for k, v in _MOD_R.items()}, "SHY": 0.30},
         Q_S: {"SHY": 0.60, COND_DURATION: 0.40},
-        D: {"TLT": 0.45, "SHY": 0.35, "XLP": 0.20},
+        D: {"TLT": 0.40, "SHY": 0.25, "GLD": 0.25, "SPY": 0.10},
     },
     "MOD": {
         G: {"QQQ": 0.70, "IEF": 0.30},
         R: dict(_MOD_R),
         Q_S: {"SHY": 0.50, COND_DURATION: 0.50},
-        D: {"TLT": 0.55, "XLP": 0.25, "GLD": 0.20},
+        D: {"TLT": 0.45, "GLD": 0.30, "XLP": 0.15, "SPY": 0.10},
     },
     "AGG": {
         G: {"QLD": 1.00},
         R: {"QLD": 0.30, "XLE": 0.25, "GDX": 0.25, "DBC": 0.20},
         Q_S: {"SHY": 0.40, COND_DURATION: 0.60},
-        D: {"TLT": 0.60, "TMF": 0.20, "GLD": 0.20},
+        D: {"TLT": 0.40, "TMF": 0.15, "GLD": 0.30, "QQQ": 0.15},
     },
     "VAGG": {
         G: {"TQQQ": 1.00},
         R: {"TQQQ": 0.30, "ERX": 0.25, "GDX": 0.25, "DBC": 0.20},
         Q_S: {"SHY": 0.30, COND_DURATION: 0.70},
-        D: {"TMF": 0.50, "TLT": 0.30, "GLD": 0.20},
+        D: {"TMF": 0.35, "TLT": 0.20, "GLD": 0.30, "QLD": 0.15},
     },
 }
 
