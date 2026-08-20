@@ -270,6 +270,17 @@ Verdicts:
 - **Corrected official numbers (monthly-only, v4 + conditional-S):** modern MOD +14.2%/1.43/−15%, AGG +22.2%/1.10/−35%; pre-2007 replication +11.4%/0.84/−24% vs S&P +11.0%/0.56/−48% — **the out-of-sample validation of the framework survives**; only the brake's claimed contribution was fake.
 - Cell-level conclusions (conditional-S, D-gold, R-tilt, G-engine verdicts) compared variants under identical execution and are unaffected in direction; their headline magnitudes shift with the corrected baseline.
 - **Operational consequence: the system is monthly-complete.** No daily monitor is needed; the intra-month "execution gap" is closed by deletion, not construction. The remaining forward work is letting the ledger accumulate.
+
+### Autopsy: why the rebound accelerator fails (2026-08-21)
+
+All 23 modern-era fires enumerated. Three findings explain everything:
+
+1. **The cross-day pop is the whole trade — and it is uncapturable.** The day SPY crosses its 200d SMA averages **+1.70%**; the drift from the first tradeable day to month-end averages **+0.20%**. The information in the cross is consumed by the move that produces it. (This +1.7%×23 is exactly what the look-ahead bug was harvesting.)
+2. **Half the fires are bear traps.** Only 52% were confirmed by the next monthly classification. Confirmed fires drift +1.32%; false alarms −1.01% — and the tails are catastrophic: 2020-03-02 (biggest bounce of the COVID crash, −16% SPY to month-end after firing), 2022-08-16 (the exact top of the 2022 bear rally, −8%), three consecutive whipsaws in 2011, 2008-05-06 (the '08 bear rally top). Structurally, crossing the 200d SMA from below while classified S/D REQUIRES a violent recent rally inside a downtrend — the textbook definition of a bear-market rally.
+3. **The "opposite" trade doesn't exist either**: overall drift +0.20% means fading the cross earns ≈ −0.2% before costs. The profitable side of the accelerator's bad trades is simply *staying defensive* — which is the baseline — and the monthly classifier already captures the real rebounds a few weeks later (the 52% confirmed fires flip to G at month-end anyway).
+
+**Conclusion: the rebound lag is not a defect — it is the fee that filters bear traps.** The monthly cadence acts as an accidental ~3-week confirmation filter, trading ~+1.3% of missed early-rebound drift for immunity to −1% average (−16% tail, levered) trap entries. Any faster re-entry rule must beat that trade, and the canonical one doesn't.
+
 - Lesson recorded: intra-month mechanisms need T+1 execution modeling from the first test; monthly mechanics were never affected (signals from prior month-end, executed at month start).
 
 ## Tax execution habits, quantified (2026-08-21)
