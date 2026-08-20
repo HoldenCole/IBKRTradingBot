@@ -198,6 +198,26 @@ Caveats: proxy funds carry higher fees than ETFs (conservative bias — in our f
 - **D-cell duration selection** (TLT vs IEF by 6m momentum): no effect. Not adopted.
 - **Cash sweep**: SHY beat rolled T-bills by +0.35%/yr on the cash sleeve over 2007–2026. SHY confirmed as the cash instrument.
 
+## The stagflation cell, solved: trend-conditional duration (2026-08-20)
+
+The user's challenge: "there's got to be SOMETHING that makes money in stagflation." Candidate sweep across BOTH eras (modern 2007–2026 S-months, n≈19mo; pre-2007 proxy S-months, n≈34mo), pass rule = positive in both independent samples:
+
+| Candidate (annualized in S-months) | Modern | Pre-2007 | Verdict |
+|---|---|---|---|
+| **Duration, trend-conditional (long TLT if TLT>10m SMA, else cash)** | **+11.1%** | **+15.5%** | **PASS** |
+| Duration trend-conditional long/short | +17.5% | +11.9% | pass (shorting adds modern-era juice, pre-2007 drag) |
+| Cash | +2.1% | +3.9% | pass (baseline) |
+| Short SPY | +10.4% | **−2.0%** | FAIL — modern-only artifact |
+| Dollar (UUP) | +7.3% | no data | insufficient |
+| Gold | −8.7% | +0.6% | fail |
+| Energy / commodities / defensives | −6 to −26% | −7 to +6% | fail |
+
+**Mechanism**: "stagflation" under this classifier is two distinct sub-regimes — growth-scare (bonds rally: 1990, 2008-adjacent) and inflation-shock (bonds crash: 2022) — and the bond's own 10-month trend identifies which one is running, ex-ante. This is the managed-futures principle applied inside the S cell. Gold is removed from S cells (negative or flat in both samples).
+
+**v3 S-cells (pre-registered, long/cash variant chosen for robustness over the L/S variant):** CONS 60 cash/40 cond-TLT · MOD 50/50 · AGG 40/60 · VAGG 30/70.
+
+Full-period impact (with crash brake): MOD +13.6%→**+14.6%**, Sortino 1.43→**1.50**, DD −15→−14%; AGG +21.7%→**+23.5%**, Sortino 1.13→1.18. The S quadrant flips from dead weight to a contributor.
+
 ## Findings
 
 1. **The 33/33/33 TQQQ/GLD/TLT mix the user read about is real but mislabeled as balanced**: +19.7% CAGR and Sortino 1.13, but −51% max drawdown and beta ≈ 1.0. Its failure mode is precisely a regime event: **2022 (−41.9%)**, when inflation broke the bond leg at the same time the levered equity leg fell — the two "ballasts" and the engine all sank together. 2008 was −34%.
