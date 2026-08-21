@@ -325,6 +325,40 @@ User approved adoption AND requested an architectural on/off switch so this and 
 
 Resolved v5 D-cells (shorts ON): MOD {TLT 35, GLD 30, XLP 15, SPY 10, SCO 5, SHY 5}; AGG {TLT 25, TMF 15, GLD 30, QQQ 15, SCO 7.5, SHY 7.5}; VAGG {TMF 35, TLT 5, GLD 30, QLD 15, SCO 7.5, SHY 7.5}. Expected impact (two-sample tested above): modern MOD 14.4→14.9%/Sortino 1.43→1.50/DD −16→−14%, AGG 22.7→23.5%/1.12→1.16/−36→−34%; pre-2007 neutral. Live from the September 2026 ledger run.
 
+## Standing rule: no broad-market shorts (2026-08-21)
+
+User directive, permanent: **never short broad US equity indices** (SPY/QQQ/IWM/DIA and their levered kin) — broad-market momentum/bias is up, and a crash hedge alone doesn't justify the carry. Sub-sectors and industry groups ARE shortable, subject to the existing two-sample absolute-negative rule and small sizing. All future short candidates screen under both rules.
+
+## The stagflation sub-sector short screen (2026-08-21)
+
+One-pass, pre-registered: universe = 18 modern sub-sector/industry ETFs (XLE/XLY/XLF/XLK/XLI/XLB/XLV/XLU/XLP/IYR/XRT/XHB/ITB/KRE/IYT/SMH/GDX/XBI) paired with 17 Fidelity Select funds (inceptions ~1985) as pre-2007 proxies; criterion = annualized absolute return negative in S-months in BOTH eras (modern n=19 S-months, pre-2007 n=34-35).
+
+**Data lesson recorded**: Yahoo silently coarsens `interval=1d&range=max` to QUARTERLY bars on long mutual-fund histories (and monthly on ETFs) while still reporting success — a first pass produced garbage pre-2007 numbers (+100%/yr artifacts from 13-of-35-month coverage). All long-history pulls must use explicit `interval=1mo` (or explicit-epoch daily) and assert `meta.dataGranularity`.
+
+**Result: only two of 18 groups pass.** Modern S-months are broad-bear months (everything negative except XBI), so the pre-2007 leg is the real filter — and it kills almost everything: chemicals +33%/yr, banks +17%, housing +19%, transports +17%, staples +11%, gold miners +9% in pre-2007 S-months.
+
+| Passer | Modern S | Pre-2007 S | Verdict |
+|---|---|---|---|
+| Energy (XLE / FSENX) | −26.5%/yr | −3.4%/yr | validated, impact-tested below |
+| Semiconductors (SMH / FSELX) | −5.3%/yr | −8.5%/yr | passed screen, FAILED impact test |
+
+**The relative-alpha check (the important one):** energy underperforms the broad market in S-months by **−14.3pp/yr modern and −12.5pp/yr pre-2007** — nearly identical sector alpha in two non-overlapping eras. Pre-2007 the market was UP +9.1%/yr in S while energy fell — so this is NOT a broad-market short in disguise; it clears the user's no-broad-shorts rule on mechanism, not just wrapper. Economic story: energy equities are long-duration claims on energy cash flows — stagflation compresses their multiples and demand outlook even while spot commodities rise.
+
+**Impact test** (sleeve from the S-cell cash leg, MOD 10%/AGG 15%/VAGG 15%, CONS long-only, borrow 2%, same engine both eras; baseline reproduces official v5 numbers):
+
+| Variant | MOD modern | AGG modern | VAGG modern | MOD pre-2007 |
+|---|---|---|---|---|
+| baseline v5 | +15.1%/1.68/−14.3% | +23.8%/1.24/−33.7% | +33.5%/1.20/−48.9% | +11.7%/1.35/−24.5% |
+| **short XLE** | **+15.3%/1.70/−14.3%** | **+24.1%/1.26/−33.7%** | **+33.8%/1.22/−48.9%** | **+11.7%/1.37/−24.5%** |
+| short SMH | +15.0%/1.68/−14.3% | +23.7%/1.25/−33.7% | +33.4%/1.21/−48.9% | +11.7%/1.36/−24.5% |
+| 50/50 split | +15.2%/1.69/−14.3% | +23.9%/1.25/−33.7% | +33.6%/1.21/−48.9% | +11.7%/1.36/−24.5% |
+
+XLE passes the pre-registered bar (modern improves in every tier, pre-2007 improves slightly); SMH fails it (modern CAGR flat-to-down after borrow — its −5.3%/yr modern edge is too thin) and is REJECTED despite passing the screen. Split is diluted XLE.
+
+**Disclosed tail risk**: ~half of S-months are squeezes (energy rises 9/19 modern, 14/34 pre-2007; worst single month against the short: XLE +16.0% in 2022-05, FSENX +13.1% in 2000-12). At the 10-15% sleeve that's a worst observed month of ≈ −1.6% of portfolio. The edge comes from down-months being roughly twice the size of up-months. Expected contribution is modest (+0.2-0.3pp CAGR, +0.02 Sortino, DD unchanged) — about half the oil-in-D sleeve's value — priced honestly, not oversold.
+
+Margin-free implementation verified: ERY (Direxion 2x inverse S&P Energy — same index family as XLE) and DUG both trade; ERY at half weight + SHY remainder mirrors the SCO pattern. Wiring is one `SHORT_ENERGY` registry entry + S-cell edits under the existing `INCLUDE_SHORTS` switch. Status: **validated candidate for matrix v6 (MOD/AGG/VAGG S-cells; CONS stays long-only), pending user adoption decision.**
+
 ## Findings
 
 1. **The 33/33/33 TQQQ/GLD/TLT mix the user read about is real but mislabeled as balanced**: +19.7% CAGR and Sortino 1.13, but −51% max drawdown and beta ≈ 1.0. Its failure mode is precisely a regime event: **2022 (−41.9%)**, when inflation broke the bond leg at the same time the levered equity leg fell — the two "ballasts" and the engine all sank together. 2008 was −34%.
