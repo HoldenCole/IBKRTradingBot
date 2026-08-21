@@ -382,7 +382,20 @@ User prompt: had we ever screened sub-sector longs — with the explicit warning
 | **AGG/VAGG D gold: GLD → GDX** | unchanged | unchanged | **+26.3%/1.33/−34.3%** | **+36.1%/1.27/−49.3%** | unchanged |
 
 - **Rebound-basket: REJECTED.** +0.1pp with a deeper CONS drawdown — the broad-market slice already captures the early-cycle bounce; slicing it finer adds noise, not signal.
-- **GDX-for-GLD in AGG/VAGG D-cells: validated candidate with a disclosed asterisk.** +2.2pp CAGR AND +0.06 Sortino at AGG (so not mere vol-loading), +2.3pp/+0.05 at VAGG, DD −0.4/−0.6pp deeper. The asterisk: this is the one candidate the two-sample rule cannot fully bless — the pre-2007 gold proxy (FKRCX) is itself a miners fund, so the older era can't distinguish bullion from miners (it does confirm miners-in-D worked pre-2007: FSAGX +55%/yr in D-months). Design coherence argues for it: AGG/VAGG are the octane tiers whose rule is "same asset, levered expression" (TLT→TMF, QQQ→QLD) — miners ARE levered gold, and MOD keeps bullion, preserving monotonicity. Status: **candidate for the AGG/VAGG D-cells, pending user adoption decision.**
+- **GDX-for-GLD in AGG/VAGG D-cells: validated candidate with a disclosed asterisk.** +2.2pp CAGR AND +0.06 Sortino at AGG (so not mere vol-loading), +2.3pp/+0.05 at VAGG, DD −0.4/−0.6pp deeper. The asterisk: this is the one candidate the two-sample rule cannot fully bless — the pre-2007 gold proxy (FKRCX) is itself a miners fund, so the older era can't distinguish bullion from miners (it does confirm miners-in-D worked pre-2007: FSAGX +55%/yr in D-months). Design coherence argues for it: AGG/VAGG are the octane tiers whose rule is "same asset, levered expression" (TLT→TMF, QQQ→QLD) — miners ARE levered gold, and MOD keeps bullion, preserving monotonicity. Status: **REJECTED by user decision (2026-08-21): "Just leave gold."** Bullion stays in every D-cell. The incomplete two-sample leg was the deciding weakness; the candidate is recorded here should the forward ledger ever motivate revisiting it.
+
+## Workbook refresh to matrix v6 (2026-08-21)
+
+GrowthProjection.xlsx regenerated from the v6 engine. Convention check passed first: the engine's SPY row reproduces the stored benchmark row to 4 decimals (CAGR .1082/.1082, Sortino .6728/.6728, maxDD −.5519/−.5519), so tier rows and benchmark rows remain computed under one identical method — no asymmetric treatment. Updated tier headline rows (Jun 2007–Aug 2026, shorts ON):
+
+| Tier | CAGR | Sortino | maxDD | beta | 2008 | 2022 |
+|---|---|---|---|---|---|---|
+| CONS | +9.7% | 1.60 | −10.2% | 0.17 | +13.8% | +1.9% |
+| MOD | +15.3% | 1.73 | −14.3% | 0.28 | **+20.7%** | +0.0% |
+| AGG | +24.1% | 1.22 | −33.7% | 0.59 | +38.0% | −25.3% |
+| VAGG | +33.8% | 1.12 | −48.9% | 1.00 | +46.3% | −31.2% |
+
+The short book shows up exactly where designed: MOD's 2008 rises to +20.7% (oil short in the deflation legs, energy short in the stagflation legs of the crash year). Per-regime monthly means in the Data sheet updated (MOD: S-cell 0.46→0.65%/mo, D-cell 1.45→1.78%/mo); regime frequencies/durations unchanged (classifier untouched). Haircut, tax engine, contribution schedule, glide path, and benchmark rows all unchanged.
 
 ## Findings
 
