@@ -357,7 +357,11 @@ XLE passes the pre-registered bar (modern improves in every tier, pre-2007 impro
 
 **Disclosed tail risk**: ~half of S-months are squeezes (energy rises 9/19 modern, 14/34 pre-2007; worst single month against the short: XLE +16.0% in 2022-05, FSENX +13.1% in 2000-12). At the 10-15% sleeve that's a worst observed month of ≈ −1.6% of portfolio. The edge comes from down-months being roughly twice the size of up-months. Expected contribution is modest (+0.2-0.3pp CAGR, +0.02 Sortino, DD unchanged) — about half the oil-in-D sleeve's value — priced honestly, not oversold.
 
-Margin-free implementation verified: ERY (Direxion 2x inverse S&P Energy — same index family as XLE) and DUG both trade; ERY at half weight + SHY remainder mirrors the SCO pattern. Wiring is one `SHORT_ENERGY` registry entry + S-cell edits under the existing `INCLUDE_SHORTS` switch. Status: **validated candidate for matrix v6 (MOD/AGG/VAGG S-cells; CONS stays long-only), pending user adoption decision.**
+Margin-free implementation verified: ERY (Direxion 2x inverse S&P Energy — same index family as XLE) and DUG both trade; ERY at half weight + SHY remainder mirrors the SCO pattern.
+
+### Adopted: matrix v6 — energy short in the S-cells (2026-08-21)
+
+User approved, folded into the `INCLUDE_SHORTS` switch as designed. `SHORT_ENERGY` registered in `SHORT_IMPL` (ERY, 2x) with fallback SHY; S-cells now MOD {SHY 40, SHORT_ENERGY 10, COND 50}, AGG {SHY 25, SHORT_ENERGY 15, COND 60}, VAGG {SHY 15, SHORT_ENERGY 15, COND 70}; CONS long-only. Resolved (shorts ON, bonds trending up): MOD {SHY 45, TLT 50, ERY 5}; AGG {SHY 32.5, TLT 60, ERY 7.5}; VAGG {SHY 22.5, TLT 70, ERY 7.5}. Shorts OFF restores the long-only S-cells exactly (tested). The short book is now: oil in Deflation + energy equities in Stagflation, both behind the one switch. Live from the September 2026 ledger run.
 
 ## Findings
 

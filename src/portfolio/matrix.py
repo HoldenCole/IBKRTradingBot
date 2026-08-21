@@ -1,4 +1,4 @@
-"""Playbook matrix v5 — locked allocation per (risk tier, quadrant).
+"""Playbook matrix v6 — locked allocation per (risk tier, quadrant).
 
 Design rules (PORTFOLIOS.md): MOD defines WHAT each regime owns; CONS
 dilutes with cash; AGG/VAGG escalate octane only. v3 changes (validated
@@ -35,6 +35,17 @@ v5 change (two-sample short screen, PORTFOLIOS.md):
   at HALF the sleeve weight plus SHY for the remainder (10% short oil
   -> 5% SCO + 5% SHY), so the ledger marks to market with real ETFs.
 
+v6 change (stagflation sub-sector short screen, PORTFOLIOS.md):
+- S cells gain a SHORT_ENERGY sleeve in MOD (10%), AGG and VAGG (15%),
+  funded from the cash leg. Energy equities are the only sub-sector
+  (besides semis, which failed the impact test) negative in absolute
+  terms in S-months in BOTH eras, underperforming the broad market by
+  ~13pp/yr in each — sector alpha, not a disguised market short (broad
+  US index shorts are banned by standing user rule). Implementation:
+  ERY (2x inverse S&P Energy) at half weight. Fallback when shorts are
+  OFF: SHY, restoring the v5 long-only S cells exactly. CONS stays
+  long-only.
+
 All tickers are real ETFs so the paper ledger marks to market without
 simulation. The IBS options overlay is a separate sleeve, not part of
 this rotation ledger.
@@ -48,7 +59,7 @@ G, R, Q_S, D = Quadrant.GROWTH, Quadrant.REFLATION, Quadrant.STAGFLATION, Quadra
 
 _MOD_R = {"SPY": 0.30, "XLE": 0.25, "GLD": 0.25, "DBC": 0.20}
 
-MATRIX_VERSION = "v5"
+MATRIX_VERSION = "v6"
 
 # Global switch for the short book. OFF -> every short placeholder
 # resolves to its long fallback, restoring the v4 long-only cells.
@@ -62,8 +73,12 @@ COND_DURATION = "COND_DURATION"
 # margin-free implementation, and to a long fallback used when shorts
 # are switched off. Future validated shorts register here.
 SHORT_OIL = "SHORT_OIL"
-SHORT_IMPL: dict[str, tuple[str, float]] = {SHORT_OIL: ("SCO", 2.0)}
-SHORT_FALLBACK: dict[str, str] = {SHORT_OIL: "TLT"}
+SHORT_ENERGY = "SHORT_ENERGY"
+SHORT_IMPL: dict[str, tuple[str, float]] = {
+    SHORT_OIL: ("SCO", 2.0),
+    SHORT_ENERGY: ("ERY", 2.0),
+}
+SHORT_FALLBACK: dict[str, str] = {SHORT_OIL: "TLT", SHORT_ENERGY: "SHY"}
 
 MATRIX: dict[str, dict[Quadrant, dict[str, float]]] = {
     "CONS": {
@@ -75,19 +90,19 @@ MATRIX: dict[str, dict[Quadrant, dict[str, float]]] = {
     "MOD": {
         G: {"QQQ": 0.70, "IEF": 0.30},
         R: dict(_MOD_R),
-        Q_S: {"SHY": 0.50, COND_DURATION: 0.50},
+        Q_S: {"SHY": 0.40, SHORT_ENERGY: 0.10, COND_DURATION: 0.50},
         D: {"TLT": 0.35, SHORT_OIL: 0.10, "GLD": 0.30, "XLP": 0.15, "SPY": 0.10},
     },
     "AGG": {
         G: {"QLD": 1.00},
         R: {"QLD": 0.30, "XLE": 0.25, "GDX": 0.25, "DBC": 0.20},
-        Q_S: {"SHY": 0.40, COND_DURATION: 0.60},
+        Q_S: {"SHY": 0.25, SHORT_ENERGY: 0.15, COND_DURATION: 0.60},
         D: {"TLT": 0.25, SHORT_OIL: 0.15, "TMF": 0.15, "GLD": 0.30, "QQQ": 0.15},
     },
     "VAGG": {
         G: {"TQQQ": 1.00},
         R: {"TQQQ": 0.30, "ERX": 0.25, "GDX": 0.25, "DBC": 0.20},
-        Q_S: {"SHY": 0.30, COND_DURATION: 0.70},
+        Q_S: {"SHY": 0.15, SHORT_ENERGY: 0.15, COND_DURATION: 0.70},
         D: {"TMF": 0.35, "TLT": 0.05, SHORT_OIL: 0.15, "GLD": 0.30, "QLD": 0.15},
     },
 }

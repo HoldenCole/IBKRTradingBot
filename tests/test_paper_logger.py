@@ -85,9 +85,10 @@ def test_no_placeholder_in_tickers():
 
 
 def test_conditional_duration_resolution():
-    up = resolve_allocation("MOD", Quadrant.STAGFLATION, tlt_trend_up=True)
-    dn = resolve_allocation("MOD", Quadrant.STAGFLATION, tlt_trend_up=False)
-    unk = resolve_allocation("MOD", Quadrant.STAGFLATION, tlt_trend_up=None)
+    # shorts off isolates the conditional-duration leg (v5 S-cells)
+    up = resolve_allocation("MOD", Quadrant.STAGFLATION, tlt_trend_up=True, include_shorts=False)
+    dn = resolve_allocation("MOD", Quadrant.STAGFLATION, tlt_trend_up=False, include_shorts=False)
+    unk = resolve_allocation("MOD", Quadrant.STAGFLATION, tlt_trend_up=None, include_shorts=False)
     assert up == {"SHY": 0.50, "TLT": 0.50}
     assert dn == {"SHY": 1.0}
     assert unk == {"SHY": 1.0}  # fail closed to cash
@@ -123,7 +124,8 @@ def test_append_entry_snapshots_resolved_s_cell(tmp_path):
     path = tmp_path / "ledger.csv"
     append_entry(Quadrant.STAGFLATION, date(2026, 9, 1), path, tlt_trend_up=True)
     allocs = json.loads(load_ledger(path).loc[0, "allocations"])
-    assert allocs["VAGG"] == {"SHY": 0.30, "TLT": 0.70}
+    # v6: VAGG S = 15% energy short (7.5% ERY + 7.5% SHY) + conditional TLT
+    assert allocs["VAGG"] == {"SHY": 0.225, "TLT": 0.70, "ERY": 0.075}
     assert allocs["CONS"] == {"SHY": 0.60, "TLT": 0.40}
 
 
@@ -160,6 +162,26 @@ def test_shorts_off_restores_v4_long_only_cells():
     for tier, expected in v4_d.items():
         a = resolve_allocation(tier, Quadrant.DEFLATION, include_shorts=False)
         assert a == pytest.approx(expected), tier
+
+
+def test_shorts_off_restores_long_only_s_cells():
+    # energy sleeve falls back to SHY -> the pre-v6 S-cells exactly
+    for tier, cash in [("MOD", 0.50), ("AGG", 0.40), ("VAGG", 0.30)]:
+        a = resolve_allocation(tier, Quadrant.STAGFLATION, tlt_trend_up=True,
+                               include_shorts=False)
+        assert a == pytest.approx({"SHY": cash, "TLT": round(1 - cash, 2)}), tier
+
+
+def test_energy_short_resolves_in_s_cell():
+    # MOD S, bonds trending up: 10% sleeve -> 5% ERY + 5% SHY
+    a = resolve_allocation("MOD", Quadrant.STAGFLATION, tlt_trend_up=True,
+                           include_shorts=True)
+    assert a == pytest.approx({"SHY": 0.45, "TLT": 0.50, "ERY": 0.05})
+    assert sum(a.values()) == pytest.approx(1.0, abs=0.01)
+    # CONS S stays long-only
+    c = resolve_allocation("CONS", Quadrant.STAGFLATION, tlt_trend_up=True,
+                           include_shorts=True)
+    assert "ERY" not in c
 
 
 def test_cons_stays_long_only_either_way():
