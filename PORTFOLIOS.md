@@ -452,6 +452,27 @@ Portfolio variants (tier-ladder as the leverage dial, modern engine): RAMP1 (one
 
 **Conclusion: the leverage dial is the tier choice itself; timing it by regime age adds nothing robust in two eras.** Want more return → sit higher on the ladder and accept its drawdown; the ladder was built for exactly that.
 
+## Dynamic-tier study: which risk basket per regime — REJECTED, with a design validation as the prize (2026-08-21)
+
+User idea: choose the risk tier per regime — minimize risk where it makes sense, maximize where it does. Pre-registered rule: octane admissible in a quadrant only where the tier ladder is monotone in BOTH eras. Required building the first full pre-2007 leveraged tier proxies (2x/3x NDX, 3x VUSTX, 3x FSENX; price-index and no-tilt limitations disclosed, uniform across tiers).
+
+**The ladder table (in-regime annualized, CONS→MOD→AGG→VAGG):**
+
+| | Modern | monotone | Pre-2007 | monotone |
+|---|---|---|---|---|
+| G | +8.9 → +17.5 → +42.6 → +61.4% | YES | +13.3 → +21.1 → +44.3 → +57.7% | YES |
+| R | +9.8 → +13.1 → +14.2 → +20.3% | YES | +8.1 → +9.4 → +11.8 → +16.3% | YES |
+| S | +4.8 → +7.7 → +9.5 → +10.3% | YES | +8.5 → +10.3 → +11.8 → +13.0% | YES |
+| D | +14.2 → +22.5 → +26.9 → +37.1% | YES | +12.5 → +17.4 → +12.8 → +11.6% | **no** |
+
+**Mapping results: every dynamic mapping is dominated by fixed VAGG in BOTH eras** (e.g., octane-except-S: 33.5 vs 33.8 modern, 26.5 vs 26.9 pre-2007; octane-G-only: worse CAGR AND worse drawdown −56 vs −49). Mechanism: **the cells already do the risk timing.** VAGG's S-cell is 85% cash/duration and its D-cell is bonds+gold — the de-risking the mapping tries to add is already inside the tier. Dropping to MOD in defensive regimes only dilutes octane that was monotonically paying (7 of 8 era×quadrant cells). The maximize/minimize logic IS the matrix; the risk dial is the tier, the timing is the rotation. Zero-turnover-cost was real but there is nothing to buy with it.
+
+**Byproducts, both valuable:**
+1. **Strongest out-of-sample design validation to date**: the full tier ladder, built on modern data, is monotone in 7 of 8 era×quadrant cells on 1987-2006 proxies it never saw.
+2. **Watch item — levered duration is financing-sensitive**: the one non-monotone cell (pre-2007 D: VAGG +11.6 < MOD +17.4) traces to 3x bonds paying 2×(rf+1%) financing when short rates were 5-9%; TMF's modern D-cell success partly rides the low-rate era. Pre-registered future candidate (NOT fitted now): condition the TMF slice on the short rate level. Revisit if the forward era keeps short rates elevated.
+3. Calendar-month seasonality gate: correlation of the 12 monthly seasonal means across eras = +0.18 — no stable seasonal structure; axis closed.
+4. First full pre-2007 tier stats (Nasdaq-proxy G-cells): CONS n/a computed, MOD +13.8%/1.40/−24%, AGG +21.2%/0.92/−46%, VAGG +26.9%/0.76/−66%. (Earlier +11.7% MOD replication used VFINX for the G-cell; NDX is the design-faithful proxy — difference disclosed.)
+
 ## Findings
 
 1. **The 33/33/33 TQQQ/GLD/TLT mix the user read about is real but mislabeled as balanced**: +19.7% CAGR and Sortino 1.13, but −51% max drawdown and beta ≈ 1.0. Its failure mode is precisely a regime event: **2022 (−41.9%)**, when inflation broke the bond leg at the same time the levered equity leg fell — the two "ballasts" and the engine all sank together. 2008 was −34%.
