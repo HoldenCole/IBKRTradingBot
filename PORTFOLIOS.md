@@ -483,6 +483,25 @@ Follow-up to the dynamic-tier study's watch item, run at user request. Pre-regis
 
 **3. The real finding — sleeve vs cell decomposition.** Standalone levered duration is weak in BOTH eras inside D-months: modern 3x TLT +2.2%/yr vs unlevered +7.0% (63% vol — daily-reset vol drag dominates even at ZIRP); pre-2007 +4.5% vs +6.4%. Yet the always-TMF vs never-TMF cell test shows the CELL is slightly better with it: modern AGG +0.2pp/VAGG +0.4pp CAGR with equal-or-better Sortino; pre-2007 a wash. TMF's value is not the sleeve's return — it is daily-rebalanced convexity against the gold/equity slices and crash-month spikes. **Verdict: keep TMF unconditional** (same asymmetric shape as the oil short, smaller: helps modern, harmless pre-2007), with the newly quantified comfort that dropping it entirely would cost only ~0.2-0.4pp — a cheap exit if the forward ledger ever shows the high-rate era turning the cell contribution negative.
 
+## Factor & style screen — academically real, not investably adoptable (2026-08-21)
+
+User request: screen factor/style exposures (momentum, value, quality, low-vol) through the framework. Data solution: Ken French long-only decile portfolios (monthly, one consistent source spanning BOTH eras — factor ETFs only start 2005-2013 and mostly miss 2008), with real-ETF implementability checks and an investable impact test for the survivor.
+
+**Academic screen (top-decile, in-regime, both eras) — three candidates cleared the two-era bar vs their incumbents:**
+- **Value in R**: +12.3% vs market +6.3% modern; +11.6% vs +8.5% pre-2007 (value = energy/financials/cyclicals — the reflation trade)
+- **Momentum in G**: +25.2% vs QQQ +23.3% modern; +37.5% vs NDX +27.0% pre-2007
+- **Quality in D**: +41.3% vs market +33.8% modern; +22.6% vs +10.9% pre-2007
+- Confirmation: **high-variance junk is absolute-negative in S in both eras** (−17.7%/−18.7%) — independent support for the S-cell short thesis (not implementable as a short: no borrow/inverse vehicle).
+
+**Implementability checks (real ETFs, in-regime) killed two of three:**
+- Momentum: PDP +16.7% vs QQQ +23.3% in G-months (2007+); MTUM +20.5% vs +21.8% (2013+). The academic decile's monthly top-10% turnover cannot exist inside an ETF. Dead — and consistent with the earlier G-cell momentum-selection rejection.
+- Quality: SPHQ +27.9% vs SPY +32.2% in D-months. Dead.
+- Value: VTV +9.1% / IWD +7.9% vs SPY +7.0% in R-months — survives the modern wrapper (diluted from the academic +6pp to ~+1-2pp).
+
+**Impact test on the survivor** (R-cell equity slice SPY→value; VTV modern, Vanguard Windsor VWNDX as pre-2007 investable proxy): modern improves (MOD +15.3→15.6%/1.73→1.77; CONS +9.7→9.9%) but **pre-2007 degrades (+11.8→11.3%/1.38→1.35)** — the academic pre-2007 value premium does not survive its own investable wrapper either. Fails the bar. **REJECTED; no matrix change.**
+
+**Lesson recorded**: regime-conditional factor premia are academically real in both eras, but every investable wrapper tested surrenders the edge — high-turnover premia (momentum) can't be packaged, and diluted large-cap versions (value, quality) shrink below adoption thresholds. The factor axis is closed unless a materially better vehicle appears.
+
 ## Findings
 
 1. **The 33/33/33 TQQQ/GLD/TLT mix the user read about is real but mislabeled as balanced**: +19.7% CAGR and Sortino 1.13, but −51% max drawdown and beta ≈ 1.0. Its failure mode is precisely a regime event: **2022 (−41.9%)**, when inflation broke the bond leg at the same time the levered equity leg fell — the two "ballasts" and the engine all sank together. 2008 was −34%.
