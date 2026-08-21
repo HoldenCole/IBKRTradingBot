@@ -431,6 +431,27 @@ Verdicts:
 2. **No cell admission.** The core matrix's evidence bar (two independent eras) is unmeetable for an asset with one macro cycle of history and n=9 stagflation months; and as G-cell octane it's a different asset (violating the "same asset, levered" rule) competing against TQQQ's validated +61%/yr with worse drawdowns. GDX — 40 years of history and a coherent mechanism — was just rejected on a weaker version of this evidence gap; consistency requires the same answer here.
 3. **Legitimate shape if the user wants exposure**: a satellite belief-bet outside the rotation (the biotech precedent) — fixed small allocation (≤5%), spot-ETF wrapper at IBKR, rebalanced with contributions, never counted in tier targets, explicitly labeled unvalidated. Its one-era regime profile suggests if it ever were gated, it would be gated like a risk asset (on in G/D-rebound, off in S) — the opposite of the popular framing.
 
+## Crypto satellite study — FILED, not deployed (2026-08-21)
+
+Per user: study it, file it away. One-era (2014-09..2026-08, all of BTC's institutional life), 5% satellite added to tier baselines, monthly rebalanced:
+
+| Variant | MOD | VAGG |
+|---|---|---|
+| baseline | +15.4%/2.39/−8% | +32.2%/1.26/−40% |
+| +5% BTC fixed | +19.5%/3.03/−13% | +36.2%/1.52/−40% |
+| **+5% BTC, 10m-trend-gated** | **+19.6%/3.22/−8%** | **+36.4%/1.52/−37%** |
+| +5% BTC, G/D-regime-gated | +17.8%/2.80/−10% | +34.4%/1.42/−37% |
+
+The trend-gated shape dominates: ~+4pp CAGR at ZERO drawdown cost (the 10-month SMA gate sat out the −74% BTC winters). Filed because the entire result rides one asset-era of +56%/yr BTC — no second sample exists or can exist, the same bar that excluded it from the matrix. If ever revisited: trend-gated, ≤5%, spot ETF, outside tier targets.
+
+## Leverage timing study — REJECTED (2026-08-21)
+
+User idea: time the octane by regime lifecycle (entering vs exiting, month-of-regime). Pre-registered gate: the age pattern must appear in both eras. Age-conditional MOD monthly returns — modern: m1 +1.01% / m2 +1.86% / m3-4 +1.56% / m5-8 +1.19% / m9+ +0.54%; pre-2007: +0.93 / +0.65 / +1.59 / +1.05 / +0.29. Stable both eras: months 3-4 are the sweet spot, month 9+ is the weakest. Era-flipping: months 1-2.
+
+Portfolio variants (tier-ladder as the leverage dial, modern engine): RAMP1 (one notch down in regime month 1) looked seductive at octane tiers — AGG Sortino 1.22→1.36, VAGG 1.12→1.22, nearly free — but its mechanism is VOLATILITY at transitions, and that channel EXACTLY INVERTS across eras: modern month-1 median vol 15.6% vs 11.6% for old regimes; pre-2007 month-1 12.4% vs 15.6% for old regimes. The 2007-2026 sample's crashes happened to begin at regime flips; 1987-2006's turbulence lived in aged regimes. Classic sample artifact — rejected. TAPER9 (notch down from month 9): the one two-era-stable signal, but portfolio impact is sub-noise (−0.1..−0.6pp CAGR for +0.02..+0.06 Sortino). BOOST36 (notch up months 3-6): +4pp CAGR with worse Sortino and DD through the tier's risk envelope — that is not timing alpha, it is just holding a higher average ladder position, which already exists as "pick a higher tier."
+
+**Conclusion: the leverage dial is the tier choice itself; timing it by regime age adds nothing robust in two eras.** Want more return → sit higher on the ladder and accept its drawdown; the ladder was built for exactly that.
+
 ## Findings
 
 1. **The 33/33/33 TQQQ/GLD/TLT mix the user read about is real but mislabeled as balanced**: +19.7% CAGR and Sortino 1.13, but −51% max drawdown and beta ≈ 1.0. Its failure mode is precisely a regime event: **2022 (−41.9%)**, when inflation broke the bond leg at the same time the levered equity leg fell — the two "ballasts" and the engine all sank together. 2008 was −34%.
