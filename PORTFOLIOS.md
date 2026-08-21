@@ -539,6 +539,14 @@ User proposed three macro-liquidity early-warning signals. Pre-registered: signa
 
 Structural reading, three-for-three: liquidity plumbing is upstream of prices in narrative but downstream in tradability — by month-end, the SPY/DBC trend has already priced what the plumbing "warned" about, and intra-month carry spikes are unreachable at monthly cadence (and intra-month mechanisms are a proven graveyard under T+1). The classifier needs no fifth input.
 
+## CCC blowouts and min-vol: the fact confirmed, the trade absent (2026-08-21)
+
+User claim: when CCC spreads blow out, USMV outperforms, and vice versa. **Confirmed as stated — contemporaneously**: same-month correlation of CCC OAS widening with USMV-minus-SPY is **+0.60** on the real ICE BofA series (2023-2026) and +0.51 on the deep-junk proxy (2011-2026); the mirror holds for high-beta (SPHB-minus-SPY corr −0.54). Spreads and defensive rotation are two prints of the same risk-off shock.
+
+**The tradable version fails.** Knowing the stress state at month-end t does not predict month t+1's low-vol relative return: 1981-2006 spread −0.02%/mo (nothing), 2007-2026 +0.33% (mild), USMV ETF 2011-2026 −0.23% (wrong direction) — era-inconsistent and tiny. The contemporaneous correlation is a hedging identity, not a signal: by the time the blowout is observable, the min-vol outperformance has already been paid. Trading it requires predicting NEXT month's spread change, which is just predicting risk-off itself — the thing the whole signal family (entries 41-43) keeps failing to do.
+
+One consistent secondary fact, no action required: the HIGH-vol decile underperforms in the stress state in both eras (−0.26/−0.35%/mo spreads) — "don't hold junk stocks when credit is stressed" is real, but the matrix never holds the high-vol decile in any cell, so the advice is already structurally followed. Framework reading: the regime cells ARE the min-vol rotation, executed slowly and honestly — when stress regimes classify, the book already holds the defensive assets that the CCC-USMV correlation points at.
+
 ## Findings
 
 1. **The 33/33/33 TQQQ/GLD/TLT mix the user read about is real but mislabeled as balanced**: +19.7% CAGR and Sortino 1.13, but −51% max drawdown and beta ≈ 1.0. Its failure mode is precisely a regime event: **2022 (−41.9%)**, when inflation broke the bond leg at the same time the levered equity leg fell — the two "ballasts" and the engine all sank together. 2008 was −34%.
