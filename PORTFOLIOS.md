@@ -397,6 +397,22 @@ GrowthProjection.xlsx regenerated from the v6 engine. Convention check passed fi
 
 The short book shows up exactly where designed: MOD's 2008 rises to +20.7% (oil short in the deflation legs, energy short in the stagflation legs of the crash year). Per-regime monthly means in the Data sheet updated (MOD: S-cell 0.46→0.65%/mo, D-cell 1.45→1.78%/mo); regime frequencies/durations unchanged (classifier untouched). Haircut, tax engine, contribution schedule, glide path, and benchmark rows all unchanged.
 
+## Version history: per-quadrant returns, v1 → v6 (2026-08-21)
+
+All six matrix versions re-run through ONE identical engine (rotation sleeve only, no IBS overlay, no retracted brake; monthly rotation, ex-ante signals; Jun 2007–Aug 2026; shorts as live SCO/ERY implementation). Cross-check: v1/v2 reproduce their originally recorded results; v6 reproduces the current official numbers. Annualized return INSIDE each quadrant's months:
+
+**Growth** — unchanged v1→v6 (CONS +8.9 / MOD +17.5 / AGG +42.6 / VAGG +61.4%): the G-cells were never altered; momentum-selection was tested and rejected.
+
+**Reflation** — CONS +8.2→9.8, MOD +12.5→13.1, AGG +13.6→14.2, VAGG +15.1→20.3%: v2 restored DBC + octane instruments (VAGG +5pp), v3's momentum tilt added the rest.
+
+**Stagflation** (the transformation): CONS −2.1→+4.8, MOD −8.3→+7.7, AGG −11.1→+9.5, VAGG −15.2→+10.3%. v2 stripped the canon energy/gold cells (still negative), v3's trend-conditional duration flipped every tier positive, v6's energy short added +2.2-3.3pp.
+
+**Deflation**: CONS +9.3→14.2, MOD +15.5→22.5, AGG +25.8→26.9, VAGG +81.4→37.1%. The VAGG path tells the honesty story: v1's +81%/yr was the flagged in-sample TQQQ barbell; v2 deleted it on principle (down to +11.8%), v4 rebuilt the cell from two-era-validated parts (gold 30% + QLD rebound slice, +31.0%), v5's oil short finished it (+37.1%) — better risk-adjusted than v1's in-sample artifact, and earned honestly.
+
+**Full-period by version** (CAGR/Sortino/maxDD): v1 MOD 12.6/1.40/−15, VAGG 33.0/1.09/−57 → v2 13.3/1.53/−15, 28.3/0.93/−53 (honesty cost: VAGG −4.7pp) → v3 14.2/1.59, 30.0/0.97 → v4 14.6/1.64/−16, 32.7/1.07/−51 → v5 15.1/1.71/−14, 33.5/1.10/−49 → v6 15.3/1.73/−14, 33.8/1.12/−49. VAGG only re-passed v1's headline CAGR at v5 — but with 8pp less drawdown and higher Sortino; every version's gain after v2 came from a two-era-validated component, not from re-fitting the sample.
+
+Evidence-quality reminder: v3+ refinements were designed after seeing the modern sample (each validated on 1987-2007 as mitigation); the forward ledger remains the binding judge.
+
 ## Findings
 
 1. **The 33/33/33 TQQQ/GLD/TLT mix the user read about is real but mislabeled as balanced**: +19.7% CAGR and Sortino 1.13, but −51% max drawdown and beta ≈ 1.0. Its failure mode is precisely a regime event: **2022 (−41.9%)**, when inflation broke the bond leg at the same time the levered equity leg fell — the two "ballasts" and the engine all sank together. 2008 was −34%.
