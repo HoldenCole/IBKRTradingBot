@@ -66,3 +66,31 @@ The long pole is the **event dataset**: parsing dated 8-K announcements, linking
 4. **The binary is as brutal as advertised**: negative announcements average −32% in two days (median −3.8%, i.e., catastrophic tails). The "never hold through a readout" sizing rule is quantitatively justified.
 
 **Stage 2 (next):** build the SCHEDULED-catalyst calendar (ClinicalTrials.gov primary-completion dates joined to tickers) and re-test H1 on anticipated events only — the only version of the run-up hypothesis this data leaves alive.
+
+
+---
+
+## Stage 2 results: the scheduled-catalyst tests (2026-08-21)
+
+Built `research/biotech_catalyst_calendar.csv`: 800 registered phase-3 primary-completion dates (PCDs), 2017–2026, matched to 201 of our tickers via ClinicalTrials.gov (curl transport; API WAF blocks urllib). Disclosed limitation: current-record PCDs (registry revisions not versioned in this pass).
+
+**Test A — Stage-1 announcements split by schedulability:**
+
+| Subset | n | Run-up T−30..T−5 | Post T+2..T+20 |
+|---|---|---|---|
+| ANTICIPATED (ann ≤120d after a registered PCD) | 230 | **+3.17% (t=+1.43)** | −2.22% |
+| SURPRISE (no nearby PCD) | 1112 | **−2.60% (t=−2.94)** | −3.78% (t=−5.87) |
+
+The literature's run-up exists ONLY around anticipatable events — a 5.8pp spread between the subsets. Directional vindication of the refined H1.
+
+**Test B — the honest tradeable version (buy ahead of every registered PCD, exit before the window):** n=602, run-up **+0.00% (t=0.00)** — dead flat, both eras. The event window itself (T−5..T+40) averages **−4.52% (t=−2.45)**.
+
+**Resolution of the apparent contradiction:** Test A conditions on an announcement having occurred — which is not knowable ex ante. Most registered PCDs never produce a prompt market-moving announcement, and they dilute the calendar to zero. The run-up is real but lives only where the market knows BOTH the date AND that it will matter — i.e., firm-dated, publicized catalysts (PDUFA decision dates, guided readouts), not registry completion dates. A free historical PDUFA-date source is the missing piece; without it, the long side of this strategy cannot be validated further.
+
+**What the data leaves standing (the "different version" of the strategy):**
+1. **Readout-window avoidance**: holding through the window costs −4.5% on average with catastrophic tails (−32% mean on failures). For any biotech the user ever holds: exit before known readout windows. Costless to implement.
+2. **Post-announcement cooling rule**: after ANY topline announcement — including positive — the name lags XBI ~3% for a month (t≈−6, the most robust effect found). Never buy the pop; sell strength into good news.
+3. **Failure-leakage avoidance**: names sliding −8% vs XBI ahead of an expected readout are signalling; do not "buy the dip" into a readout.
+4. **Long alpha: unproven.** Anticipated-event run-up (+3.2%, t=1.4) is suggestive but requires a PDUFA-grade calendar to test properly. Parked pending a data source.
+
+Verdict vs the locked decision criteria: no deployment candidate. Deliverable instead: the three avoidance rules above — a risk-management overlay for discretionary biotech activity, at zero cost.
