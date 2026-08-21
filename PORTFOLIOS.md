@@ -473,6 +473,16 @@ User idea: choose the risk tier per regime — minimize risk where it makes sens
 3. Calendar-month seasonality gate: correlation of the 12 monthly seasonal means across eras = +0.18 — no stable seasonal structure; axis closed.
 4. First full pre-2007 tier stats (Nasdaq-proxy G-cells): CONS n/a computed, MOD +13.8%/1.40/−24%, AGG +21.2%/0.92/−46%, VAGG +26.9%/0.76/−66%. (Earlier +11.7% MOD replication used VFINX for the G-cell; NDX is the design-faithful proxy — difference disclosed.)
 
+## Short-rate-conditional TMF test — carry rule rejected; TMF's true role quantified (2026-08-21)
+
+Follow-up to the dynamic-tier study's watch item, run at user request. Pre-registered rule (mechanism-derived, no fitted threshold): hold the 3x duration slice only when the 30y yield exceeds the 3m bill + 1% (leverage the bond only when its carry pays the financing); else same weight unlevered.
+
+**1. Carry-conditioning: REJECTED — the signal doesn't discriminate.** The curve is steep in nearly every D-month in BOTH eras (21/22 pre-2007, 22/30 modern) because deflation regimes coincide with Fed cutting cycles. The rule barely changes holdings and the deltas are noise (AGG modern 24.1→23.9, pre-2007 21.2→21.2). The pre-2007 damage was done by the LEVEL of financing (avg 3m bill 4.5% → ~11%/yr drag on a 3x position), which the spread rule cannot see.
+
+**2. Level-conditioning: not adoptable on discipline.** Modern D-months averaged rf 1.5%, pre-2007 D-months 4.5% — any rf threshold splits the two ERAS, not months within an era. Choosing one is curve-fitting with n≈2 observations. Left to forward monitoring instead.
+
+**3. The real finding — sleeve vs cell decomposition.** Standalone levered duration is weak in BOTH eras inside D-months: modern 3x TLT +2.2%/yr vs unlevered +7.0% (63% vol — daily-reset vol drag dominates even at ZIRP); pre-2007 +4.5% vs +6.4%. Yet the always-TMF vs never-TMF cell test shows the CELL is slightly better with it: modern AGG +0.2pp/VAGG +0.4pp CAGR with equal-or-better Sortino; pre-2007 a wash. TMF's value is not the sleeve's return — it is daily-rebalanced convexity against the gold/equity slices and crash-month spikes. **Verdict: keep TMF unconditional** (same asymmetric shape as the oil short, smaller: helps modern, harmless pre-2007), with the newly quantified comfort that dropping it entirely would cost only ~0.2-0.4pp — a cheap exit if the forward ledger ever shows the high-rate era turning the cell contribution negative.
+
 ## Findings
 
 1. **The 33/33/33 TQQQ/GLD/TLT mix the user read about is real but mislabeled as balanced**: +19.7% CAGR and Sortino 1.13, but −51% max drawdown and beta ≈ 1.0. Its failure mode is precisely a regime event: **2022 (−41.9%)**, when inflation broke the bond leg at the same time the levered equity leg fell — the two "ballasts" and the engine all sank together. 2008 was −34%.
