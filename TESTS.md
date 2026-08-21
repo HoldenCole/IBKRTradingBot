@@ -85,3 +85,6 @@ promising but parked, with its reactivation condition. Updated 2026-08-21.
 | 38 | Regime-transition conditioning | NO — no (prev→next) pair deviates stably from base rates in both eras |
 | 39 | Commodity trend basket | NO — all its edge is in R (already owned), −13.7%/yr in S, pre-2007 leg shows no edge; in-matrix trend-gating DBC is structurally a no-op |
 | 40 | Withdrawal-phase design | SPEC WRITTEN (PORTFOLIOS.md) — dormant by design until ~age 60; rules pre-registered, sequence-risk test deferred |
+| 41 | CCC/deep-junk spread stress as early warning | NO — third credit-canary failure; pre-2007 "stress" months were BETTER for equities (+1.61 vs +0.77%/mo) |
+| 42 | BOJ assets → Nasdaq | NO — inverse in 1998-2011 (corr −0.20, reactive expansion), zero in 2012-2026, narrative corr −0.03 |
+| 43 | Yen strength / carry-unwind warning | NO — backwards both halves (yen-strong precedes BETTER equity months); surge version flips sign across halves |
