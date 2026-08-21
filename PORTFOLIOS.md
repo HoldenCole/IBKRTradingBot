@@ -547,6 +547,17 @@ User claim: when CCC spreads blow out, USMV outperforms, and vice versa. **Confi
 
 One consistent secondary fact, no action required: the HIGH-vol decile underperforms in the stress state in both eras (−0.26/−0.35%/mo spreads) — "don't hold junk stocks when credit is stressed" is real, but the matrix never holds the high-vol decile in any cell, so the advice is already structurally followed. Framework reading: the regime cells ARE the min-vol rotation, executed slowly and honestly — when stress regimes classify, the book already holds the defensive assets that the CCC-USMV correlation points at.
 
+## VIX term structure as a signal — rejected (2026-08-21)
+
+Data: CBOE official VIX (1990+) and VIX3M (2009-09+ — no 2008 in the ratio sample, disclosed; Yahoo's ^VIX3M is broken, one row). Ratio = VIX/VIX3M at month-end; inverted (>1) = backwardation. Halves 2009-2017 / 2018-2026.
+
+1. **As a danger signal: backwards.** Month-end backwardation precedes BETTER months in both halves (+1.76 vs +1.13%/mo; +2.21 vs +1.16). At monthly frequency, inversion is a capitulation marker, not a warning — the panic has already printed and the next month mean-reverts.
+2. **As a de-risk overlay in trend-up months: never fires.** Only 5 and 3 G/R-classified month-ends with inversion per half — backwardation and classifier trend-breaks are nearly simultaneous events; there is nothing left to act on that the regime switch doesn't already do.
+3. **The one consistent pattern runs the OTHER way**: steepest-contango (calmest quartile) month-ends precede WEAKER months in both halves (+0.54 vs +1.37; +0.60 vs +1.49) — complacency, not panic, is the mild warning. But forward returns remain positive (de-risking on it costs absolute return), the sample is one era by construction (VIX3M's 2009 birth), and it cannot ever clear the two-sample bar. Noted, not tradable.
+4. VIX level vs own trend (1990+, the long-history supplement): era-flip (no difference 1991-2008, high-VIX-better 2009-2026). Nothing.
+
+Fifth member of the signal-family graveyard (credit ×3, liquidity ×3, now vol structure): every popular early-warning indicator is either simultaneous with the price trend, backwards, or era-unstable at monthly horizon.
+
 ## Findings
 
 1. **The 33/33/33 TQQQ/GLD/TLT mix the user read about is real but mislabeled as balanced**: +19.7% CAGR and Sortino 1.13, but −51% max drawdown and beta ≈ 1.0. Its failure mode is precisely a regime event: **2022 (−41.9%)**, when inflation broke the bond leg at the same time the levered equity leg fell — the two "ballasts" and the engine all sank together. 2008 was −34%.
