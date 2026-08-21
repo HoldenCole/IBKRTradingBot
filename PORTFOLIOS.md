@@ -608,6 +608,24 @@ User question: did we factor in decay? Yes — structurally: the sim is daily-re
 
 **Restatement**: Direxion cut ERX (and ERY) from 3x to 2x in March 2020. The v2 design doc said ERX(2x) but every engine simulated 3x. The tradable product today is 2x, so the engine now models 2x — only VAGG holds ERX (R-cell), so only VAGG restates: **CAGR 34.4→32.9%, Sortino 1.13→1.12, maxDD −48.9→−46.9% (shallower), 2026 YTD 49.9→36.7%** (this year's energy run at true 2x). CONS/MOD/AGG unchanged. Workbook refreshed. Note the forward paper ledger was never affected — it marks to market with REAL ERX prices; only backtest statistics carried the 3x assumption.
 
+## Leverage audit part two: realized betas today, and the SCO restatement (2026-08-21)
+
+User question: are the other levered ETFs still the same leverage today? Measured by realized daily beta vs underlying, trailing 12m/3m and yearly through each product's life:
+
+| Product | today | history | verdict |
+|---|---|---|---|
+| QLD | 1.99 | 2.0 every period since 2007 | unchanged |
+| TQQQ | 2.97 | 3.0 throughout | unchanged |
+| TMF | 2.92 | ~3.0 throughout | unchanged |
+| ERX / ERY | +2.00 / −2.00 | 3x until Mar 2020, 2x since | matches yesterday's restatement |
+| **SCO** | **−1.3 vs USO** | −2.0 until 2019, drifting since | **flagged — see below** |
+
+**SCO's drift is basis, not leverage**: SCO still runs 2x inverse of ITS index, but USO restructured in 2020 (multi-month futures basket) and the two have diverged — realized beta vs USO is now ~−1.3. The backtest modeled the D-cell short as a clean −2x of USO; the real vehicle demonstrably was not, most dramatically in April 2020 (negative oil): synthetic +72% that month, real SCO **−7%**.
+
+**Restatement — hybrid convention adopted**: the stats engine now uses REAL product returns wherever the product existed (SCO from Nov 2008) and synthetic-of-today's-spec before inception. ERY stays synthetic-2x throughout (its pre-2020 3x incarnation no longer exists; post-2020 real tracks our synthetic within −2.6%/yr, conservative). Official v7 numbers restated: MOD +15.3%/1.72/−14.3, AGG +24.2%/1.23/−33.4, VAGG +32.4%/1.11/−47.0 (CONS unchanged; cumulative cost of the two audit restatements at VAGG: 34.4→32.4%). Workbook refreshed.
+
+**Deployment note**: at today's −1.3 realized beta, a 5% SCO position delivers ≈ −6.5% oil exposure per 10% sleeve rather than the modeled −10% — the live short runs undersized, which the hybrid backtest now prices. Cheapest-to-hold inverse oil vehicle it remains; the sleeve is small and the regime self-limiting either way. The audit lesson, recorded: products drift under you — realized-beta checks belong in the periodic review alongside the ledger.
+
 ## Findings
 
 1. **The 33/33/33 TQQQ/GLD/TLT mix the user read about is real but mislabeled as balanced**: +19.7% CAGR and Sortino 1.13, but −51% max drawdown and beta ≈ 1.0. Its failure mode is precisely a regime event: **2022 (−41.9%)**, when inflation broke the bond leg at the same time the levered equity leg fell — the two "ballasts" and the engine all sank together. 2008 was −34%.
