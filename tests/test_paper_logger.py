@@ -209,6 +209,74 @@ def test_append_entry_snapshots_short_sleeve(tmp_path):
     assert json.loads(row["signals"])["include_shorts"] is True
 
 
+# ---- v7 additions: washout-conditional D rebound slice ----
+from src.portfolio.matrix import WASHOUT_REBOUND, WASHOUT_SHIFT
+
+
+def test_washout_tilt_resolves_in_d_cell():
+    # MOD D washed out: TLT 35->25, SPY 10->20 (shorts on)
+    a = resolve_allocation("MOD", Quadrant.DEFLATION, include_shorts=True,
+                           breadth_washout=True)
+    assert a["TLT"] == pytest.approx(0.25)
+    assert a["SPY"] == pytest.approx(0.20)
+    assert sum(a.values()) == pytest.approx(1.0, abs=0.01)
+
+
+def test_washout_shift_caps_at_tlt_weight():
+    # VAGG D has only 5% TLT after short resolution -> shift caps at 5pp
+    a = resolve_allocation("VAGG", Quadrant.DEFLATION, include_shorts=True,
+                           breadth_washout=True)
+    assert "TLT" not in a
+    assert a["QLD"] == pytest.approx(0.20)
+    assert sum(a.values()) == pytest.approx(1.0, abs=0.01)
+
+
+def test_washout_fails_closed_and_excludes_cons():
+    base = resolve_allocation("MOD", Quadrant.DEFLATION, include_shorts=True)
+    assert resolve_allocation("MOD", Quadrant.DEFLATION, include_shorts=True,
+                              breadth_washout=None) == base
+    assert resolve_allocation("MOD", Quadrant.DEFLATION, include_shorts=True,
+                              breadth_washout=False) == base
+    cons = resolve_allocation("CONS", Quadrant.DEFLATION, include_shorts=True)
+    assert resolve_allocation("CONS", Quadrant.DEFLATION, include_shorts=True,
+                              breadth_washout=True) == cons
+    # non-D quadrants unaffected
+    g = resolve_allocation("MOD", Quadrant.GROWTH)
+    assert resolve_allocation("MOD", Quadrant.GROWTH, breadth_washout=True) == g
+
+
+def test_append_entry_snapshots_washout(tmp_path):
+    path = tmp_path / "ledger.csv"
+    append_entry(Quadrant.DEFLATION, date(2026, 11, 1), path,
+                 breadth=0.15, breadth_washout=True)
+    row = load_ledger(path).loc[0]
+    sig = json.loads(row["signals"])
+    assert sig["breadth"] == 0.15 and sig["breadth_washout"] is True
+    allocs = json.loads(row["allocations"])
+    assert allocs["MOD"]["SPY"] == 0.20
+    assert allocs["CONS"]["SPY"] == 0.10  # CONS untouched
+
+
+def test_compute_signals_breadth():
+    idx = _pd.date_range("2024-01-01", "2026-08-19", freq="B")
+    n = len(idx)
+    up = _pd.Series(np.linspace(100, 200, n), index=idx)
+    dn = _pd.Series(np.linspace(200, 100, n), index=idx)
+    prices = {t: up.copy() for t in ["SPY", "TLT", "XLE", "GLD", "GDX"]}
+    prices["DBC"] = dn.copy(); prices["ERX"] = dn.copy()
+    from src.portfolio.paper_logger import BREADTH_TICKERS
+    # 15 breadth names all in downtrend -> breadth ~0 -> washout True
+    for t in BREADTH_TICKERS[:15]:
+        prices[t] = dn.copy()
+    sig = compute_signals(prices, _date(2026, 8, 19))
+    assert sig["breadth"] is not None and sig["breadth"] < 0.25
+    assert sig["breadth_washout"] is True
+    # too few names -> unknown, fail closed
+    prices2 = {k: v for k, v in prices.items() if k not in BREADTH_TICKERS[:10]}
+    sig2 = compute_signals(prices2, _date(2026, 8, 19))
+    assert sig2["breadth"] is None and sig2["breadth_washout"] is None
+
+
 def test_compute_signals_end_to_end():
     idx = _pd.date_range("2024-01-01", "2026-08-19", freq="B")
     n = len(idx)

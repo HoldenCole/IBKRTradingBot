@@ -1,4 +1,4 @@
-"""Monthly paper logger for the quadrant rotation portfolios (matrix v5).
+"""Monthly paper logger for the quadrant rotation portfolios (matrix v7).
 
 Run once a month (any day; idempotent per calendar month):
 
@@ -41,6 +41,12 @@ LEDGER_PATH = Path("paper/ledger.csv")
 LEDGER_COLUMNS = ["month", "logged_at", "quadrant", "matrix_version", "signals", "allocations"]
 MOMENTUM_MONTHS = 6
 
+# v7 breadth signal: share of the sector universe above its own 10m SMA.
+BREADTH_TICKERS = ["XLE", "XLY", "XLF", "XLK", "XLI", "XLB", "XLV", "XLU", "XLP",
+                   "IYR", "XRT", "XHB", "ITB", "KRE", "IYT", "SMH", "GDX", "XBI"]
+WASHOUT_THRESHOLD = 0.25
+MIN_BREADTH_NAMES = 12  # fewer usable names -> breadth unknown, fail closed
+
 
 def completed_month_closes(daily: pd.Series, today: date) -> pd.Series:
     """Month-end closes using ONLY months completed before `today`'s month."""
@@ -70,7 +76,22 @@ def compute_signals(prices: dict[str, pd.Series], today: date) -> dict:
         if len(m) > MOMENTUM_MONTHS:
             momentum[asset] = round(float(m.iloc[-1] / m.iloc[-(MOMENTUM_MONTHS + 1)] - 1), 4)
 
-    return {"quadrant": quadrant, "tlt_trend_up": tlt_up, "commodity_momentum": momentum}
+    above = total = 0
+    for t in BREADTH_TICKERS:
+        if t not in prices:
+            continue
+        m = completed_month_closes(prices[t], today)
+        if len(m) < SMA_MONTHS:
+            continue
+        total += 1
+        if m.iloc[-1] > m.tail(SMA_MONTHS).mean():
+            above += 1
+    breadth = round(above / total, 3) if total >= MIN_BREADTH_NAMES else None
+    washout = (breadth < WASHOUT_THRESHOLD) if breadth is not None else None
+
+    return {"quadrant": quadrant, "tlt_trend_up": tlt_up,
+            "commodity_momentum": momentum,
+            "breadth": breadth, "breadth_washout": washout}
 
 
 def load_ledger(path: Path = LEDGER_PATH) -> pd.DataFrame:
@@ -85,6 +106,8 @@ def append_entry(
     path: Path = LEDGER_PATH,
     tlt_trend_up: bool | None = None,
     commodity_momentum: dict[str, float] | None = None,
+    breadth: float | None = None,
+    breadth_washout: bool | None = None,
 ) -> bool:
     """Append this month's row with resolved allocations. False if logged."""
     ledger = load_ledger(path)
@@ -93,7 +116,8 @@ def append_entry(
         logger.info(f"{month} already logged — nothing to do")
         return False
     allocs = {
-        tier: resolve_allocation(tier, quadrant, tlt_trend_up, commodity_momentum)
+        tier: resolve_allocation(tier, quadrant, tlt_trend_up, commodity_momentum,
+                                 breadth_washout=breadth_washout)
         for tier in TIERS
     }
     row = {
@@ -106,6 +130,8 @@ def append_entry(
                 "tlt_trend_up": tlt_trend_up,
                 "commodity_momentum": commodity_momentum or {},
                 "include_shorts": INCLUDE_SHORTS,
+                "breadth": breadth,
+                "breadth_washout": breadth_washout,
             }
         ),
         "allocations": json.dumps(allocs),
@@ -162,20 +188,31 @@ def run_paper_log(path: Path = LEDGER_PATH) -> None:
     from src.data.yahoo import fetch_yahoo_daily
 
     today = date.today()
-    signal_tickers = sorted({"SPY", "DBC", "TLT"} | {a for t in R_TILT.values() for a in t})
-    prices = {t: fetch_yahoo_daily(t, "2y") for t in signal_tickers}
+    signal_tickers = sorted({"SPY", "DBC", "TLT"} | {a for t in R_TILT.values() for a in t}
+                            | set(BREADTH_TICKERS))
+    prices = {}
+    for t in signal_tickers:
+        try:
+            prices[t] = fetch_yahoo_daily(t, "2y")
+        except Exception as exc:  # noqa: BLE001 - a missing breadth name shouldn't kill the run
+            if t in ("SPY", "DBC", "TLT"):
+                raise
+            logger.warning(f"{t}: fetch failed ({exc}) — continuing without it")
     sig = compute_signals(prices, today)
     quadrant = sig["quadrant"]
     logger.info(
         f"Quadrant in force for {today:%Y-%m}: {quadrant.name} "
-        f"(tlt_up={sig['tlt_trend_up']}, mom={sig['commodity_momentum']})"
+        f"(tlt_up={sig['tlt_trend_up']}, breadth={sig['breadth']}, "
+        f"washout={sig['breadth_washout']}, mom={sig['commodity_momentum']})"
     )
     for tier in TIERS:
         logger.info(f"  {tier:>5} target: "
-                    f"{resolve_allocation(tier, quadrant, sig['tlt_trend_up'], sig['commodity_momentum'])}")
+                    f"{resolve_allocation(tier, quadrant, sig['tlt_trend_up'], sig['commodity_momentum'], breadth_washout=sig['breadth_washout'])}")
     append_entry(quadrant, today, path,
                  tlt_trend_up=sig["tlt_trend_up"],
-                 commodity_momentum=sig["commodity_momentum"])
+                 commodity_momentum=sig["commodity_momentum"],
+                 breadth=sig["breadth"],
+                 breadth_washout=sig["breadth_washout"])
 
     ledger = load_ledger(path)
     referenced: set[str] = set(all_tickers()) | {"SPY"}

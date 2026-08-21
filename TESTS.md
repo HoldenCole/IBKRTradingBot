@@ -21,6 +21,7 @@ promising but parked, with its reactivation condition. Updated 2026-08-21.
 | 10 | Short energy equities in Stagflation (ERY half-weight), matrix v6 | −26.5%/−3.4% absolute both eras; underperforms market ~13pp/yr in S in both |
 | 11 | Tax habits: HIFO lots, contributions buy underweights, harvest >5% losers | +1.6-2.3% terminal wealth, one-time setup |
 | 12 | TMF kept unconditional in D-cells | convexity ballast: +0.2-0.4pp in-cell despite weak standalone sleeve |
+| 13 | Washout-conditional D rebound slice (matrix v7, MOD/AGG/VAGG) | breadth <25% in defensive months → +1.4pp/+0.6pp better next month both eras; +0.3-0.6pp CAGR all tiers both eras; CONS excluded (mandate) |
 
 ## Rejected — NO
 
@@ -92,7 +93,7 @@ promising but parked, with its reactivation condition. Updated 2026-08-21.
 | 45 | VIX term structure (backwardation warning) | NO — backwards (inversion precedes BETTER months, capitulation marker); as overlay it fires ~4x/decade, simultaneous with trend breaks; steep-contango complacency pattern is one-era-only by data birth |
 | 46 | Valuation (CAPE) as a bottom signal | NO — cheap gets cheaper: modern extreme-cheap S/D months averaged −0.28%/mo through the GFC; even long-horizon CAPE flips eras |
 | 47 | Financials as leading indicator | NO — exact era inversion (weak financials preceded rebounds pre-2007, healthy financials modern); monthly lead-lag corr ~0 both directions |
-| 48 | Breadth washout as bottom signal | **PASSES both eras** — <25% sectors above trend in S/D months → +1.4pp/+0.6pp better next month; impact test improves all tiers both eras; v7 CANDIDATE pending user decision |
+| 48 | Breadth washout as bottom signal | **ADOPTED as matrix v7** — see Adopted table #13 |
 | 49 | Breadth thrust | NO — never fires while still classified defensive; the regime flips first |
 | 50 | Vol-crest-passed as bottom signal | NO — exact era inversion (same vol flip as leverage timing) |
 | 51 | Crash-month mean reversion | NO — crashes beget crashes mildly, both eras |

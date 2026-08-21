@@ -1,4 +1,4 @@
-"""Playbook matrix v6 — locked allocation per (risk tier, quadrant).
+"""Playbook matrix v7 — locked allocation per (risk tier, quadrant).
 
 Design rules (PORTFOLIOS.md): MOD defines WHAT each regime owns; CONS
 dilutes with cash; AGG/VAGG escalate octane only. v3 changes (validated
@@ -46,6 +46,15 @@ v6 change (stagflation sub-sector short screen, PORTFOLIOS.md):
   OFF: SHY, restoring the v5 long-only S cells exactly. CONS stays
   long-only.
 
+v7 change (bottom-signal round two, PORTFOLIOS.md):
+- Washout-conditional D rebound slice: when sector breadth is washed
+  out (<25% of the 18-sector universe above its own 10m SMA at
+  month-end — the first bottom signal to pass BOTH eras), the D-cell
+  equity slice grows by up to 10pp, funded from TLT, in MOD/AGG/VAGG
+  only (CONS keeps its drawdown mandate untouched). VAGG's shift caps
+  at its TLT weight (5pp). Fail-closed: breadth unknown -> standard
+  cell. Signal is month-end-observed; no intra-month machinery.
+
 All tickers are real ETFs so the paper ledger marks to market without
 simulation. The IBS options overlay is a separate sleeve, not part of
 this rotation ledger.
@@ -59,7 +68,7 @@ G, R, Q_S, D = Quadrant.GROWTH, Quadrant.REFLATION, Quadrant.STAGFLATION, Quadra
 
 _MOD_R = {"SPY": 0.30, "XLE": 0.25, "GLD": 0.25, "DBC": 0.20}
 
-MATRIX_VERSION = "v6"
+MATRIX_VERSION = "v7"
 
 # Global switch for the short book. OFF -> every short placeholder
 # resolves to its long fallback, restoring the v4 long-only cells.
@@ -79,6 +88,12 @@ SHORT_IMPL: dict[str, tuple[str, float]] = {
     SHORT_ENERGY: ("ERY", 2.0),
 }
 SHORT_FALLBACK: dict[str, str] = {SHORT_OIL: "TLT", SHORT_ENERGY: "SHY"}
+
+# v7: washout-conditional D rebound slice — tier -> equity asset that
+# grows by up to WASHOUT_SHIFT (from TLT) when breadth is washed out.
+# CONS excluded by design (drawdown mandate).
+WASHOUT_REBOUND: dict[str, str] = {"MOD": "SPY", "AGG": "QQQ", "VAGG": "QLD"}
+WASHOUT_SHIFT = 0.10
 
 MATRIX: dict[str, dict[Quadrant, dict[str, float]]] = {
     "CONS": {
@@ -140,6 +155,7 @@ def resolve_allocation(
     tlt_trend_up: bool | None = None,
     commodity_momentum: dict[str, float] | None = None,
     include_shorts: bool | None = None,
+    breadth_washout: bool | None = None,
 ) -> dict[str, float]:
     """Concrete weights for a tier/quadrant given the resolution signals.
 
@@ -149,6 +165,9 @@ def resolve_allocation(
       SHY for the remainder; OFF -> the long fallback (v4 cells).
     - In REFLATION, the tier's commodity trio is reweighted by momentum
       rank when commodity_momentum covers all three assets.
+    - In DEFLATION, when breadth_washout is True the rebound equity
+      slice grows by up to WASHOUT_SHIFT from TLT (MOD/AGG/VAGG only;
+      None/False fails closed to the standard cell).
     """
     if include_shorts is None:
         include_shorts = INCLUDE_SHORTS
@@ -177,6 +196,14 @@ def resolve_allocation(
             total = sum(TILT_SHARES)
             for asset, share in zip(ranked, TILT_SHARES):
                 base[asset] = round(pool * share / total, 4)
+    if breadth_washout and quadrant is D and tier in WASHOUT_REBOUND:
+        shift = round(min(WASHOUT_SHIFT, base.get("TLT", 0.0)), 4)
+        if shift > 0:
+            asset = WASHOUT_REBOUND[tier]
+            base["TLT"] = round(base["TLT"] - shift, 4)
+            base[asset] = round(base.get(asset, 0.0) + shift, 4)
+            if base["TLT"] == 0:
+                del base["TLT"]
     return base
 
 
