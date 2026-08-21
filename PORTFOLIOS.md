@@ -592,6 +592,22 @@ Improves every tier modern AND improves pre-2007 — the same asymmetric-or-bett
 
 User approved for MOD/AGG/VAGG; CONS untouched. Wired: `WASHOUT_REBOUND` map + `WASHOUT_SHIFT` (10pp from TLT to the tier's rebound asset — SPY/QQQ/QLD; VAGG's shift caps at its 5pp TLT weight), `breadth_washout` parameter in `resolve_allocation` (fail-closed: None/False → standard cell), breadth signal in the paper logger (18 sector ETFs, share above 10m SMA of completed months, ≥12 names required else unknown→fail-closed, threshold <25%), breadth + washout recorded in the ledger's signals JSON. 65 tests pass. Official v7 numbers (workbook refreshed): CONS +9.7%/1.60/−10.2 (unchanged), MOD +15.6%/1.75/−14.3, AGG +24.6%/1.25/−33.4, VAGG +34.4%/1.13/−48.9. Honest trade visible in the year rows: MOD's 2008 falls +20.7→+15.4% (the tilt buys equity into late-2008 washouts) while the full period gains — buying washouts costs something inside the crash year and earns more across the cycle. Why the gain is only +0.3-0.6pp despite a 0.6-1.4pp/mo signal edge: the tilt moves 10pp of weight, in D-months only (~13% of months), in the washed-out subset (~20-25 fired months in 19 years) — per-decision edge large, exposure small, by design. Live from the September 2026 ledger run.
 
+## Leveraged-ETF decay: validated, and one restatement (2026-08-21)
+
+User question: did we factor in decay? Yes — structurally: the sim is daily-reset (N× daily return − (N−1)×(rf+100bp)/252 − ER, compounded daily), so volatility decay emerges from the compounding path rather than being a bolt-on haircut. It is visible in our own results (3x TLT +2.2%/yr in D-months vs +7.0% unlevered — the decay, measured). Sim-vs-real validation over each product's live history:
+
+| Product | daily corr | sim CAGR − real CAGR |
+|---|---|---|
+| QLD | 0.996 | −0.5%/yr (sim conservative) |
+| TQQQ | 0.999 | −1.3%/yr (conservative) |
+| TMF | 0.997 | −0.7%/yr (conservative) |
+| SCO | 0.974 | −0.3%/yr |
+| ERY (2x, post-2020 product) | 0.999 | −2.6%/yr (conservative) |
+| ERX sim-as-3x | 0.997/0.999 | matches pre-2020 real; **+7.4%/yr optimistic vs post-2020 real** |
+| ERX sim-as-2x | 0.999 | matches post-2020 real (−0.2%/yr) |
+
+**Restatement**: Direxion cut ERX (and ERY) from 3x to 2x in March 2020. The v2 design doc said ERX(2x) but every engine simulated 3x. The tradable product today is 2x, so the engine now models 2x — only VAGG holds ERX (R-cell), so only VAGG restates: **CAGR 34.4→32.9%, Sortino 1.13→1.12, maxDD −48.9→−46.9% (shallower), 2026 YTD 49.9→36.7%** (this year's energy run at true 2x). CONS/MOD/AGG unchanged. Workbook refreshed. Note the forward paper ledger was never affected — it marks to market with REAL ERX prices; only backtest statistics carried the 3x assumption.
+
 ## Findings
 
 1. **The 33/33/33 TQQQ/GLD/TLT mix the user read about is real but mislabeled as balanced**: +19.7% CAGR and Sortino 1.13, but −51% max drawdown and beta ≈ 1.0. Its failure mode is precisely a regime event: **2022 (−41.9%)**, when inflation broke the bond leg at the same time the levered equity leg fell — the two "ballasts" and the engine all sank together. 2008 was −34%.
