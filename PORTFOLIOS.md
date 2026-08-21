@@ -311,7 +311,19 @@ User criterion: shorts only where the asset is NEGATIVE IN ABSOLUTE TERMS in a r
 | MOD v4 → +sleeve | 14.4%/1.43/−16% → **14.9%/1.50/−14%** | 11.4%/0.84/−24% → 11.4%/0.84/−24% (neutral) |
 | AGG v4 → +sleeve | 22.7%/1.12/−36% → **23.5%/1.16/−34%** | — |
 
-Ideal asymmetric profile: helps the era where the effect is strong, harmless where it was weak. Implementation note for a margin-free account: SCO (2x inverse oil ETF) at half weight ≈ the modeled short, with daily-reset tracking differences disclosed. Status: **validated candidate for matrix v5 (MOD/AGG/VAGG D-cells; CONS stays long-only), pending user adoption decision.**
+Ideal asymmetric profile: helps the era where the effect is strong, harmless where it was weak. Implementation note for a margin-free account: SCO (2x inverse oil ETF) at half weight ≈ the modeled short, with daily-reset tracking differences disclosed.
+
+### Adopted: matrix v5 — the short book and its switch (2026-08-21)
+
+User approved adoption AND requested an architectural on/off switch so this and any future validated short can be toggled globally. Wired in `src/portfolio/matrix.py`:
+
+- **`INCLUDE_SHORTS`** (module-level, default ON): the global switch for the entire short book. OFF resolves every short placeholder to its long fallback, restoring the v4 long-only cells *exactly* (verified by test).
+- **`SHORT_OIL` placeholder** in the D-cells: MOD 10%, AGG 15%, VAGG 15% — funded from TLT in every case (VAGG keeps its full TMF octane; TLT 20%→5%). CONS stays long-only per the adoption decision.
+- **Registry pattern for future shorts**: `SHORT_IMPL` maps each placeholder to its (2x-inverse ETF, leverage) and `SHORT_FALLBACK` to its shorts-off long substitute. A future validated short (e.g. XLE-in-S if it ever passes two-sample) is one dict entry + one cell edit, and automatically obeys the switch.
+- **Margin-free resolution**: 10% short exposure → 5% SCO + 5% SHY (2x inverse at half weight). The ledger holds only real ETFs; daily-reset tracking drift vs a true short is the disclosed cost of avoiding margin.
+- Ledger provenance: each row's `signals` JSON now records `include_shorts`, so history shows which book was in force; resolved-allocation snapshots were already append-only.
+
+Resolved v5 D-cells (shorts ON): MOD {TLT 35, GLD 30, XLP 15, SPY 10, SCO 5, SHY 5}; AGG {TLT 25, TMF 15, GLD 30, QQQ 15, SCO 7.5, SHY 7.5}; VAGG {TMF 35, TLT 5, GLD 30, QLD 15, SCO 7.5, SHY 7.5}. Expected impact (two-sample tested above): modern MOD 14.4→14.9%/Sortino 1.43→1.50/DD −16→−14%, AGG 22.7→23.5%/1.12→1.16/−36→−34%; pre-2007 neutral. Live from the September 2026 ledger run.
 
 ## Findings
 

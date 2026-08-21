@@ -127,6 +127,66 @@ def test_append_entry_snapshots_resolved_s_cell(tmp_path):
     assert allocs["CONS"] == {"SHY": 0.60, "TLT": 0.40}
 
 
+# ---- v5 additions: the short book and its global switch ----
+from src.portfolio.matrix import SHORT_FALLBACK, SHORT_IMPL, SHORT_OIL
+
+
+def test_short_placeholders_not_in_tickers():
+    tickers = all_tickers()
+    assert SHORT_OIL not in tickers
+    assert "SCO" in tickers  # the margin-free implementation ETF
+
+
+def test_short_sleeve_resolves_to_inverse_etf_plus_cash():
+    # 10% MOD sleeve -> 5% SCO (2x inverse) + 5% SHY
+    a = resolve_allocation("MOD", Quadrant.DEFLATION, include_shorts=True)
+    assert a["SCO"] == pytest.approx(0.05)
+    assert a["SHY"] == pytest.approx(0.05)
+    assert SHORT_OIL not in a
+    assert sum(a.values()) == pytest.approx(1.0, abs=0.01)
+    # 15% AGG sleeve -> 7.5% SCO + 7.5% SHY
+    a = resolve_allocation("AGG", Quadrant.DEFLATION, include_shorts=True)
+    assert a["SCO"] == pytest.approx(0.075)
+    assert a["SHY"] == pytest.approx(0.075)
+    assert sum(a.values()) == pytest.approx(1.0, abs=0.01)
+
+
+def test_shorts_off_restores_v4_long_only_cells():
+    v4_d = {
+        "MOD": {"TLT": 0.45, "GLD": 0.30, "XLP": 0.15, "SPY": 0.10},
+        "AGG": {"TLT": 0.40, "TMF": 0.15, "GLD": 0.30, "QQQ": 0.15},
+        "VAGG": {"TMF": 0.35, "TLT": 0.20, "GLD": 0.30, "QLD": 0.15},
+    }
+    for tier, expected in v4_d.items():
+        a = resolve_allocation(tier, Quadrant.DEFLATION, include_shorts=False)
+        assert a == pytest.approx(expected), tier
+
+
+def test_cons_stays_long_only_either_way():
+    on = resolve_allocation("CONS", Quadrant.DEFLATION, include_shorts=True)
+    off = resolve_allocation("CONS", Quadrant.DEFLATION, include_shorts=False)
+    assert on == off
+    assert "SCO" not in on
+
+
+def test_short_registry_consistent():
+    # every registered short has an implementation and a long fallback
+    assert set(SHORT_IMPL) == set(SHORT_FALLBACK)
+    for etf, leverage in SHORT_IMPL.values():
+        assert leverage >= 1.0
+        assert etf in all_tickers()
+
+
+def test_append_entry_snapshots_short_sleeve(tmp_path):
+    path = tmp_path / "ledger.csv"
+    append_entry(Quadrant.DEFLATION, date(2026, 10, 1), path)
+    row = load_ledger(path).loc[0]
+    allocs = json.loads(row["allocations"])
+    assert allocs["MOD"]["SCO"] == 0.05
+    assert "SCO" not in allocs["CONS"]
+    assert json.loads(row["signals"])["include_shorts"] is True
+
+
 def test_compute_signals_end_to_end():
     idx = _pd.date_range("2024-01-01", "2026-08-19", freq="B")
     n = len(idx)

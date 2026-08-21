@@ -1,4 +1,4 @@
-"""Monthly paper logger for the quadrant rotation portfolios (matrix v3).
+"""Monthly paper logger for the quadrant rotation portfolios (matrix v5).
 
 Run once a month (any day; idempotent per calendar month):
 
@@ -28,6 +28,7 @@ import pandas as pd
 from loguru import logger
 
 from src.portfolio.matrix import (
+    INCLUDE_SHORTS,
     MATRIX_VERSION,
     R_TILT,
     TIERS,
@@ -101,7 +102,11 @@ def append_entry(
         "quadrant": quadrant.name,
         "matrix_version": MATRIX_VERSION,
         "signals": json.dumps(
-            {"tlt_trend_up": tlt_trend_up, "commodity_momentum": commodity_momentum or {}}
+            {
+                "tlt_trend_up": tlt_trend_up,
+                "commodity_momentum": commodity_momentum or {},
+                "include_shorts": INCLUDE_SHORTS,
+            }
         ),
         "allocations": json.dumps(allocs),
     }
