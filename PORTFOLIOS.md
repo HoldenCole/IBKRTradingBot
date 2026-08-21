@@ -294,6 +294,25 @@ Lot-level simulation of the MOD rotation, 2007–2026, real contribution schedul
 
 Worth doing (it is one IBKR setting plus two habits), worth ~0.1pp/yr — but not transformative: total taxes paid are nearly identical; the gain is deferral compounding. The dominant tax decision remains structural (turnover level and account type), already settled: keep model speed, accept the drag, apply the habits.
 
+## The short screen: two-sample validated shorts (2026-08-21)
+
+User criterion: shorts only where the asset is NEGATIVE IN ABSOLUTE TERMS in a regime, in both eras — no shorting positive assets just to buy Sharpe. Full asset x regime screen (modern 2007–2026 / pre-2007 proxies):
+
+**Passers (negative both eras):**
+- **Commodities/oil in DEFLATION**: USO −43.3%/yr modern (DBC −7.2%) / GSCI −0.6% pre-2007. Mechanism is the system's own: D-classification REQUIRES commodities below their 10-month SMA — shorting them is trend-following's short side, and a short USO position additionally collects the contango roll drag documented in the original CL/USO research. Self-limiting risk: an oil spike pushes DBC above its SMA and flips the regime out of D, closing the short.
+- Energy equities in STAGFLATION (XLE −26.3% / ENER −3.4%): parked — n=19 modern months, weak pre-2007 leg, squeeze risk in a rare short-lived regime.
+
+**Failures recalled**: short equity in stagflation (+10.4% modern) failed pre-2007 (−2.0%); short bonds in stagflation helped modern, hurt pre-2007 — both already rejected.
+
+**Impact test — 10%/15% short-oil sleeve in MOD/AGG D-cells (funded from duration, borrow 2% modeled):**
+
+| | Modern | Pre-2007 |
+|---|---|---|
+| MOD v4 → +sleeve | 14.4%/1.43/−16% → **14.9%/1.50/−14%** | 11.4%/0.84/−24% → 11.4%/0.84/−24% (neutral) |
+| AGG v4 → +sleeve | 22.7%/1.12/−36% → **23.5%/1.16/−34%** | — |
+
+Ideal asymmetric profile: helps the era where the effect is strong, harmless where it was weak. Implementation note for a margin-free account: SCO (2x inverse oil ETF) at half weight ≈ the modeled short, with daily-reset tracking differences disclosed. Status: **validated candidate for matrix v5 (MOD/AGG/VAGG D-cells; CONS stays long-only), pending user adoption decision.**
+
 ## Findings
 
 1. **The 33/33/33 TQQQ/GLD/TLT mix the user read about is real but mislabeled as balanced**: +19.7% CAGR and Sortino 1.13, but −51% max drawdown and beta ≈ 1.0. Its failure mode is precisely a regime event: **2022 (−41.9%)**, when inflation broke the bond leg at the same time the levered equity leg fell — the two "ballasts" and the engine all sank together. 2008 was −34%.
