@@ -558,6 +558,14 @@ Data: CBOE official VIX (1990+) and VIX3M (2009-09+ — no 2008 in the ratio sam
 
 Fifth member of the signal-family graveyard (credit ×3, liquidity ×3, now vol structure): every popular early-warning indicator is either simultaneous with the price trend, backwards, or era-unstable at monthly horizon.
 
+## Valuation-at-bottoms and financials-as-leader — both rejected (2026-08-21)
+
+**Valuation (Shiller CAPE, 1881+, tested 1987-2026): REJECTED — cheap gets cheaper.** Within defensive-classified (S/D) months, CAPE state vs its own trailing 10-year distribution shows no usable pattern: pre-2007 non-monotone (rich +1.37%/mo, mild-cheap −1.73%, extreme n=2); modern INVERTED — "extremely cheap" months averaged **−0.28%/mo** (n=24), because CAPE sat below its 10-year 25th percentile through the entire 2008-09 collapse while prices kept falling. Valuation identifies WHERE bottoms happen eventually, not WHEN — the one thing a bottom signal must do. Bonus finding: even the famous long-horizon version fails era-consistency in our samples — cheap beat rich pre-2007 (+13.7% vs +11.6% forward-12m) but rich beat cheap modern (+13.9% vs +10.3%); CAPE's 21st-century breakdown, reproduced in-house.
+
+**Financials as the economy's leading indicator: REJECTED — exact era inversion.** Relative-strength flag (XLF/SPY modern, FIDSX/VFINX pre-2007, ratio vs 10m SMA): in defensive months, pre-2007 fin-WEAK preceded rebounds (+3.07%/mo vs −0.59% when healthy — capitulation again); modern the story runs the other way (fin-healthy +2.98% vs +0.87%) — spreads of −3.66% and +2.12%, a perfect flip. In trend-up months: −0.06% vs +0.61%, also flipped. Monthly lead-lag correlations are ~zero in both directions in both eras (if anything the MARKET slightly leads financials, +0.09/+0.12). "Financials lead" is narrative, not data, at monthly horizon.
+
+Signal graveyard count: nine (credit ×3, liquidity ×3, vol structure, valuation, financials). Recurring anatomy of bottoms across all of them: bottoms are marked by everything looking broken — junk credit collapsing, VIX inverted, financials dying, valuations "cheap and getting cheaper" — which is precisely why waiting for any health indicator misses the turn, and why the price trend, late as it is, keeps beating every attempt to front-run it.
+
 ## Findings
 
 1. **The 33/33/33 TQQQ/GLD/TLT mix the user read about is real but mislabeled as balanced**: +19.7% CAGR and Sortino 1.13, but −51% max drawdown and beta ≈ 1.0. Its failure mode is precisely a regime event: **2022 (−41.9%)**, when inflation broke the bond leg at the same time the levered equity leg fell — the two "ballasts" and the engine all sank together. 2008 was −34%.
