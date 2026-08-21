@@ -417,6 +417,20 @@ Evidence-quality reminder: v3+ refinements were designed after seeing the modern
 
 User question: what's the logic for entering mid-regime (market extended, oil already up, rates rising)? Empirics, MOD v6, 2007–2026, monthly returns conditioned on the AGE of the regime being held: month 1 +1.01%/mo, month 2 +1.86%, months 3-4 +1.56%, months 5-8 +1.19%, month 9+ +0.54% — decay with age, but NO age bucket is negative. Reflation specifically at month 6+ (the current situation): MOD +0.97%/mo with 63% positive months, while SPY in those same months averaged −0.05% — the R-book's commodity/gold/energy construction carries late-reflation even when equities stall. Random-entry stress: all 225 six-month entry windows since 2007 — 84% positive, mean +7.6%, worst −7.2%. Conclusion: mid-regime entry costs expected return relative to early entry but has never been a structurally bad trade; the whole-period record already contains every top. Contributions (large relative to account) provide natural averaging; tranching remains available for lump sums.
 
+## Crypto screen (2026-08-21)
+
+User question: did we ever consider crypto? Screened BTC (2014+) and ETH (2017+) through the quadrant framework — necessarily ONE-ERA (no pre-2014 data exists), which already fails the two-sample rule by construction. What the one era shows:
+
+| In-regime ann. | G | R | S | D | 2022 | maxDD | corr QQQ (2020+) | corr GLD |
+|---|---|---|---|---|---|---|---|---|
+| BTC | +83% (n=52) | +49% | **−33% (n=9)** | +84% (n=15) | −65% | −74% | 0.47 | 0.10 |
+| ETH | +85% | +4% | −46% | +36% | — | worse | — | — |
+
+Verdicts:
+1. **"Digital gold" is empirically false in this data**: BTC's gold correlation is ~0.05-0.10 while its equity correlation is ~0.5 (2020+). In stagflation — where a real store-of-value earns — BTC lost 33%/yr; in 2022 (the one inflation-shock test it has ever faced) it fell 65% alongside stocks and bonds. It is an ultra-high-beta risk asset whose regime fingerprint mimics leveraged Nasdaq, not bullion.
+2. **No cell admission.** The core matrix's evidence bar (two independent eras) is unmeetable for an asset with one macro cycle of history and n=9 stagflation months; and as G-cell octane it's a different asset (violating the "same asset, levered" rule) competing against TQQQ's validated +61%/yr with worse drawdowns. GDX — 40 years of history and a coherent mechanism — was just rejected on a weaker version of this evidence gap; consistency requires the same answer here.
+3. **Legitimate shape if the user wants exposure**: a satellite belief-bet outside the rotation (the biotech precedent) — fixed small allocation (≤5%), spot-ETF wrapper at IBKR, rebalanced with contributions, never counted in tier targets, explicitly labeled unvalidated. Its one-era regime profile suggests if it ever were gated, it would be gated like a risk asset (on in G/D-rebound, off in S) — the opposite of the popular framing.
+
 ## Findings
 
 1. **The 33/33/33 TQQQ/GLD/TLT mix the user read about is real but mislabeled as balanced**: +19.7% CAGR and Sortino 1.13, but −51% max drawdown and beta ≈ 1.0. Its failure mode is precisely a regime event: **2022 (−41.9%)**, when inflation broke the bond leg at the same time the levered equity leg fell — the two "ballasts" and the engine all sank together. 2008 was −34%.
