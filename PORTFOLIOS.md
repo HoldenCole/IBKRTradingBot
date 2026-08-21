@@ -363,6 +363,27 @@ Margin-free implementation verified: ERY (Direxion 2x inverse S&P Energy — sam
 
 User approved, folded into the `INCLUDE_SHORTS` switch as designed. `SHORT_ENERGY` registered in `SHORT_IMPL` (ERY, 2x) with fallback SHY; S-cells now MOD {SHY 40, SHORT_ENERGY 10, COND 50}, AGG {SHY 25, SHORT_ENERGY 15, COND 60}, VAGG {SHY 15, SHORT_ENERGY 15, COND 70}; CONS long-only. Resolved (shorts ON, bonds trending up): MOD {SHY 45, TLT 50, ERY 5}; AGG {SHY 32.5, TLT 60, ERY 7.5}; VAGG {SHY 22.5, TLT 70, ERY 7.5}. Shorts OFF restores the long-only S-cells exactly (tested). The short book is now: oil in Deflation + energy equities in Stagflation, both behind the one switch. Live from the September 2026 ledger run.
 
+## The sub-sector LONG screen (2026-08-21)
+
+User prompt: had we ever screened sub-sector longs — with the explicit warning that this is prime overfitting territory (tech looks unbeatable in cherry-picked windows). Answer: not systematically until now; the matrix's existing sector longs (XLE/GDX/DBC in R, XLP+GLD in D) each entered through their own two-era tests. Full grid run: same locked 18-group universe as the short screen (no additions after seeing data), all four quadrants, both eras, benchmarks (SPY/QQQ modern, VFINX/NDX pre-2007) printed first, full tables kept — the bar for a LONG is beating the cell's incumbent in both eras, not being positive.
+
+**What the grid shows, cell by cell:**
+- **G**: only semis beat the Nasdaq incumbent in both eras (SMH +27.9% vs QQQ +23.3% modern; FSELX +28.7% vs NDX +27.0% pre-2007). NOT adopted — the two eras are not independent evidence here: each contains a tech supercycle (1990s, 2010s-20s AI), so "semis beat QQQ" is the same bubble sampled twice, with margins (+4.6pp/+1.7pp) inside fund-noise range. AGG/VAGG already express G-aggression through QLD/TQQQ — leverage on 100 diversified names beats concentration in one industry at equal octane. Pre-2007's other QQQ-beaters (leisure, retail) collapse in the modern era — era instability on display.
+- **R**: XLE is the grid's #1 modern sector (+16.8%) and top-tier pre-2007 (+14.6%) — the incumbent R-trio already owns the winner. Nothing beats it in both eras. (Noted: GDX's absolute in-regime R record is mediocre — +5.5%/+0.2% — but it sits behind the momentum tilt, which demotes it dynamically; the tilt was separately validated.)
+- **S**: biotech is the only sector positive in S in both eras (XBI +14.8% modern, FBIOX +9.5% pre-2007) — REJECTED as the textbook false passer: no relative alpha pre-2007 (VFINX +9.1% — it merely matched the market), its own sector neighbor contradicts it (XLV −11.5% modern), n=19, and with 18 candidates screened, ~1 spurious two-sample "passer" is the expected base rate. Chemicals is the cautionary exhibit the user predicted: +33%/yr in pre-2007 S-months, −25%/yr modern.
+- **D**: the one coherent multi-sector signal — early-cycle cyclicals (transports, retail, discretionary, materials) beat the broad market in D-months in BOTH eras (one mechanism, many expressions: the D rebound is early-cycle). And miners dwarf everything (GDX +70.5%/yr modern D; FSAGX +55.1% pre-2007).
+
+**Impact tests (same engine, baseline reproduces official v6):**
+
+| Variant | CONS | MOD | AGG | VAGG | MOD pre-2007 |
+|---|---|---|---|---|---|
+| baseline v6 | +9.7%/1.58/−10.2% | +15.3%/1.70/−14.3% | +24.1%/1.26/−33.7% | +33.8%/1.22/−48.9% | +11.7%/1.37/−24.5% |
+| D rebound slice → IYT/XRT/XLY basket | +9.8%/1.61/−10.9% | +15.4%/1.71/−14.3% | +24.0%/1.26/−33.8% | — | +11.8%/1.38/−24.5% |
+| **AGG/VAGG D gold: GLD → GDX** | unchanged | unchanged | **+26.3%/1.33/−34.3%** | **+36.1%/1.27/−49.3%** | unchanged |
+
+- **Rebound-basket: REJECTED.** +0.1pp with a deeper CONS drawdown — the broad-market slice already captures the early-cycle bounce; slicing it finer adds noise, not signal.
+- **GDX-for-GLD in AGG/VAGG D-cells: validated candidate with a disclosed asterisk.** +2.2pp CAGR AND +0.06 Sortino at AGG (so not mere vol-loading), +2.3pp/+0.05 at VAGG, DD −0.4/−0.6pp deeper. The asterisk: this is the one candidate the two-sample rule cannot fully bless — the pre-2007 gold proxy (FKRCX) is itself a miners fund, so the older era can't distinguish bullion from miners (it does confirm miners-in-D worked pre-2007: FSAGX +55%/yr in D-months). Design coherence argues for it: AGG/VAGG are the octane tiers whose rule is "same asset, levered expression" (TLT→TMF, QQQ→QLD) — miners ARE levered gold, and MOD keeps bullion, preserving monotonicity. Status: **candidate for the AGG/VAGG D-cells, pending user adoption decision.**
+
 ## Findings
 
 1. **The 33/33/33 TQQQ/GLD/TLT mix the user read about is real but mislabeled as balanced**: +19.7% CAGR and Sortino 1.13, but −51% max drawdown and beta ≈ 1.0. Its failure mode is precisely a regime event: **2022 (−41.9%)**, when inflation broke the bond leg at the same time the levered equity leg fell — the two "ballasts" and the engine all sank together. 2008 was −34%.
