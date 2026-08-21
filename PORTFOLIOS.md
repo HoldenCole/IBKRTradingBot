@@ -502,6 +502,16 @@ User request: screen factor/style exposures (momentum, value, quality, low-vol) 
 
 **Lesson recorded**: regime-conditional factor premia are academically real in both eras, but every investable wrapper tested surrenders the edge — high-turnover premia (momentum) can't be packaged, and diluted large-cap versions (value, quality) shrink below adoption thresholds. The factor axis is closed unless a materially better vehicle appears.
 
+## Thematic-basket screen — axis closed (2026-08-21)
+
+User question: real estate ETFs (already screened — IYR/FRESX sat in both sub-sector screens; mediocre in every cell both eras, never beats an incumbent, fails as a short) and thematic baskets (never screened — done now, 13 themes with the longest available histories, modern era, vs QQQ/SPY incumbents).
+
+Results (in-regime annualized, full-period CAGR): the themes split into two families, both non-candidates.
+1. **Diluted Nasdaq beta** (FDN internet, IGV software, SKYY cloud, HACK cyber, ARKK): some beat QQQ inside G or D months (FDN G +27% vs +23%; ARKK D +135%), but every one loses to QQQ over the full period (FDN +13.2%/yr vs QQQ ~16%; ARKK +13.6% from 2014 vs QQQ ~18% same window) — the in-regime edge is just higher beta, and the regime mix taxes it back.
+2. **Narrative boom-busts** (TAN solar −7.1%/yr SINCE 2008, PBW clean energy −4.0%/yr over 21 years, ICLN −3.7%, URA −3.3%, KWEB +1.9%, JETS +2.2%, LIT +6.4%): negative-to-feeble two-decade CAGRs with −20-40%/yr stagflation legs. Live confirmation of the launch-at-attention-peak adverse selection documented in the ETF literature.
+
+Structural point: no thematic fund has pre-2007 history, so matrix admission is impossible under the two-sample rule regardless (the crypto precedent). Nothing here even earns satellite-file status — unlike BTC, no theme shows an edge its diversified parent index doesn't already deliver cheaper. Axis closed.
+
 ## Findings
 
 1. **The 33/33/33 TQQQ/GLD/TLT mix the user read about is real but mislabeled as balanced**: +19.7% CAGR and Sortino 1.13, but −51% max drawdown and beta ≈ 1.0. Its failure mode is precisely a regime event: **2022 (−41.9%)**, when inflation broke the bond leg at the same time the levered equity leg fell — the two "ballasts" and the engine all sank together. 2008 was −34%.
