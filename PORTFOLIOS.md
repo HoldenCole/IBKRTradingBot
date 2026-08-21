@@ -566,6 +566,28 @@ Fifth member of the signal-family graveyard (credit ×3, liquidity ×3, now vol 
 
 Signal graveyard count: nine (credit ×3, liquidity ×3, vol structure, valuation, financials). Recurring anatomy of bottoms across all of them: bottoms are marked by everything looking broken — junk credit collapsing, VIX inverted, financials dying, valuations "cheap and getting cheaper" — which is precisely why waiting for any health indicator misses the turn, and why the price trend, late as it is, keeps beating every attempt to front-run it.
 
+## Bottom-signal round two: turn signals, not state signals (2026-08-21)
+
+User prompt: bottoms move fast, tops are slow — find bottom signals. The nine dead signals were mostly STATES; this round tested five TURN/washout designs, month-end signal → next-month equity, WITHIN defensive-classified (S/D) months, both eras:
+
+| Signal | Pre-2007 (off vs ON) | Modern (off vs ON) | Verdict |
+|---|---|---|---|
+| **1a. Breadth washout** (<25% of 17-18 sectors above own 10m SMA) | +0.31 vs **+1.69**%/mo | +0.87 vs **+1.48**%/mo | **PASSES — first two-era-consistent bottom signal** |
+| 1b. Breadth thrust (+30pp in 2mo) | n=4 | n=4 | never fires while still classified S/D — the regime flips first |
+| 2. Vol crest passed (realized vol falling) | +1.80 vs +0.07 | +0.09 vs **+2.95** | exact era inversion — dead (the leverage-timing autopsy's vol flip, again) |
+| 3. Crash last month (<−5%) | +1.04 vs +0.53 | +1.48 vs +0.95 | crashes beget crashes mildly — no mean-reversion edge |
+| 4. Fed easing (3m bill < 6mo ago) | +1.59 vs +0.64 | +3.14 vs **+0.16** | consistent NEGATIVE both eras — cuts confirm recessions, they don't rescue them; the book is already defensive, so no action, but recorded as a real (inverse) finding |
+| 5. Credit turn (junk rally inside S/D) | +1.27 vs +0.07 | +1.49 vs +0.82 | junk rallies inside defensive regimes are bear-market rallies — consistent mild negative |
+
+**Impact test on the survivor — washout-conditional D-cell rebound slice** (+10pp to the cell's equity asset from TLT when breadth <25% at month-end; signal is month-end-observed, no intra-month machinery, no T+1 exposure):
+
+| | CONS | MOD | AGG | VAGG | MOD pre-2007 |
+|---|---|---|---|---|---|
+| baseline v6 | +9.7/1.60/−10 | +15.3/1.73/−14 | +24.1/1.22/−34 | +33.8/1.12/−49 | +11.8/1.38/−24 |
+| washout-tilt | +10.0/1.63/−11 | **+15.6/1.75/−14** | **+24.6/1.25/−33** | **+34.4/1.13/−49** | **+11.9/1.39/−24** |
+
+Improves every tier modern AND improves pre-2007 — the same asymmetric-or-better profile as the adopted R-tilt and energy short, at comparable magnitude (+0.3-0.6pp). Mechanism-coherent: it enlarges an already-validated slice (the D rebound equity) conditionally, exactly in the months where forward returns have historically been strongest in both eras, addressing the known rebound-lag weakness WITHIN the monthly cadence. Note: CONS's drawdown deepens slightly (−10→−11%); recommendation is to adopt for MOD/AGG/VAGG and leave CONS untouched (mandate purity, same precedent as the shorts). Status: **validated candidate for matrix v7 (washout-conditional D rebound slice, MOD/AGG/VAGG), pending user adoption decision.** Implementation cost: one breadth signal (18 monthly sector closes) in the paper logger + a conditional in resolve_allocation, fail-closed to the standard cell.
+
 ## Findings
 
 1. **The 33/33/33 TQQQ/GLD/TLT mix the user read about is real but mislabeled as balanced**: +19.7% CAGR and Sortino 1.13, but −51% max drawdown and beta ≈ 1.0. Its failure mode is precisely a regime event: **2022 (−41.9%)**, when inflation broke the bond leg at the same time the levered equity leg fell — the two "ballasts" and the engine all sank together. 2008 was −34%.

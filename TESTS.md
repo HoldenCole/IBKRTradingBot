@@ -92,3 +92,8 @@ promising but parked, with its reactivation condition. Updated 2026-08-21.
 | 45 | VIX term structure (backwardation warning) | NO — backwards (inversion precedes BETTER months, capitulation marker); as overlay it fires ~4x/decade, simultaneous with trend breaks; steep-contango complacency pattern is one-era-only by data birth |
 | 46 | Valuation (CAPE) as a bottom signal | NO — cheap gets cheaper: modern extreme-cheap S/D months averaged −0.28%/mo through the GFC; even long-horizon CAPE flips eras |
 | 47 | Financials as leading indicator | NO — exact era inversion (weak financials preceded rebounds pre-2007, healthy financials modern); monthly lead-lag corr ~0 both directions |
+| 48 | Breadth washout as bottom signal | **PASSES both eras** — <25% sectors above trend in S/D months → +1.4pp/+0.6pp better next month; impact test improves all tiers both eras; v7 CANDIDATE pending user decision |
+| 49 | Breadth thrust | NO — never fires while still classified defensive; the regime flips first |
+| 50 | Vol-crest-passed as bottom signal | NO — exact era inversion (same vol flip as leverage timing) |
+| 51 | Crash-month mean reversion | NO — crashes beget crashes mildly, both eras |
+| 52 | Fed easing / credit turn inside S/D | NO as buy signals — both consistently NEGATIVE both eras (cuts confirm recessions; junk rallies in defensive regimes are bear rallies); recorded as real inverse findings, no action (book already defensive) |
