@@ -72,13 +72,16 @@ promising but parked, with its reactivation condition. Updated 2026-08-21.
 
 ## Interesting and NOT yet tested
 
-Ranked by (two-era testability × mechanism strength × implementability):
+*(emptied 2026-08-21 — all eight ideas below were tested in the final-frontier sweep; results moved to the Rejected table and PORTFOLIOS.md. New ideas land here.)*
 
-1. **High-yield credit as sleeve and/or signal** — Vanguard High-Yield (VWEHX) runs daily to 1978, so a REAL two-era test exists. Does HY earn a seat in G/R cells? Does the credit spread confirm/lead the equity trend signal? Canonical macro literature says credit leads equities at turns.
-2. **Dollar overlay for stagflation** — UUP earned +7.3% in modern S-months (screened once, no pre-2007 leg run); DXY index history reaches the 1970s, making the two-era test possible. A strong-dollar S-cell asset would be the first non-cash, non-duration long that works there.
-3. **Commodity trend-following (the filed backtest, done properly)** — the canonical 2022-style stagflation performer; needs clean continuous futures (paid data or careful splicing). Highest expected value of anything on this list per the managed-futures literature.
-4. **International/EM sleeves by regime** — proxies already in hand (VWIGX 1985, FEMKX 1990, EFA/EEM modern). Does ex-US equity earn a seat in R (weak-dollar regimes) that the commodity legs don't already cover?
-5. **Gold trend-conditioning in D** — gold spot history to the 1970s; does a 10m SMA gate on the 30% gold slice help, or is D-gold like D-duration (always on)? Cheap test, symmetric to work already done.
-6. **Regime-transition conditioning** — does the playbook for a G-month differ by predecessor (D→G rebound vs S→G resolution)? Two-era testable; state-splitting cuts sample size, so gate hard.
-7. **TIPS in R/S** — mechanism is obvious but TIP only starts 2003; the pre-2007 leg needs synthetic real-yield construction. Flagged as data-limited before starting.
-8. **Withdrawal-phase design** — not a backtest but a modeling gap: the glide path ends at CONS; the decumulation rules (sequence-of-returns, which sleeve to draw from by regime) are unwritten. Relevant in ~25 years, cheap to spec early.
+| # | Idea (tested in sweep) | Verdict one-liner |
+|---|---|---|
+| 32 | HY credit as sleeve | NO — beats no incumbent in both eras (D leg flips) |
+| 33 | HY credit as early-warning signal | NO — warning direction itself flips between eras |
+| 34 | Dollar overlay in stagflation | NO — +8.0%/yr modern S vs −7.8%/yr pre-2007 S; the 2022 dollar surge in costume |
+| 35 | International/EM sleeves by regime | NO — never beats Nasdaq incumbent; EM −35%/yr modern S |
+| 36 | TIPS in R/S | NO — fails on modern evidence alone; data gap never binding |
+| 37 | Gold trend-gate in D | NO — and strengthens the cell: below-SMA D-months are gold's BEST both eras (crash V-bottoms); unconditional D-gold validated by its own conditioning failing |
+| 38 | Regime-transition conditioning | NO — no (prev→next) pair deviates stably from base rates in both eras |
+| 39 | Commodity trend basket | NO — all its edge is in R (already owned), −13.7%/yr in S, pre-2007 leg shows no edge; in-matrix trend-gating DBC is structurally a no-op |
+| 40 | Withdrawal-phase design | SPEC WRITTEN (PORTFOLIOS.md) — dormant by design until ~age 60; rules pre-registered, sequence-risk test deferred |

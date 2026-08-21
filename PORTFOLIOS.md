@@ -512,6 +512,23 @@ Results (in-regime annualized, full-period CAGR): the themes split into two fami
 
 Structural point: no thematic fund has pre-2007 history, so matrix admission is impossible under the two-sample rule regardless (the crypto precedent). Nothing here even earns satellite-file status — unlike BTC, no theme shows an edge its diversified parent index doesn't already deliver cheaper. Axis closed.
 
+## The final-frontier sweep: all eight untested ideas, one pass (2026-08-21)
+
+User directive: test everything left on the TESTS.md untested list. Pre-registered, two-era where data exists (VWEHX daily to 1980, DXY to 1976 made most of them properly testable). Result: **eight ideas, zero adoptions — and one existing cell strengthened.**
+
+1. **HY credit as a sleeve — REJECTED.** Beats no incumbent in both eras: modern D it beats TLT (+16% vs +7%) but pre-2007 D it loses (+3.4% vs +6.2%); everywhere else it trails equity or cash.
+2. **HY credit as an early-warning signal — REJECTED.** "Equity trend up but credit trend down" predicts weaker months modern (+0.93 vs +0.76%/mo) but STRONGER months pre-2007 (+0.80 vs +1.38) — the direction itself flips eras.
+3. **Dollar in stagflation — REJECTED.** Modern +8.0%/yr in S-months, pre-2007 **−7.8%/yr**. The UUP screen hit was the 2022 dollar surge wearing a regime costume. Textbook two-sample kill.
+4. **International/EM sleeves — REJECTED.** Never beat the Nasdaq G-incumbent in either era; EM does −35%/yr in modern S. Confirms the G-cell momentum-select rejection from the other direction.
+5. **TIPS — CLOSED on modern evidence alone** (+5.0% in R vs gold's +12.9%; worse than cash in S); the missing pre-2007 leg never becomes binding.
+6. **Gold trend-gate in D — REJECTED, and the rejection is a gift.** In BOTH eras, D-months where gold sat BELOW its 10m SMA were gold's BEST months (+3.40%/mo modern, +6.34%/mo pre-2007, vs +1.37/−0.23 above-SMA): those are the crash-panic months where gold V-bottoms on flight-to-safety. A trend gate would have removed exactly the months the 30% slice exists for. Unconditional D-gold is now validated the same way unconditional D-duration was — by the failure of its own conditioning.
+7. **Regime-transition conditioning — CLOSED.** No (predecessor→successor) pair shows a stable actionable deviation in both eras (R→G +1.7/+1.3%/mo, R→S +1.4/+1.8 — all near base rates).
+8. **Commodity trend basket — REJECTED.** Modern 13-commodity trend (long above own 10m SMA, EW) beats DBC buy-and-hold (+4.0% vs +2.2%/yr, DD −40 vs −75) but earns it all in R (+10.1%/yr) where the matrix already owns commodities, LOSES −13.7%/yr in S (our ex-ante S-months are choppy inflections, not CTA-friendly trends), and the pre-2007 GSCI-trend leg shows no edge over buy-and-hold (+4.3 vs +5.1). Structural note: trend-gating the R-cell's DBC is a no-op — R classification already requires DBC above its SMA. No seat. (Yahoo roll-gap contamination disclosed but not binding: the S-month failure is too large to be a data artifact.)
+
+## Decumulation spec (pre-registered, dormant until ~age 60)
+
+The glide path ends at CONS at 65; the withdrawal phase needs rules, specced now so they get tested with decades of forward ledger behind them: (1) hold 2 years of spending in the cash/duration sleeve; (2) monthly withdrawals draw from cash; (3) refill cash from risk sleeves only in G/R-classified months — never sell equity into S/D; (4) skip inflation adjustments after negative portfolio years; (5) initial rate 3.5-4% (CONS's −10% maxDD and +13.8% 2008 make the classic sequence-risk failure mode structurally mild, but this is asserted, not yet tested). Test before first withdrawal, not before.
+
 ## Findings
 
 1. **The 33/33/33 TQQQ/GLD/TLT mix the user read about is real but mislabeled as balanced**: +19.7% CAGR and Sortino 1.13, but −51% max drawdown and beta ≈ 1.0. Its failure mode is precisely a regime event: **2022 (−41.9%)**, when inflation broke the bond leg at the same time the levered equity leg fell — the two "ballasts" and the engine all sank together. 2008 was −34%.
