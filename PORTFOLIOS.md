@@ -413,6 +413,10 @@ All six matrix versions re-run through ONE identical engine (rotation sleeve onl
 
 Evidence-quality reminder: v3+ refinements were designed after seeing the modern sample (each validated on 1987-2007 as mitigation); the forward ledger remains the binding judge.
 
+## Mid-regime entry analysis (2026-08-21)
+
+User question: what's the logic for entering mid-regime (market extended, oil already up, rates rising)? Empirics, MOD v6, 2007–2026, monthly returns conditioned on the AGE of the regime being held: month 1 +1.01%/mo, month 2 +1.86%, months 3-4 +1.56%, months 5-8 +1.19%, month 9+ +0.54% — decay with age, but NO age bucket is negative. Reflation specifically at month 6+ (the current situation): MOD +0.97%/mo with 63% positive months, while SPY in those same months averaged −0.05% — the R-book's commodity/gold/energy construction carries late-reflation even when equities stall. Random-entry stress: all 225 six-month entry windows since 2007 — 84% positive, mean +7.6%, worst −7.2%. Conclusion: mid-regime entry costs expected return relative to early entry but has never been a structurally bad trade; the whole-period record already contains every top. Contributions (large relative to account) provide natural averaging; tranching remains available for lump sums.
+
 ## Findings
 
 1. **The 33/33/33 TQQQ/GLD/TLT mix the user read about is real but mislabeled as balanced**: +19.7% CAGR and Sortino 1.13, but −51% max drawdown and beta ≈ 1.0. Its failure mode is precisely a regime event: **2022 (−41.9%)**, when inflation broke the bond leg at the same time the levered equity leg fell — the two "ballasts" and the engine all sank together. 2008 was −34%.
