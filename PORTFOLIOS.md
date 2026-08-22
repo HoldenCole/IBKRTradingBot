@@ -626,6 +626,16 @@ User question: are the other levered ETFs still the same leverage today? Measure
 
 **Deployment note**: at today's −1.3 realized beta, a 5% SCO position delivers ≈ −6.5% oil exposure per 10% sleeve rather than the modeled −10% — the live short runs undersized, which the hybrid backtest now prices. Cheapest-to-hold inverse oil vehicle it remains; the sleeve is small and the regime self-limiting either way. The audit lesson, recorded: products drift under you — realized-beta checks belong in the periodic review alongside the ledger.
 
+## "Quadrant balances" reconstructed — the top-signature confirmed, no new action (2026-08-21)
+
+User described a breadth phase-clock from a prior job: four phases of a breadth oscillator (1 falling-decelerating/pre-bottom, 2 rising-accelerating, 3 rising-decelerating/late-cycle, 4 falling-accelerating/crash) plus a time-in-phase counter, S&P-focused. Reconstructed as a phase-plane of the two-era sector-breadth series (direction × acceleration of the 3m-smoothed share-above-trend), month-end sampled, tested both eras.
+
+**What replicates across both eras:**
+- **Q3 (rising but decelerating) is the weakest forward phase in BOTH eras** (+0.51/+0.40%/mo vs +0.8-1.7% elsewhere) — the "slow top" signature is real: breadth deceleration while still rising is the most era-stable warning any signal has shown in this whole program. But its forward months remain POSITIVE, so acting on it costs absolute return — the same untradable shape as steep-contango complacency (entry 45).
+- **Falling-breadth phases (Q4/Q1) precede strong months in both eras** (+1.1-1.7%/mo) — the capitulation family again, already harvested by the v7 washout tilt.
+
+**What does not replicate:** WHICH falling phase is best inside defensive regimes flips eras (Q1 +1.95% pre-2007 / −0.65% modern; Q2 +0.12% / +1.87%) — the phase adds no stable refinement to the washout level signal, and phase-gating the v7 tilt (e.g., blocking Q4) would have HURT both eras (Q4-in-S/D forward months are good: +1.36/+1.71%). The age counter compresses at monthly frequency (ages rarely exceed 3-4; the original tool was likely weekly, where >10 readings mean something) — its cells are too small to judge, and a weekly-actioned version would land in the proven intra-month/T+1 graveyard. **Verdict: the tool's qualitative story (slow tops via breadth deceleration, fast bottoms via washout) is two-era TRUE; its actionable monthly content is already inside the classifier + v7 washout tilt. No change.**
+
 ## Findings
 
 1. **The 33/33/33 TQQQ/GLD/TLT mix the user read about is real but mislabeled as balanced**: +19.7% CAGR and Sortino 1.13, but −51% max drawdown and beta ≈ 1.0. Its failure mode is precisely a regime event: **2022 (−41.9%)**, when inflation broke the bond leg at the same time the levered equity leg fell — the two "ballasts" and the engine all sank together. 2008 was −34%.

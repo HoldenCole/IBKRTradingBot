@@ -91,6 +91,7 @@ promising but parked, with its reactivation condition. Updated 2026-08-21.
 | 43 | Yen strength / carry-unwind warning | NO — backwards both halves (yen-strong precedes BETTER equity months); surge version flips sign across halves |
 | 44 | CCC blowout → USMV rotation | FACT CONFIRMED (contemporaneous corr +0.60 real OAS) but NOT tradable — no predictive edge in any era; a hedging identity, not a signal |
 | 45 | VIX term structure (backwardation warning) | NO — backwards (inversion precedes BETTER months, capitulation marker); as overlay it fires ~4x/decade, simultaneous with trend breaks; steep-contango complacency pattern is one-era-only by data birth |
+| 53 | "Quadrant balances" breadth phase-clock (user's prior-job tool) | Q3 slow-top signature CONFIRMED both eras (weakest phase, but still positive → untradable); falling-phase strength = capitulation, already in v7 washout; phase choice inside S/D flips eras; age counter needs weekly data → intra-month graveyard. No change |
 | 46 | Valuation (CAPE) as a bottom signal | NO — cheap gets cheaper: modern extreme-cheap S/D months averaged −0.28%/mo through the GFC; even long-horizon CAPE flips eras |
 | 47 | Financials as leading indicator | NO — exact era inversion (weak financials preceded rebounds pre-2007, healthy financials modern); monthly lead-lag corr ~0 both directions |
 | 48 | Breadth washout as bottom signal | **ADOPTED as matrix v7** — see Adopted table #13 |
