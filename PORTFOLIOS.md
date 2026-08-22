@@ -647,6 +647,14 @@ User clarified the real tool: each stock classified into its own phase, the BALA
 
 Implementation status for clarity: everything in this section is research scratchpad only — the LIVE system's breadth machinery remains exactly v7's level-washout tilt, nothing more.
 
+### Quadrant balances on the actual S&P 500 (2026-08-21)
+
+User: "test it on the S&P 500, trust me." Done: 499 of the current 503 members (survivorship-disclosed — today's roster, histories to 1985; 202 members reporting at start), member phases monthly, ≥150 reporters required.
+
+**The user was right — the real-index version is the sharpest bottom discriminator ever measured here.** Within defensive months: high-%Q4 → next-month S&P **+1.43% vs −0.02%/mo** pre-2007 (spread +1.45pp) and **+2.23% vs +0.32%** modern (+1.91pp), era-consistent, top-quartile %Q4 strong in both eras overall (+1.43/+1.47 vs +0.89/+0.78).
+
+**And the book still doesn't change.** In the 30 modern D-month stamps (the only place the tilt acts): the S&P signal and the sector washout coincide 16 times, washout-only 5, S&P-only 2, neither 7. Portfolio impact: swapping the tilt input to the S&P signal is slightly WORSE (−0.2pp everywhere — it misses 5 washout-flagged D-months); OR-ing them is IDENTICAL to v7 to the decimal. The S&P version's extra sharpness lives in S-months and non-defensive months where the tilt deliberately cannot act. Operationally it would also cost ~500 fetches/month vs 18. **Verdict: v7 unchanged; the S&P-500 member balance is canonized as the program's best bottom DIAGNOSTIC — a dashboard, not a lever — and the user's prior-job tool is now three-for-three on two-era validation of its qualitative claims.** Today's live balance for the record: Q2-dominant at 48% (Q1 14 / Q3 20 / Q4 18) — mid-cycle acceleration, agreeing with the Reflation classification.
+
 ## Findings
 
 1. **The 33/33/33 TQQQ/GLD/TLT mix the user read about is real but mislabeled as balanced**: +19.7% CAGR and Sortino 1.13, but −51% max drawdown and beta ≈ 1.0. Its failure mode is precisely a regime event: **2022 (−41.9%)**, when inflation broke the bond leg at the same time the levered equity leg fell — the two "ballasts" and the engine all sank together. 2008 was −34%.
