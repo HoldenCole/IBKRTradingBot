@@ -95,6 +95,13 @@ promising but parked, with its reactivation condition. Updated 2026-08-21.
 | 53 | "Quadrant balances" breadth phase-clock (user's prior-job tool) | Q3 slow-top signature CONFIRMED both eras (weakest phase, but still positive → untradable); falling-phase strength = capitulation, already in v7 washout; phase choice inside S/D flips eras; age counter needs weekly data → intra-month graveyard. No change |
 | 54 | Quadrant balances, member-level "main version" | %Q4-share is the best bottom discriminator measured (S/D spreads +1.3/+1.2pp both eras; weekly-fed +1.6pp) but portfolio-incremental over the v7 washout tilt ≈ 0 — extra months land in S (no equity tilt by design) or overlap washout in D. FILED with revisit trigger |
 | 55 | Quadrant balances on the actual S&P 500 (499 members) | sharpest bottom diagnostic measured (S/D spreads +1.45/+1.91pp both eras) yet swapping/OR-ing it into the v7 tilt is neutral-to-worse — overlaps washout in D-months, extra edge lives where the tilt cannot act. Canonized as dashboard, not lever |
+| 56 | LEAPS as leverage engine | FILED — one contract exceeds the account; financing only ties ETFs at 1.9x; revisit ~$150k |
+| 57 | Levered sector ETFs beyond ERX (incl. 2x gold in D) | NO — leverage can't rescue rejected exposures; UGL-in-D is evidence-equivalent to the rejected GDX swap |
+| 58 | Faster/asymmetric entry SMAs | NO — opposite return gradients across eras (modern rewards speed, pre-2007 punishes it); 8m "pass" is the crossing point |
+| 59 | Other metals (silver, copper, platinum, palladium) | NO on modern evidence — none beats GLD at its job; silver −34%/yr in S |
+| 60 | Agricultural commodities (DBA, grains) | NO on modern evidence — ags underperform DBC in Reflation itself |
+| 61 | Blue-chip dip-buying (UNH/BA style) | DATA-BLOCKED — survivor-sample +1.1-2.2%/mo excess is an upper bound manufactured by the bias; needs delisting-inclusive data |
+| 62 | Regime-conditional cash (BIL in S) | NO — era inversion (2y duration beat bills +7.4/+2.8 in pre-2007 S); SHY stays; interest-bearing cash was already adopted design |
 | 46 | Valuation (CAPE) as a bottom signal | NO — cheap gets cheaper: modern extreme-cheap S/D months averaged −0.28%/mo through the GFC; even long-horizon CAPE flips eras |
 | 47 | Financials as leading indicator | NO — exact era inversion (weak financials preceded rebounds pre-2007, healthy financials modern); monthly lead-lag corr ~0 both directions |
 | 48 | Breadth washout as bottom signal | **ADOPTED as matrix v7** — see Adopted table #13 |
