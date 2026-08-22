@@ -35,7 +35,7 @@ from src.portfolio.matrix import (
     all_tickers,
     resolve_allocation,
 )
-from src.regime.quadrant import SMA_MONTHS, Quadrant, classify
+from src.regime.quadrant import SMA_MONTHS, Quadrant, classify, shadow_classify
 
 LEDGER_PATH = Path("paper/ledger.csv")
 LEDGER_COLUMNS = ["month", "logged_at", "quadrant", "matrix_version", "signals", "allocations"]
@@ -139,6 +139,7 @@ def compute_signals(prices: dict[str, pd.Series], today: date) -> dict:
     quadrant = classify(spy_m, dbc_m)
     if quadrant is None:
         raise RuntimeError("not enough history to classify the quadrant")
+    shadow = shadow_classify(spy_m, dbc_m)  # informational fast-entry variant
 
     tlt_m = completed_month_closes(prices["TLT"], today)
     tlt_up = None
@@ -169,7 +170,8 @@ def compute_signals(prices: dict[str, pd.Series], today: date) -> dict:
 
     return {"quadrant": quadrant, "tlt_trend_up": tlt_up,
             "commodity_momentum": momentum,
-            "breadth": breadth, "breadth_washout": washout}
+            "breadth": breadth, "breadth_washout": washout,
+            "shadow_quadrant": shadow.name if shadow else None}
 
 
 def load_ledger(path: Path = LEDGER_PATH) -> pd.DataFrame:
@@ -187,6 +189,7 @@ def append_entry(
     breadth: float | None = None,
     breadth_washout: bool | None = None,
     sp500_balance: dict | None = None,
+    shadow_quadrant: str | None = None,
 ) -> bool:
     """Append this month's row with resolved allocations. False if logged."""
     ledger = load_ledger(path)
@@ -212,6 +215,7 @@ def append_entry(
                 "breadth": breadth,
                 "breadth_washout": breadth_washout,
                 "sp500_balance": sp500_balance,  # informational only
+                "shadow_quadrant": shadow_quadrant,  # informational fast-entry classifier
             }
         ),
         "allocations": json.dumps(allocs),
@@ -285,6 +289,11 @@ def run_paper_log(path: Path = LEDGER_PATH) -> None:
         f"(tlt_up={sig['tlt_trend_up']}, breadth={sig['breadth']}, "
         f"washout={sig['breadth_washout']}, mom={sig['commodity_momentum']})"
     )
+    if sig["shadow_quadrant"] and sig["shadow_quadrant"] != quadrant.name:
+        logger.warning(
+            f"SHADOW DISAGREES: fast-entry classifier says {sig['shadow_quadrant']} "
+            f"vs primary {quadrant.name} — forward-evidence event, see PORTFOLIOS.md"
+        )
     for tier in TIERS:
         logger.info(f"  {tier:>5} target: "
                     f"{resolve_allocation(tier, quadrant, sig['tlt_trend_up'], sig['commodity_momentum'], breadth_washout=sig['breadth_washout'])}")
@@ -300,7 +309,8 @@ def run_paper_log(path: Path = LEDGER_PATH) -> None:
                  commodity_momentum=sig["commodity_momentum"],
                  breadth=sig["breadth"],
                  breadth_washout=sig["breadth_washout"],
-                 sp500_balance=balance)
+                 sp500_balance=balance,
+                 shadow_quadrant=sig["shadow_quadrant"])
 
     ledger = load_ledger(path)
     referenced: set[str] = set(all_tickers()) | {"SPY"}

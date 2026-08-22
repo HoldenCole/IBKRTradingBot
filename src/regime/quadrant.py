@@ -56,6 +56,59 @@ def classify(spy_month_closes: pd.Series, dbc_month_closes: pd.Series) -> Quadra
     return Quadrant.DEFLATION
 
 
+# --- Shadow classifier (INFORMATIONAL ONLY — drives no allocation) ---
+# The user's structural hypothesis: post-2007 markets (indexed,
+# systematic) reward faster re-entry off bottoms. Evidence: the
+# fast-entry edge is negative in both pre-2007 decades and positive in
+# all four modern 5-year windows including both modern grind bears
+# (PORTFOLIOS.md). Spec: identical quadrant logic except the equity leg
+# enters risk-on via the FAST SMA when currently risk-off; exits stay
+# on the 10m SMA; the inflation leg is unchanged. Stateful hysteresis,
+# reconstructed deterministically from the price history each run
+# (initialized from the plain 10m rule at the first computable month).
+# Adoption trigger (pre-registered): promoted only if it wins the
+# majority of its first several LIVE re-entry disagreements with the
+# primary, as recorded in the forward ledger.
+FAST_ENTRY_MONTHS = 5
+
+
+def _asymmetric_growth_on(spy_month_closes: pd.Series) -> bool | None:
+    """Final state of the fast-entry/slow-exit growth flag."""
+    if len(spy_month_closes) < SMA_MONTHS:
+        return None
+    sma_slow = spy_month_closes.rolling(SMA_MONTHS).mean()
+    sma_fast = spy_month_closes.rolling(FAST_ENTRY_MONTHS).mean()
+    on: bool | None = None
+    for i in range(len(spy_month_closes)):
+        if pd.isna(sma_slow.iloc[i]):
+            continue
+        px = spy_month_closes.iloc[i]
+        if on is None:
+            on = bool(px > sma_slow.iloc[i])
+        elif on:
+            on = bool(px > sma_slow.iloc[i])
+        else:
+            on = bool(px > sma_fast.iloc[i])
+    return on
+
+
+def shadow_classify(spy_month_closes: pd.Series, dbc_month_closes: pd.Series) -> Quadrant | None:
+    """Shadow quadrant: fast-entry equity leg, standard inflation leg."""
+    if len(spy_month_closes) < SMA_MONTHS or len(dbc_month_closes) < SMA_MONTHS:
+        return None
+    growth_on = _asymmetric_growth_on(spy_month_closes)
+    if growth_on is None:
+        return None
+    infl_on = dbc_month_closes.iloc[-1] > dbc_month_closes.tail(SMA_MONTHS).mean()
+    if growth_on and not infl_on:
+        return Quadrant.GROWTH
+    if growth_on and infl_on:
+        return Quadrant.REFLATION
+    if infl_on:
+        return Quadrant.STAGFLATION
+    return Quadrant.DEFLATION
+
+
 def quadrant_series(spy_daily: pd.Series, dbc_daily: pd.Series) -> pd.Series:
     """Monthly Quadrant series, shifted so month T uses data through T-1.
 

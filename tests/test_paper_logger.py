@@ -318,6 +318,46 @@ def test_append_entry_snapshots_sp500_balance(tmp_path):
     assert sig2["sp500_balance"] is None
 
 
+# ---- shadow classifier (informational fast-entry variant) ----
+from src.regime.quadrant import shadow_classify
+
+
+def test_shadow_agrees_in_steady_trends():
+    idx = _pd.date_range("2023-01-31", periods=24, freq="ME")
+    up = _pd.Series(np.linspace(100, 200, 24), index=idx)
+    dn = _pd.Series(np.linspace(200, 100, 24), index=idx)
+    from src.regime.quadrant import classify
+    assert shadow_classify(up, dn) is Quadrant.GROWTH
+    assert shadow_classify(up, dn) is classify(up, dn)
+    assert shadow_classify(dn, dn) is Quadrant.DEFLATION
+
+
+def test_shadow_enters_faster_after_decline():
+    # long decline (flag OFF), then a 5-month recovery: price crosses the
+    # 5m SMA but is still below the 10m SMA -> shadow risk-on, primary
+    # still defensive. The exact asymmetry being trialed.
+    # NOTE: the shadow re-evaluates monthly (matching the backtested
+    # rule exactly): in the 5m<px<10m band it can flip back off the
+    # following month. This test ends at the fast-entry month.
+    from src.regime.quadrant import classify
+    vals = [200, 190, 180, 170, 160, 150, 140, 130, 120, 110, 100,
+            104, 108, 112]
+    idx = _pd.date_range("2023-01-31", periods=len(vals), freq="ME")
+    spy = _pd.Series(vals, index=idx, dtype=float)
+    dn = _pd.Series(np.linspace(300, 100, len(vals)), index=idx)  # inflation off
+    assert spy.iloc[-1] > spy.tail(5).mean()          # above fast SMA
+    assert spy.iloc[-1] < spy.tail(10).mean()         # still below slow SMA
+    assert classify(spy, dn) is Quadrant.DEFLATION    # primary: defensive
+    assert shadow_classify(spy, dn) is Quadrant.GROWTH  # shadow: re-entered
+
+
+def test_append_entry_snapshots_shadow(tmp_path):
+    path = tmp_path / "ledger.csv"
+    append_entry(Quadrant.DEFLATION, date(2027, 2, 1), path, shadow_quadrant="GROWTH")
+    sig = json.loads(load_ledger(path).loc[0, "signals"])
+    assert sig["shadow_quadrant"] == "GROWTH"
+
+
 def test_compute_signals_end_to_end():
     idx = _pd.date_range("2024-01-01", "2026-08-19", freq="B")
     n = len(idx)

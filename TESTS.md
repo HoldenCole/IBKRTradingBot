@@ -97,7 +97,7 @@ promising but parked, with its reactivation condition. Updated 2026-08-21.
 | 55 | Quadrant balances on the actual S&P 500 (499 members) | sharpest bottom diagnostic measured (S/D spreads +1.45/+1.91pp both eras) yet swapping/OR-ing it into the v7 tilt is neutral-to-worse — overlaps washout in D-months, extra edge lives where the tilt cannot act. Canonized as dashboard, not lever |
 | 56 | LEAPS as leverage engine | FILED — one contract exceeds the account; financing only ties ETFs at 1.9x; revisit ~$150k |
 | 57 | Levered sector ETFs beyond ERX (incl. 2x gold in D) | NO — leverage can't rescue rejected exposures; UGL-in-D is evidence-equivalent to the rejected GDX swap |
-| 58 | Faster/asymmetric entry SMAs | NO — opposite return gradients across eras (modern rewards speed, pre-2007 punishes it); 8m "pass" is the crossing point |
+| 58 | Faster/asymmetric entry SMAs | REVISED → SHADOW: user's structural challenge validated by the trend test (edge positive in all 4 modern windows incl. both grinds, negative in both pre-2007 decades); running as informational shadow classifier in the ledger; promoted only if it wins the majority of live disagreements |
 | 59 | Other metals (silver, copper, platinum, palladium) | NO on modern evidence — none beats GLD at its job; silver −34%/yr in S |
 | 60 | Agricultural commodities (DBA, grains) | NO on modern evidence — ags underperform DBC in Reflation itself |
 | 61 | Blue-chip dip-buying (UNH/BA style) | DATA-BLOCKED — survivor-sample +1.1-2.2%/mo excess is an upper bound manufactured by the bias; needs delisting-inclusive data |
