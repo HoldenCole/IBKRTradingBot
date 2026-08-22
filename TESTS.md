@@ -70,6 +70,7 @@ promising but parked, with its reactivation condition. Updated 2026-08-21.
 | Biotech long side (anticipated-catalyst run-up, +3.2% suggestive) | a free historical PDUFA-date source |
 | IBS options overlay + CL surge calls (execution layer) | IB Gateway connection for options data/orders |
 | Commodity trend-following portfolio (user's Variant 1 on 13 futures) | roll-gap-clean continuous futures series (Yahoo splices are contaminated, esp. NG) |
+| LEAPS as the G-cell leverage engine (deep-ITM ~50% moneyness, 1.9x, defined loss) | account ~$150k+ — today one contract ($13-38k) exceeds the whole account; financing only matches ETFs at low leverage; live-quote analysis in PORTFOLIOS.md |
 
 ## Interesting and NOT yet tested
 

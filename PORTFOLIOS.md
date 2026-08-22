@@ -657,6 +657,25 @@ User: "test it on the S&P 500, trust me." Done: 499 of the current 503 members (
 
 **Adopted as an informational ledger line (2026-08-21, user request):** the monthly logger now fetches the current S&P 500 roster (datahub constituents CSV) + each member's monthly closes, computes the balance on completed months, and records it in the signals JSON as `sp500_balance` ({q1..q4, dominant, n}). Strictly informational — it feeds no resolution, and any fetch failure logs None without blocking the row (fail-soft, ≥150 members required). Adds ~2-3 minutes to the monthly run. From September 2026 the ledger carries the user's old dashboard beside the system's decisions, accruing a forward record of both.
 
+## LEAPS as the leverage engine — rejected today, filed with an account-size trigger (2026-08-21)
+
+User question: did we ever look at LEAPS/options? Options strategies exist as FILED items (IBS overlay, CL surge calls — both pending the IB Gateway execution layer). LEAPS-as-leverage (deep-ITM long calls replacing QLD/TQQQ) analyzed here against live quotes (QQQ spot 713, Sep-2027 chain):
+
+| moneyness | mid | 1 contract | eff. leverage | embedded financing/yr | spread |
+|---|---|---|---|---|---|
+| 50% | $376 | **$37,600** | 1.9x | 4.7% (≈ rf+1%) | 1.0% |
+| 70% | $246 | $24,600 | 2.9x | 6.1% | 1.3% |
+| 80% | $188 | $18,800 | 3.8x | 7.3% | 1.7% |
+| 90% | $135 | $13,500 | 5.3x | 8.9% | 2.5% |
+
+**Four blockers, in order of severity:**
+1. **Granularity**: every single contract costs more than the entire account (~$12k). No tier sizing, no rotation granularity, no diversified cell possible.
+2. **Costs beat the ETFs only at low leverage**: 50%-moneyness financing (4.7%) merely MATCHES the modeled levered-ETF financing; pushing toward the ETFs' 2-3x costs 6-9%/yr embedded plus 1-2.5% bid-ask crossed at entry, at every annual roll, and at every regime rotation (3.2 switches/yr; median hold 2 months) vs ~1bp on QLD. The LEAPS advantages (no daily reset, LT tax at >1yr holds, defined loss) all require HOLDING — precisely what the rotation doesn't do.
+3. **The convexity is redundant**: the extrinsic paid is the variance risk premium (persistently overpriced), buying a crash floor the classifier already manufactures by rotating to defensive cells.
+4. **No validatable backtest exists**: free historical LEAPS data doesn't exist; the levered-ETF sims were validated at 0.997-0.999 daily correlation to real products, while a LEAPS sim would rest on modeled IV surfaces with nothing to check against — sub-house-standard evidence by construction.
+
+**Filed with trigger**: revisit at ~$150k+ account, where 1-2 deep-ITM 50%-moneyness contracts (1.9x at rf+1%, defined max loss, possible LT treatment in G-regimes that persist >1yr) become a sizeable QLD-alternative for the G-cell. The options roadmap otherwise remains the FILED IBS overlay + CL calls behind IB Gateway.
+
 ## Findings
 
 1. **The 33/33/33 TQQQ/GLD/TLT mix the user read about is real but mislabeled as balanced**: +19.7% CAGR and Sortino 1.13, but −51% max drawdown and beta ≈ 1.0. Its failure mode is precisely a regime event: **2022 (−41.9%)**, when inflation broke the bond leg at the same time the levered equity leg fell — the two "ballasts" and the engine all sank together. 2008 was −34%.
