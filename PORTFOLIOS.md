@@ -636,6 +636,17 @@ User described a breadth phase-clock from a prior job: four phases of a breadth 
 
 **What does not replicate:** WHICH falling phase is best inside defensive regimes flips eras (Q1 +1.95% pre-2007 / −0.65% modern; Q2 +0.12% / +1.87%) — the phase adds no stable refinement to the washout level signal, and phase-gating the v7 tilt (e.g., blocking Q4) would have HURT both eras (Q4-in-S/D forward months are good: +1.36/+1.71%). The age counter compresses at monthly frequency (ages rarely exceed 3-4; the original tool was likely weekly, where >10 readings mean something) — its cells are too small to judge, and a weekly-actioned version would land in the proven intra-month/T+1 graveyard. **Verdict: the tool's qualitative story (slow tops via breadth deceleration, fast bottoms via washout) is two-era TRUE; its actionable monthly content is already inside the classifier + v7 washout tilt. No change.**
 
+### Quadrant balances, the member-level "main version" (2026-08-21)
+
+User clarified the real tool: each stock classified into its own phase, the BALANCE = population counts per quadrant, computed at daily/weekly/monthly/yearly frequencies (nested cycles). Rebuilt member-level on the 17-18 sector series (granularity disclosed: sectors, not 500 stocks), phases per member (3m-smoothed direction × acceleration), month-end sampled; weekly-fed variant (13w smoothing, sampled monthly) for the modern era; yearly skipped honestly (3-4 supercycles in 40y = narrative, not statistics).
+
+**Findings:**
+1. **High share-in-Q4 (members in crash phase) → better next months in BOTH eras**, and it is the best bottom discriminator yet measured inside S/D months: high-%Q4 +1.42 vs +0.13%/mo pre-2007, +1.89 vs +0.74 modern; the weekly-fed version is stronger still (+2.06 vs +0.48). The member distribution carries real information.
+2. **Incremental over the adopted washout flag**: yes at the month level — "Q4-only" S/D months (balance fires, level-flag doesn't) ran +1.24/+1.72%/mo in the two eras. **No at the portfolio level**: widening the v7 tilt to (washout OR high-%Q4) changes tier results by ≈0.0-0.1pp — the extra months land mostly in S (where the equity tilt doesn't apply, by prior validated design) or already coincide with washout in D. The v7 tilt is already harvesting what is actionable.
+3. Verdict: **no v8; the member-balance version enriches the science and validates the user's tool a second time** (its %Q4 spike = the capitulation the system buys; its Q3 signature = the slow-top warning confirmed earlier). Revisit trigger (pre-registered): if forward-ledger defensive months ever show the level-washout misfiring where the weekly-fed balance disagreed, rerun this comparison on live data.
+
+Implementation status for clarity: everything in this section is research scratchpad only — the LIVE system's breadth machinery remains exactly v7's level-washout tilt, nothing more.
+
 ## Findings
 
 1. **The 33/33/33 TQQQ/GLD/TLT mix the user read about is real but mislabeled as balanced**: +19.7% CAGR and Sortino 1.13, but −51% max drawdown and beta ≈ 1.0. Its failure mode is precisely a regime event: **2022 (−41.9%)**, when inflation broke the bond leg at the same time the levered equity leg fell — the two "ballasts" and the engine all sank together. 2008 was −34%.
