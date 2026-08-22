@@ -277,6 +277,47 @@ def test_compute_signals_breadth():
     assert sig2["breadth"] is None and sig2["breadth_washout"] is None
 
 
+# ---- S&P 500 quadrant balance (informational ledger line) ----
+from src.portfolio.paper_logger import member_phase, quadrant_balance
+
+
+def _mseries(vals):
+    idx = _pd.date_range("2024-01-31", periods=len(vals), freq="ME")
+    return _pd.Series(vals, index=idx, dtype=float)
+
+
+def test_member_phase_quadrants():
+    assert member_phase(_mseries([100, 99, 97, 96, 95.5, 95.2])) == 1  # falling, decelerating
+    assert member_phase(_mseries([100, 100.5, 101.5, 103, 105, 108])) == 2  # rising, accelerating
+    assert member_phase(_mseries([100, 104, 107, 109, 110, 110.5])) == 3  # rising, decelerating
+    assert member_phase(_mseries([100, 99.5, 98.5, 97, 95, 92])) == 4  # falling, accelerating
+    assert member_phase(_mseries([100, 101])) is None  # too short
+
+
+def test_quadrant_balance_counts_and_threshold():
+    closes = {}
+    for i in range(160):
+        closes[f"UP{i}"] = _mseries([100, 100.5, 101.5, 103, 105, 108])
+    for i in range(40):
+        closes[f"DN{i}"] = _mseries([100, 99.5, 98.5, 97, 95, 92])
+    bal = quadrant_balance(closes)
+    assert bal["n"] == 200 and bal["dominant"] == 2
+    assert bal["q2"] == pytest.approx(0.8) and bal["q4"] == pytest.approx(0.2)
+    assert quadrant_balance(dict(list(closes.items())[:100])) is None  # < MIN_BALANCE_NAMES
+
+
+def test_append_entry_snapshots_sp500_balance(tmp_path):
+    path = tmp_path / "ledger.csv"
+    bal = {"q1": 0.14, "q2": 0.48, "q3": 0.20, "q4": 0.18, "dominant": 2, "n": 499}
+    append_entry(Quadrant.REFLATION, date(2026, 12, 1), path, sp500_balance=bal)
+    sig = json.loads(load_ledger(path).loc[0, "signals"])
+    assert sig["sp500_balance"]["dominant"] == 2
+    # and None (fetch failure) must serialize cleanly too
+    append_entry(Quadrant.REFLATION, date(2027, 1, 1), path, sp500_balance=None)
+    sig2 = json.loads(load_ledger(path).loc[1, "signals"])
+    assert sig2["sp500_balance"] is None
+
+
 def test_compute_signals_end_to_end():
     idx = _pd.date_range("2024-01-01", "2026-08-19", freq="B")
     n = len(idx)
