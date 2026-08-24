@@ -102,6 +102,7 @@ promising but parked, with its reactivation condition. Updated 2026-08-21.
 | 60 | Agricultural commodities (DBA, grains) | NO on modern evidence — ags underperform DBC in Reflation itself |
 | 61 | Blue-chip dip-buying (UNH/BA style) | DATA-BLOCKED — survivor-sample +1.1-2.2%/mo excess is an upper bound manufactured by the bias; needs delisting-inclusive data |
 | 62 | Regime-conditional cash (BIL in S) | NO — era inversion (2y duration beat bills +7.4/+2.8 in pre-2007 S); SHY stays; interest-bearing cash was already adopted design |
+| 63 | Overnight vs intraday decomposition | Anomaly REAL and split-half stable (equities accrue overnight, bonds intraday); untradable as a strategy (252 RT/yr costs); ADOPTED as free execution habit — equity buys near close/sells near open, bonds reversed |
 | 46 | Valuation (CAPE) as a bottom signal | NO — cheap gets cheaper: modern extreme-cheap S/D months averaged −0.28%/mo through the GFC; even long-horizon CAPE flips eras |
 | 47 | Financials as leading indicator | NO — exact era inversion (weak financials preceded rebounds pre-2007, healthy financials modern); monthly lead-lag corr ~0 both directions |
 | 48 | Breadth washout as bottom signal | **ADOPTED as matrix v7** — see Adopted table #13 |

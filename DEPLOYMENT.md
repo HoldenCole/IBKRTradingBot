@@ -35,6 +35,11 @@ live account — it is the benchmark the live account is measured against.
    entry with no consistent direction. Spreading the initial buy over
    2-3 days is fine (tranching was validated); spreading over months is
    just underinvestment.
+4. Time-of-day habit (free, worth single-digit bps/yr; PORTFOLIOS.md
+   overnight study): execute equity-ETF buys near the CLOSE and equity
+   sells near the OPEN (equity returns accrue overnight); bond-ETF
+   trades the reverse (TLT accrues intraday). A convenience, not a
+   requirement — never miss a rotation waiting for the right hour.
 
 ## Monthly routine (first week of each month, ~15 minutes)
 

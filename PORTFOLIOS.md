@@ -685,6 +685,24 @@ User question: did we ever look at LEAPS/options? Options strategies exist as FI
 5. **Blue-chip dip-buying (≥35% below 12m high) — DATA-BLOCKED; reported number is an upper bound, not evidence.** On current S&P members the dip basket shows +2.21%/mo excess pre-2007 and +1.13%/mo modern — but survivorship bias MANUFACTURES precisely this result: today's roster contains only the companies whose crashes recovered (the AAPLs of 2008) and omits the Lehmans, Enrons, and Circuit Cities that defined the strategy's true risk. UNH/BA-style dip-buying cannot be honestly evaluated without delisting-inclusive data (CRSP-grade, paid). Filed as data-blocked; also outside the ETF mandate (single-name risk).
 6. **Interest-bearing cash — already the adopted design** (SHY, +0.35%/yr over rolled bills; note: IBKR pays zero interest on idle cash below $10k, so the ETF form is mandatory at this account size). Refinement tested — regime-conditional bills (BIL in S): modern S favors BIL (+2.2 vs +1.6%) but pre-2007 S flips hard (2y duration +7.4% vs bills +2.8% — growth-scare stagflations had falling short rates). Era inversion; SHY stays everywhere.
 
+## Overnight vs intraday decomposition (2026-08-21)
+
+User request: decompose returns into overnight (prev close→open) and intraday (open→close) across the book's ETFs. Full histories, split-half checked:
+
+| ETF | overnight/yr | intraday/yr | halves stable? |
+|---|---|---|---|
+| SPY (1993+) | **+10.1%** | +0.7% | yes (+11.1/+9.0) |
+| QQQ (1999+) | **+13.9%** | −2.8% | yes (+14.6/+13.3) |
+| IWM | +13.5% | −4.1% | yes (+13.5/+13.4) |
+| XBI | **+23.2%** | −8.9% | yes-ish (+26.8/+19.6) |
+| XLE | +12.9% | −3.4% | yes |
+| GLD | +11.0% | 0.0% | yes (London/Asia hours) |
+| **TLT** | **+0.4%** | **+3.1%** | direction holds | 
+
+**Findings:** (1) The overnight anomaly is real and split-half stable in the majors — essentially ALL of equity ETFs' long-run return accrues while the US market is closed; intraday drift is zero-to-negative. XBI is the extreme case (+23% overnight vs −9% intraday — biotech news is announced off-hours, consistent with our 8-K event study). (2) **Bonds run the OPPOSITE way**: TLT accrues intraday. (3) As a STRATEGY it remains untradable, as the literature found: capturing overnight requires 252 round-trips/yr (~2.5-5% costs), 100% ST gains, and overnight-only funds have failed commercially. No matrix change.
+
+**Adopted as a free execution habit (DEPLOYMENT.md)**: at monthly rotations, execute equity-ETF BUYS near the close and equity SELLS near the open; bond-ETF trades the reverse (buys near open, sells near close). Worth single-digit bps/yr at our turnover — adopted because it is free and directionally grounded in 30 years of stable data, sized honestly as bps.
+
 ## Findings
 
 1. **The 33/33/33 TQQQ/GLD/TLT mix the user read about is real but mislabeled as balanced**: +19.7% CAGR and Sortino 1.13, but −51% max drawdown and beta ≈ 1.0. Its failure mode is precisely a regime event: **2022 (−41.9%)**, when inflation broke the bond leg at the same time the levered equity leg fell — the two "ballasts" and the engine all sank together. 2008 was −34%.
