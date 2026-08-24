@@ -703,6 +703,20 @@ User request: decompose returns into overnight (prev close→open) and intraday 
 
 **Adopted as a free execution habit (DEPLOYMENT.md)**: at monthly rotations, execute equity-ETF BUYS near the close and equity SELLS near the open; bond-ETF trades the reverse (buys near open, sells near close). Worth single-digit bps/yr at our turnover — adopted because it is free and directionally grounded in 30 years of stable data, sized honestly as bps.
 
+## Daily overnight/intraday rotation — the toll-booth arithmetic (2026-08-21)
+
+User: what about a strategy that rotates that often? Tested the full-capture version — QQQ held close→open (its accrual window), TLT held open→close (its window), every day, 2002-2026, ~1,000 trades/yr, auction-fill assumption (MOC/MOO orders receive the official open/close = the backtest's own prices, so the only per-trade costs are commissions/auction fees):
+
+| variant | CAGR / Sortino / maxDD |
+|---|---|
+| GROSS (zero cost) | +15.1% / 1.17 / −45% (split-half stable: 15.9/14.4) |
+| 0.5bp per side (best realistic case) | +9.5% / 0.73 / −45% |
+| 1bp per side | +4.1% / 0.32 / −45% |
+| 2bp per side | **−5.9% / ruin** |
+| QQQ buy-and-hold, same window | **+15.9% / 0.96 / −53%** |
+
+Three verdicts: (1) even GROSS, the combo does not beat QQQ buy-and-hold on level (+15.1 vs +15.9) — the anomaly's advantage is only risk-shaped (higher Sortino, shallower DD); (2) each 0.5bp of per-side cost consumes ~5.5pp/yr at this trade count — the strategy loses to B&H at the FIRST bp; (3) after tax it's +7.2%/yr (all ST, taxed annually) vs B&H compounding pre-tax with deferral. **REJECTED — and generalized: at ~1,000 trades/yr, ANY strategy needs a gross edge of ~5-11pp/yr per bp of round-trip cost just to stand still, before surrendering deferral. High-frequency rotation is structurally unavailable to a taxable retail account regardless of the signal's quality.** The system's monthly cadence is the sweet spot this arithmetic implies: few enough trades that costs round to zero, frequent enough to harvest regime change.
+
 ## Findings
 
 1. **The 33/33/33 TQQQ/GLD/TLT mix the user read about is real but mislabeled as balanced**: +19.7% CAGR and Sortino 1.13, but −51% max drawdown and beta ≈ 1.0. Its failure mode is precisely a regime event: **2022 (−41.9%)**, when inflation broke the bond leg at the same time the levered equity leg fell — the two "ballasts" and the engine all sank together. 2008 was −34%.
