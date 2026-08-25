@@ -57,6 +57,13 @@ SP500_MEMBERS_URL = ("https://raw.githubusercontent.com/datasets/"
                      "s-and-p-500-companies/main/data/constituents.csv")
 MIN_BALANCE_NAMES = 150
 
+# Managed-futures watchlist — INFORMATIONAL ONLY. Filed S-cell
+# instrument candidates (TESTS.md): each row logs the funds' PRIOR
+# completed-month returns so the pre-registered trigger ("outperform
+# the S-cell allocation over the next >=4 live S-classified months")
+# can be adjudicated from ledger rows alone.
+MANAGED_FUTURES_TICKERS = ["DBMF", "KMLM"]
+
 
 def member_phase(monthly_closes: pd.Series) -> float | None:
     """Latest quadrant (1-4) of one member from completed monthly closes."""
@@ -168,10 +175,19 @@ def compute_signals(prices: dict[str, pd.Series], today: date) -> dict:
     breadth = round(above / total, 3) if total >= MIN_BREADTH_NAMES else None
     washout = (breadth < WASHOUT_THRESHOLD) if breadth is not None else None
 
+    mf_returns: dict[str, float] = {}
+    for t in MANAGED_FUTURES_TICKERS:
+        if t not in prices:
+            continue
+        m = completed_month_closes(prices[t], today)
+        if len(m) >= 2:
+            mf_returns[t] = round(float(m.iloc[-1] / m.iloc[-2] - 1), 4)
+
     return {"quadrant": quadrant, "tlt_trend_up": tlt_up,
             "commodity_momentum": momentum,
             "breadth": breadth, "breadth_washout": washout,
-            "shadow_quadrant": shadow.name if shadow else None}
+            "shadow_quadrant": shadow.name if shadow else None,
+            "managed_futures": mf_returns}
 
 
 def load_ledger(path: Path = LEDGER_PATH) -> pd.DataFrame:
@@ -190,6 +206,7 @@ def append_entry(
     breadth_washout: bool | None = None,
     sp500_balance: dict | None = None,
     shadow_quadrant: str | None = None,
+    managed_futures: dict[str, float] | None = None,
 ) -> bool:
     """Append this month's row with resolved allocations. False if logged."""
     ledger = load_ledger(path)
@@ -216,6 +233,7 @@ def append_entry(
                 "breadth_washout": breadth_washout,
                 "sp500_balance": sp500_balance,  # informational only
                 "shadow_quadrant": shadow_quadrant,  # informational fast-entry classifier
+                "managed_futures": managed_futures or {},  # informational watchlist (prior-month returns)
             }
         ),
         "allocations": json.dumps(allocs),
@@ -273,7 +291,7 @@ def run_paper_log(path: Path = LEDGER_PATH) -> None:
 
     today = date.today()
     signal_tickers = sorted({"SPY", "DBC", "TLT"} | {a for t in R_TILT.values() for a in t}
-                            | set(BREADTH_TICKERS))
+                            | set(BREADTH_TICKERS) | set(MANAGED_FUTURES_TICKERS))
     prices = {}
     for t in signal_tickers:
         try:
@@ -310,7 +328,8 @@ def run_paper_log(path: Path = LEDGER_PATH) -> None:
                  breadth=sig["breadth"],
                  breadth_washout=sig["breadth_washout"],
                  sp500_balance=balance,
-                 shadow_quadrant=sig["shadow_quadrant"])
+                 shadow_quadrant=sig["shadow_quadrant"],
+                 managed_futures=sig["managed_futures"])
 
     ledger = load_ledger(path)
     referenced: set[str] = set(all_tickers()) | {"SPY"}

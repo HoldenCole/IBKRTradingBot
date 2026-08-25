@@ -358,6 +358,29 @@ def test_append_entry_snapshots_shadow(tmp_path):
     assert sig["shadow_quadrant"] == "GROWTH"
 
 
+# ---- managed-futures watchlist (informational) ----
+def test_compute_signals_managed_futures():
+    idx = _pd.date_range("2024-01-01", "2026-08-19", freq="B")
+    n = len(idx)
+    up = _pd.Series(np.linspace(100, 200, n), index=idx)
+    dn = _pd.Series(np.linspace(200, 100, n), index=idx)
+    prices = {t: up.copy() for t in ["SPY", "TLT", "XLE", "GLD", "GDX", "DBMF"]}
+    prices["DBC"] = dn.copy(); prices["ERX"] = dn.copy()
+    sig = compute_signals(prices, _date(2026, 8, 19))
+    assert "DBMF" in sig["managed_futures"] and sig["managed_futures"]["DBMF"] > 0
+    assert "KMLM" not in sig["managed_futures"]  # missing ticker tolerated
+
+
+def test_append_entry_snapshots_managed_futures(tmp_path):
+    path = tmp_path / "ledger.csv"
+    append_entry(Quadrant.STAGFLATION, date(2027, 3, 1), path,
+                 managed_futures={"DBMF": 0.021, "KMLM": 0.035})
+    sig = json.loads(load_ledger(path).loc[0, "signals"])
+    assert sig["managed_futures"]["KMLM"] == 0.035
+    append_entry(Quadrant.STAGFLATION, date(2027, 4, 1), path)  # None -> {}
+    assert json.loads(load_ledger(path).loc[1, "signals"])["managed_futures"] == {}
+
+
 def test_compute_signals_end_to_end():
     idx = _pd.date_range("2024-01-01", "2026-08-19", freq="B")
     n = len(idx)
