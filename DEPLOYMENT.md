@@ -1,8 +1,10 @@
 # Deployment Runbook — going live on the quadrant rotation
 
 Written 2026-08-21. Starting parameters: ~$11k initial capital (plus any
-contributions accumulated before start), $800–1,000/mo contributions
-(workbook default $900). The paper ledger keeps running regardless of the
+contributions accumulated before start), ~$1,500/mo contributions now,
+ramping +20%/yr through the no-kids years then +7%/yr (workbook default;
+anchored to user decade targets: >$5k/mo in the 30s, >$7k in the 40s,
+>$10k in the 50s). The paper ledger keeps running regardless of the
 live account — it is the benchmark the live account is measured against.
 
 ## Preconditions (before the first live order)
