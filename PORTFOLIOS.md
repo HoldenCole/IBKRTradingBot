@@ -740,3 +740,23 @@ What's real in the pitch: the 200d index filter (a cousin of our classifier — 
 3. **Static leveraged mixes vs the indices strategy**: the 33/33 mixes earn their return from *diversified always-on leverage*; the indices strategy earns it from *timing*. Their drawdown profiles are complementary (mixes die in inflation years like 2022 [−42%] which the trend strategy sidestepped [−5%]; the trend strategy bleeds in chop like 2015-16 which the mixes shrugged off). Combining them is the obvious next test.
 4. **Regime portfolios post the best headline numbers** (AGG: +22.4%, Sortino 1.11, −32%, Sharpe 0.95) but carry the design bias flag; their honest validation is forward paper trading or a pre-2007 replication with different-era ETF proxies.
 5. Every leveraged-ETF result relies on the daily-reset simulation assumptions; real TQQQ tracking since 2010 is close to this model, but pre-2010 numbers are model, not history.
+
+## Why not just VAGG the whole time? (2026-08-26)
+
+User question after reviewing the ladder numbers. Three exhibits computed from the modern v7 engine's actual monthly returns, run through the workbook's own contribution schedule (13-stage ramp, $40k cap), after-tax convention (CAGR × 0.75 haircut − 0.6pp, then ST tax on the taxable share).
+
+**Exhibit 1 — what the glide path costs in expectation (40y terminal wealth):**
+
+| path | terminal (haircut + tax) |
+|---|---|
+| default glide (VAGG 10y → AGG 10y → MOD 15y → CONS 5y) | $41.2M |
+| extended glide (VAGG to 45 → AGG to 55 → MOD after) | $89.3M |
+| all-VAGG, all 40 years | $297.9M |
+
+**Exhibit 2 — the same −49% VAGG-scale drawdown, priced in years of that age's contributions** (how long it takes to save your way back): age 30 = 3 years; 35 = 6; 40 = 13; 45 = 24; 50 = 43; 55 = 77; 60 = 141; 65 = 304. The identical percentage event transforms from a buying opportunity into an unrecoverable loss purely as the balance-to-contribution ratio grows.
+
+**Exhibit 3 — sequence risk, isolated.** The identical 231 actual VAGG months (same CAGR, same set of returns), reordered, same contributions: crash years moved to the START (age 25-27) → $1,116M terminal; actual historical order → $43.8M; crash years moved to the END (~age 43, largest balance in a 20y window) → $16.2M. A **69× spread** from ordering alone. Early crashes are contribution-subsidized accumulation; late crashes are just losses.
+
+**Supporting evidence against VAGG-forever, from the existing registry:** (1) out-of-sample era (pre-2007 proxies) VAGG was the worst risk-adjusted tier — Sortino 0.76, −66% maxDD — while MOD was best in BOTH eras; the modern era is the friendly sample. (2) VAGG's G-cell is 100% TQQQ; a 1987-type −22% index day is a one-day ~−66% that appears in NO leveraged backtest (the sim starts 1987-post-crash / real data 2010+). (3) Behavioral: the plan only pays if the holder executes rotations through a −49-66% at a seven-figure balance; nobody gets to assume they're the exception until they've held through one.
+
+**Verdict — the instinct is half right, and the half matters.** Exhibits 1+3 genuinely support MORE VAGG than the default glide: while contributions dominate the balance, deep drawdowns are cheap (Exhibit 3's best case is crashes-at-start) and the expected cost of de-risking early is enormous. But Exhibit 2 is the reason "the whole time" fails: risk capacity is measured in years-of-contributions-to-recover, not in risk tolerance, and past ~age 45-50 a single in-sample-sized event costs decades of saving with the sequence-risk asymmetry now pointed the wrong way. Recommendation: extend the VAGG phase beyond the default (the VAGG-to-45 / AGG-to-55 / MOD-after path more than doubles the default glide's expectation, $89M vs $41M, while still de-risking before the years where Exhibit 2 goes vertical). The glide boundaries are Dashboard inputs — the de-risking rule to carry: step down a tier when a full VAGG drawdown would cost more years of contributions than you're willing to re-save, not at a birthday.
