@@ -56,6 +56,9 @@ def build(ledger_path: Path = LEDGER_PATH, out_path: Path = OUT_PATH) -> Path:
     allocs: dict[str, dict[str, float]] = json.loads(row["allocations"])
 
     wb = Workbook()
+    # no recalc pass is available in the build environment — make Excel
+    # compute every formula the moment the file opens
+    wb.calculation.fullCalcOnLoad = True
 
     # ---------------- Data sheet: this month's resolved weights ----------
     data = wb.create_sheet("Data")
