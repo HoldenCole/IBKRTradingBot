@@ -32,6 +32,10 @@ live account — it is the benchmark the live account is measured against.
    momentum tilt, and the short book are already resolved into real
    tickers.
 2. Dollar target per ticker = weight × account value. Fractional shares.
+   The order calculator does the arithmetic from the latest ledger row:
+   `python -m src.portfolio.order_calc --tier VAGG --equity <value>`
+   (add `--held TICKER=DOLLARS` per position for monthly deploys — it
+   applies contribution-first rebalancing and the 5pp drift band).
 3. Buy with limit orders at or near the midpoint; there is no urgency —
    execution-day tests showed ±1pp noise between same-day and +10-day
    entry with no consistent direction. Spreading the initial buy over
