@@ -27,6 +27,10 @@ live account — it is the benchmark the live account is measured against.
 
 ## Day 1 (any business day after reading the current month's row)
 
+> Automated execution now exists — see AUTOMATION.md. The manual steps
+> below remain the reference behavior the executor replicates, and the
+> fallback if the box is ever down.
+
 1. Open the latest `paper/ledger.csv` row → `allocations` JSON → your
    tier's resolved weights. These are final — conditional duration, the
    momentum tilt, and the short book are already resolved into real
