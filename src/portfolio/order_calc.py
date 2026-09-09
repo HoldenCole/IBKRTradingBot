@@ -22,17 +22,16 @@ import json
 from pathlib import Path
 
 from src.data.yahoo import fetch_yahoo_daily
-from src.portfolio.paper_logger import LEDGER_PATH, load_ledger
+from src.portfolio.paper_logger import LEDGER_PATH, current_allocations
 
 DRIFT_BAND = 0.05  # sell-to-rebalance only beyond this (DEPLOYMENT.md)
 
 
 def latest_allocations(path: Path = LEDGER_PATH) -> tuple[str, str, dict]:
-    ledger = load_ledger(path)
-    if ledger.empty:
-        raise SystemExit("ledger is empty — run the paper logger first")
-    row = ledger.iloc[-1]
-    return str(row["month"]), str(row["quadrant"]), json.loads(row["allocations"])
+    month, quadrant, allocs, restated = current_allocations(path)
+    if restated:
+        print(f"(allocations restated under the current matrix from the {month} signals)")
+    return month, quadrant, allocs
 
 
 def build_orders(

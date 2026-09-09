@@ -393,3 +393,35 @@ def test_compute_signals_end_to_end():
     assert sig["quadrant"] is Quadrant.GROWTH   # SPY up, DBC down
     assert sig["tlt_trend_up"] is True
     assert sig["commodity_momentum"]["XLE"] > 0 > sig["commodity_momentum"]["DBC"]
+
+
+def test_current_allocations_restates_old_matrix_rows(tmp_path):
+    """A row logged under an older matrix version is re-resolved from its
+    stored signals under the current matrix; a current-version row is
+    returned as logged."""
+    import csv
+    import json
+
+    from src.portfolio.matrix import MATRIX_VERSION
+    from src.portfolio.paper_logger import current_allocations
+
+    signals = {"tlt_trend_up": False, "include_shorts": True, "breadth_washout": False,
+               "commodity_momentum": {"DBC": 0.247, "ERX": 0.2721, "GDX": -0.1496,
+                                      "GLD": -0.1557, "XLE": 0.1596}}
+    stale = {"AGG": {"QLD": 0.3, "XLE": 0.2275, "GDX": 0.1575, "DBC": 0.315}}
+    path = tmp_path / "ledger.csv"
+    with path.open("w", newline="") as fh:
+        w = csv.writer(fh)
+        w.writerow(["month", "logged_at", "quadrant", "matrix_version", "allocations", "signals"])
+        w.writerow(["2026-09", "2026-09-01", "REFLATION", "v7", json.dumps(stale), json.dumps(signals)])
+    month, quadrant, allocs, restated = current_allocations(path)
+    assert restated and month == "2026-09"
+    assert allocs["AGG"] == {"QQQ": 0.3, "ERX": 0.315, "GDX": 0.1575, "DBC": 0.2275}
+    assert abs(sum(allocs["AGG"].values()) - 1.0) < 1e-9
+    # same row stamped with the current version -> returned verbatim
+    with path.open("w", newline="") as fh:
+        w = csv.writer(fh)
+        w.writerow(["month", "logged_at", "quadrant", "matrix_version", "allocations", "signals"])
+        w.writerow(["2026-09", "2026-09-01", "REFLATION", MATRIX_VERSION, json.dumps(stale), json.dumps(signals)])
+    _, _, allocs2, restated2 = current_allocations(path)
+    assert not restated2 and allocs2 == stale

@@ -24,7 +24,7 @@ from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.datavalidation import DataValidation
 
 from src.portfolio.matrix import MATRIX_VERSION, TIERS
-from src.portfolio.paper_logger import LEDGER_PATH, load_ledger
+from src.portfolio.paper_logger import LEDGER_PATH, current_allocations
 
 OUT_PATH = Path(__file__).resolve().parents[2] / "RotationOrders.xlsx"
 
@@ -47,13 +47,10 @@ def _font(size=10, bold=False, color="000000"):
     return Font(name=ARIAL, size=size, bold=bold, color=color)
 
 
-def build(ledger_path: Path = LEDGER_PATH, out_path: Path = OUT_PATH) -> Path:
-    ledger = load_ledger(ledger_path)
-    if ledger.empty:
-        raise SystemExit("ledger is empty — run the paper logger first")
-    row = ledger.iloc[-1]
-    month, quadrant = str(row["month"]), str(row["quadrant"])
-    allocs: dict[str, dict[str, float]] = json.loads(row["allocations"])
+def build(ledger_path: Path = LEDGER_PATH, out_path: Path = OUT_PATH,
+          default_tier: str = "VAGG") -> Path:
+    month, quadrant, allocs, restated = current_allocations(ledger_path)
+    version_label = MATRIX_VERSION + (" (restated from logged signals)" if restated else "")
 
     wb = Workbook()
     # no recalc pass is available in the build environment — make Excel
@@ -62,7 +59,7 @@ def build(ledger_path: Path = LEDGER_PATH, out_path: Path = OUT_PATH) -> Path:
 
     # ---------------- Data sheet: this month's resolved weights ----------
     data = wb.create_sheet("Data")
-    data["H1"], data["H2"], data["H3"] = month, quadrant, str(row["matrix_version"])
+    data["H1"], data["H2"], data["H3"] = month, quadrant, version_label
     data["G1"], data["G2"], data["G3"] = "Month", "Quadrant", "Matrix"
     for cells in (("G1", "G2", "G3"),):
         for c in cells:
@@ -98,7 +95,7 @@ def build(ledger_path: Path = LEDGER_PATH, out_path: Path = OUT_PATH) -> Path:
 
     ws["A5"] = "Risk tier"
     ws["A5"].font = _font(10, bold=True)
-    ws["C5"] = "VAGG"
+    ws["C5"] = default_tier
     dv = DataValidation(type="list", formula1='"CONS,MOD,AGG,VAGG"', allow_blank=False)
     ws.add_data_validation(dv)
     dv.add(ws["C5"])
@@ -127,7 +124,7 @@ def build(ledger_path: Path = LEDGER_PATH, out_path: Path = OUT_PATH) -> Path:
         c.font = _font(9, bold=True)
         c.fill = GREY
         c.border = BOX
-    prefill = list(allocs["VAGG"])  # example rows: this month's book at $0
+    prefill = list(allocs[default_tier])  # example rows: this month's book at $0
     for k in range(HOLD_ROWS):
         r = 12 + k
         t = ws.cell(row=r, column=1, value=prefill[k] if k < len(prefill) else None)
@@ -212,5 +209,11 @@ def build(ledger_path: Path = LEDGER_PATH, out_path: Path = OUT_PATH) -> Path:
 
 
 if __name__ == "__main__":
-    path = build()
+    import argparse
+
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--tier", default="VAGG", choices=TIERS,
+                    help="tier pre-selected in the sheet (dropdown stays editable)")
+    args = ap.parse_args()
+    path = build(default_tier=args.tier)
     print(f"wrote {path}")

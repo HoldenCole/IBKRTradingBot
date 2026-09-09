@@ -11,7 +11,8 @@ live account — it is the benchmark the live account is measured against.
 
 1. **The September 1 ledger row exists** — the Routine fires on the 1st
    and logs the month's quadrant + resolved per-tier allocations under
-   matrix v7. Verify `paper/ledger.csv` gained a row.
+   the current matrix (v8 since 2026-09-09; the September row is v7 and
+   the manual order tools restate it — see PORTFOLIOS.md). Verify `paper/ledger.csv` gained a row.
 2. **Tier chosen.** The workbook glide path defaults to VAGG at age 25.
    Entering one notch lower (AGG or MOD) and stepping up after the next
    regime turn is a legitimate use of the ladder; waiting in cash is the

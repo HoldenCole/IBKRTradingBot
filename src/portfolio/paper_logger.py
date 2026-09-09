@@ -195,6 +195,36 @@ def load_ledger(path: Path = LEDGER_PATH) -> pd.DataFrame:
         return pd.DataFrame(columns=LEDGER_COLUMNS)
     return pd.read_csv(path, dtype=str)
 
+def current_allocations(path: Path = LEDGER_PATH) -> tuple[str, str, dict, bool]:
+    """(month, quadrant, per-tier allocations, restated) from the latest
+    ledger row. If the matrix version has moved on since the row was
+    logged, re-resolve every tier from the row's stored signals under the
+    CURRENT matrix and flag restated=True. The ledger row itself is never
+    modified (append-only); this is for the manual order tools so a
+    mid-month matrix adoption can be traded before the next ledger run.
+    The automated executor deliberately reads the ledger row as-is."""
+    ledger = load_ledger(path)
+    if ledger.empty:
+        raise SystemExit("ledger is empty — run the paper logger first")
+    row = ledger.iloc[-1]
+    month, quadrant = str(row["month"]), str(row["quadrant"])
+    allocs = json.loads(row["allocations"])
+    restated = False
+    signals = row.get("signals")
+    if str(row["matrix_version"]) != MATRIX_VERSION and isinstance(signals, str) and signals:
+        sig = json.loads(signals)
+        quad = Quadrant[quadrant]
+        allocs = {
+            tier: resolve_allocation(
+                tier, quad, sig.get("tlt_trend_up"), sig.get("commodity_momentum"),
+                include_shorts=sig.get("include_shorts"),
+                breadth_washout=sig.get("breadth_washout"))
+            for tier in TIERS
+        }
+        restated = True
+    return month, quadrant, allocs, restated
+
+
 
 def append_entry(
     quadrant: Quadrant,
