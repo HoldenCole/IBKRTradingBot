@@ -4,7 +4,7 @@ __pycache__/
 .venv/
 venv/
 logs/
-data/
+/data/
 notebooks/
 .pytest_cache/
 *.egg-info/
