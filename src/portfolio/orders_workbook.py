@@ -47,8 +47,80 @@ def _font(size=10, bold=False, color="000000"):
     return Font(name=ARIAL, size=size, bold=bold, color=color)
 
 
+WATCH_PATH = Path(__file__).resolve().parents[2] / "paper" / "watch.csv"
+
+
+def _watch_rows() -> list[dict]:
+    import csv
+    if not WATCH_PATH.exists():
+        return []
+    with WATCH_PATH.open() as fh:
+        return list(csv.DictReader(fh))
+
+
+def _mark_to_market() -> "pd.DataFrame | None":
+    """Current paper mark-to-market per tier (fail-soft: None on any error)."""
+    try:
+        import json
+        import pandas as pd
+        from src.data.yahoo import fetch_yahoo_daily
+        from src.portfolio.paper_logger import load_ledger, mark_to_market
+        ledger = load_ledger()
+        ref = {"SPY"}
+        for blob in ledger["allocations"]:
+            for alloc in json.loads(blob).values():
+                ref.update(alloc)
+        px = {t: fetch_yahoo_daily(t, "6mo") for t in sorted(ref)}
+        return mark_to_market(ledger, pd.DataFrame(px))
+    except Exception:  # noqa: BLE001 - informational sheet must never block the order sheet
+        return None
+
+
+def _write_watch_sheet(wb, include_mtm: bool) -> None:
+    from datetime import date
+    ws = wb.create_sheet("Weekly Watch")
+    ws.sheet_view.showGridLines = False
+    ws.sheet_properties.tabColor = "1F3864"
+    ws["A1"] = "WEEKLY REGIME WATCH — informational, trades nothing"
+    ws["A1"].font = _font(12, bold=True, color="1F3864")
+    ws["A2"] = ("Distance of each price to its regime boundary (mean of the prior 9 completed "
+                "monthly closes). Provisional = quadrant if the month ended that day. Only the "
+                "monthly ledger row rotates money (TESTS.md entry 67).")
+    ws["A2"].font = _font(8, color="595959")
+    headers = ["Date (UTC)", "SPY vs growth line", "DBC vs inflation line", "Provisional", "In force", "Divergence"]
+    for j, h in enumerate(headers, start=1):
+        c = ws.cell(row=4, column=j, value=h)
+        c.font = _font(9, bold=True); c.fill = GREY; c.border = BOX
+    for i, row in enumerate(_watch_rows(), start=5):
+        vals = [row["logged_at"][:10], float(row["spy_dist"]), float(row["dbc_dist"]),
+                row["provisional"], row["in_force"], "YES" if row["divergence"] == "True" else "no"]
+        for j, v in enumerate(vals, start=1):
+            c = ws.cell(row=i, column=j, value=v); c.font = _font(10); c.border = BOX
+            if j in (2, 3):
+                c.number_format = "+0.0%;-0.0%"
+    r0 = 5 + max(1, len(_watch_rows())) + 2
+    ws.cell(row=r0, column=1, value=f"Paper ledger mark-to-market (as of {date.today().isoformat()})").font = _font(10, bold=True)
+    mtm = _mark_to_market() if include_mtm else None
+    if mtm is None or mtm.empty:
+        ws.cell(row=r0 + 1, column=1, value="(unavailable this build — rerun with network)").font = _font(9, color="595959")
+    else:
+        for j, h in enumerate(["Tier", "Since", "Return", "Max drawdown", "Trading days"], start=1):
+            c = ws.cell(row=r0 + 1, column=j, value=h)
+            c.font = _font(9, bold=True); c.fill = GREY; c.border = BOX
+        for i, rec in enumerate(mtm.to_dict("records"), start=r0 + 2):
+            vals = [rec["tier"], rec["since"], rec["ret"], rec["maxDD"], int(rec["days"])]
+            for j, v in enumerate(vals, start=1):
+                c = ws.cell(row=i, column=j, value=v); c.font = _font(10); c.border = BOX
+                if j in (3, 4):
+                    c.number_format = "+0.00%;-0.00%"
+        ws.cell(row=r0 + 2 + len(mtm), column=1,
+                value="Daily-rebalanced paper books from each ledger row's logged_at; SPY = buy-and-hold benchmark.").font = _font(8, color="595959")
+    for col, w in {"A": 34, "B": 18, "C": 20, "D": 13, "E": 12, "F": 11}.items():
+        ws.column_dimensions[col].width = w
+
+
 def build(ledger_path: Path = LEDGER_PATH, out_path: Path = OUT_PATH,
-          default_tier: str = "VAGG") -> Path:
+          default_tier: str = "VAGG", include_mtm: bool = True) -> Path:
     month, quadrant, allocs, restated = current_allocations(ledger_path)
     version_label = MATRIX_VERSION + (" (restated from logged signals)" if restated else "")
 
@@ -203,6 +275,8 @@ def build(ledger_path: Path = LEDGER_PATH, out_path: Path = OUT_PATH,
     for i in range(1, 10):
         data.column_dimensions[get_column_letter(i)].width = 12
 
+    _write_watch_sheet(wb, include_mtm)
+
     out_path.parent.mkdir(parents=True, exist_ok=True)
     wb.save(out_path)
     return out_path
@@ -214,6 +288,7 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--tier", default="VAGG", choices=TIERS,
                     help="tier pre-selected in the sheet (dropdown stays editable)")
+    ap.add_argument("--no-mtm", action="store_true", help="skip the mark-to-market fetch")
     args = ap.parse_args()
-    path = build(default_tier=args.tier)
+    path = build(default_tier=args.tier, include_mtm=not args.no_mtm)
     print(f"wrote {path}")
