@@ -10,3 +10,4 @@ notebooks/
 *.egg-info/
 build/
 dist/
+research/cache/
