@@ -56,6 +56,30 @@ def provisional_quadrant(growth_on: bool, infl_on: bool) -> Quadrant:
     return Quadrant.DEFLATION
 
 
+def _append_row(path: Path, row: dict) -> None:
+    """Append a row; if the file's header predates new columns, rewrite it
+    with the union of columns so old rows keep their values and new ones
+    are blank (schema migration, never a misaligned CSV)."""
+    fieldnames = list(row)
+    existing: list[dict] = []
+    if path.exists():
+        with path.open() as fh:
+            reader = csv.DictReader(fh)
+            old_fields = reader.fieldnames or []
+            existing = list(reader)
+        if old_fields == fieldnames:
+            with path.open("a", newline="") as fh:
+                csv.DictWriter(fh, fieldnames=fieldnames).writerow(row)
+            return
+        fieldnames = list(old_fields) + [f for f in fieldnames if f not in old_fields]
+    with path.open("w", newline="") as fh:
+        writer = csv.DictWriter(fh, fieldnames=fieldnames)
+        writer.writeheader()
+        for r in existing:
+            writer.writerow({k: r.get(k, "") for k in fieldnames})
+        writer.writerow({k: row.get(k, "") for k in fieldnames})
+
+
 def run_watch(today: date | None = None, path: Path = WATCH_PATH) -> dict:
     today = today or date.today()
     spy = fetch_yahoo_daily("SPY", rng="2y")
@@ -89,12 +113,7 @@ def run_watch(today: date | None = None, path: Path = WATCH_PATH) -> dict:
         "fragile_now": fragile_now,
     }
     path.parent.mkdir(parents=True, exist_ok=True)
-    is_new = not path.exists()
-    with path.open("a", newline="") as fh:
-        writer = csv.DictWriter(fh, fieldnames=list(row))
-        if is_new:
-            writer.writeheader()
-        writer.writerow(row)
+    _append_row(path, row)
 
     logger.info(f"SPY {spy_px:,.2f} vs boundary {spy_th:,.2f} ({spy_d:+.1%}) — "
                 f"growth {'ON' if spy_d > 0 else 'OFF'}")

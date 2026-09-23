@@ -49,3 +49,18 @@ def test_boundary_requires_history():
     s = _daily([("2026-07", 100.0), ("2026-08", 100.0)])
     with pytest.raises(ValueError):
         boundary(s, date(2026, 9, 1))
+
+
+def test_append_row_migrates_schema(tmp_path):
+    import csv
+
+    from src.portfolio.watch import _append_row
+
+    path = tmp_path / "watch.csv"
+    _append_row(path, {"logged_at": "t1", "spy_dist": 0.07, "provisional": "REFLATION"})
+    _append_row(path, {"logged_at": "t2", "spy_dist": 0.08, "provisional": "REFLATION", "fragile_now": False})
+    with path.open() as fh:
+        rows = list(csv.DictReader(fh))
+    assert [r["logged_at"] for r in rows] == ["t1", "t2"]
+    assert rows[0]["fragile_now"] == "" and rows[1]["fragile_now"] == "False"
+    assert list(rows[0].keys()) == ["logged_at", "spy_dist", "provisional", "fragile_now"]
