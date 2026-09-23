@@ -139,6 +139,43 @@ def completed_month_closes(daily: pd.Series, today: date) -> pd.Series:
     return daily[daily.index < cutoff].resample("ME").last().dropna()
 
 
+# Fragility shadow (entry 70, PORTFOLIOS.md): modern-era crash months were
+# entered with SPY barely above its 10m line AND elevated realized vol.
+# Era-flipped pre-2007, so it is INFORMATIONAL — logged alongside, feeds no
+# resolution. Promotion trigger pre-registered in TESTS.md.
+FRAGILE_EXT_MAX = 0.03      # SPY no more than 3% above its 10m SMA
+FRAGILE_RVOL_MIN = 0.16     # 20-day realized vol (annualized) above 16%
+DELEVER_NOTCH = {"TQQQ": "QLD", "QLD": "QQQ"}
+
+
+def fragility_signal(spy_daily: pd.Series, quadrant: Quadrant | None, today: date) -> dict:
+    """Ex-ante fragility features from completed-month data.
+
+    ext: last completed monthly close vs its 10-month SMA (incl. that month);
+    rvol20: annualized std of the 20 daily returns ending at that month-end;
+    fragile: risk-on quadrant AND ext < FRAGILE_EXT_MAX AND rvol20 > FRAGILE_RVOL_MIN.
+    """
+    m = completed_month_closes(spy_daily, today)
+    cutoff = pd.Timestamp(today.replace(day=1))
+    daily = spy_daily[spy_daily.index < cutoff].dropna()
+    if len(m) < SMA_MONTHS or len(daily) < 21:
+        return {"ext": None, "rvol20": None, "fragile": None}
+    ext = float(m.iloc[-1] / m.tail(SMA_MONTHS).mean() - 1)
+    rvol = float(daily.pct_change().dropna().tail(20).std() * (252 ** 0.5))
+    risk_on = quadrant in (Quadrant.GROWTH, Quadrant.REFLATION)
+    fragile = bool(risk_on and ext < FRAGILE_EXT_MAX and rvol > FRAGILE_RVOL_MIN)
+    return {"ext": round(ext, 4), "rvol20": round(rvol, 4), "fragile": fragile}
+
+
+def delever_one_notch(weights: dict[str, float]) -> dict[str, float]:
+    """Shadow book: equity leverage one notch down (TQQQ->QLD, QLD->QQQ)."""
+    out: dict[str, float] = {}
+    for asset, w in weights.items():
+        target = DELEVER_NOTCH.get(asset, asset)
+        out[target] = round(out.get(target, 0.0) + w, 4)
+    return out
+
+
 def compute_signals(prices: dict[str, pd.Series], today: date) -> dict:
     """Quadrant + v3 resolution signals from completed-month data."""
     spy_m = completed_month_closes(prices["SPY"], today)
@@ -183,11 +220,14 @@ def compute_signals(prices: dict[str, pd.Series], today: date) -> dict:
         if len(m) >= 2:
             mf_returns[t] = round(float(m.iloc[-1] / m.iloc[-2] - 1), 4)
 
+    fragility = fragility_signal(prices["SPY"], quadrant, today)
+
     return {"quadrant": quadrant, "tlt_trend_up": tlt_up,
             "commodity_momentum": momentum,
             "breadth": breadth, "breadth_washout": washout,
             "shadow_quadrant": shadow.name if shadow else None,
-            "managed_futures": mf_returns}
+            "managed_futures": mf_returns,
+            "fragility": fragility}
 
 
 def load_ledger(path: Path = LEDGER_PATH) -> pd.DataFrame:
@@ -237,6 +277,7 @@ def append_entry(
     sp500_balance: dict | None = None,
     shadow_quadrant: str | None = None,
     managed_futures: dict[str, float] | None = None,
+    fragility: dict | None = None,
 ) -> bool:
     """Append this month's row with resolved allocations. False if logged."""
     ledger = load_ledger(path)
@@ -249,6 +290,9 @@ def append_entry(
                                  breadth_washout=breadth_washout)
         for tier in TIERS
     }
+    shadow_delever = None
+    if fragility and fragility.get("fragile"):
+        shadow_delever = {tier: delever_one_notch(allocs[tier]) for tier in ("AGG", "VAGG")}
     row = {
         "month": month,
         "logged_at": today.isoformat(),
@@ -264,6 +308,8 @@ def append_entry(
                 "sp500_balance": sp500_balance,  # informational only
                 "shadow_quadrant": shadow_quadrant,  # informational fast-entry classifier
                 "managed_futures": managed_futures or {},  # informational watchlist (prior-month returns)
+                "fragility": fragility,  # informational shadow (entry 70): ext / rvol20 / fragile
+                "shadow_delever": shadow_delever,  # what AGG/VAGG would hold one notch down, if fragile
             }
         ),
         "allocations": json.dumps(allocs),
@@ -342,6 +388,12 @@ def run_paper_log(path: Path = LEDGER_PATH) -> None:
             f"SHADOW DISAGREES: fast-entry classifier says {sig['shadow_quadrant']} "
             f"vs primary {quadrant.name} — forward-evidence event, see PORTFOLIOS.md"
         )
+    frag = sig.get("fragility") or {}
+    if frag.get("fragile"):
+        logger.warning(f"FRAGILE MONTH (shadow, informational): SPY {frag['ext']:+.1%} above its 10m line, "
+                       f"20d vol {frag['rvol20']:.0%} — de-levered shadow book logged; live book unchanged")
+    elif frag.get("ext") is not None:
+        logger.info(f"Fragility shadow: ext {frag['ext']:+.1%}, 20d vol {frag['rvol20']:.0%} — not fragile")
     for tier in TIERS:
         logger.info(f"  {tier:>5} target: "
                     f"{resolve_allocation(tier, quadrant, sig['tlt_trend_up'], sig['commodity_momentum'], breadth_washout=sig['breadth_washout'])}")
@@ -359,7 +411,8 @@ def run_paper_log(path: Path = LEDGER_PATH) -> None:
                  breadth_washout=sig["breadth_washout"],
                  sp500_balance=balance,
                  shadow_quadrant=sig["shadow_quadrant"],
-                 managed_futures=sig["managed_futures"])
+                 managed_futures=sig["managed_futures"],
+                 fragility=sig.get("fragility"))
 
     ledger = load_ledger(path)
     referenced: set[str] = set(all_tickers()) | {"SPY"}

@@ -425,3 +425,33 @@ def test_current_allocations_restates_old_matrix_rows(tmp_path):
         w.writerow(["2026-09", "2026-09-01", "REFLATION", MATRIX_VERSION, json.dumps(stale), json.dumps(signals)])
     _, _, allocs2, restated2 = current_allocations(path)
     assert not restated2 and allocs2 == stale
+
+
+def test_fragility_signal_and_delever_notch():
+    from datetime import date
+
+    import numpy as np
+    import pandas as pd
+
+    from src.portfolio.paper_logger import delever_one_notch, fragility_signal
+    from src.regime.quadrant import Quadrant
+
+    days = pd.bdate_range("2024-01-01", "2026-08-31")
+    # calm uptrend: well above the line, low vol -> not fragile
+    calm = pd.Series(np.linspace(100, 160, len(days)), index=days)
+    f = fragility_signal(calm, Quadrant.GROWTH, date(2026, 9, 1))
+    assert f["fragile"] is False and f["ext"] > 0.03 and f["rvol20"] < 0.16
+    # hugging the line with a violent final month -> fragile in a risk-on quadrant
+    rng = np.random.default_rng(0)
+    flat = pd.Series(100.0 + rng.normal(0, 0.2, len(days)).cumsum() * 0.05, index=days)
+    flat.iloc[-25:] = flat.iloc[-26] * (1 + rng.normal(0, 0.02, 25)).cumprod()
+    f2 = fragility_signal(flat, Quadrant.GROWTH, date(2026, 9, 1))
+    assert f2["rvol20"] > 0.16
+    assert f2["fragile"] == (f2["ext"] < 0.03)
+    # never fragile in a defensive quadrant
+    assert fragility_signal(flat, Quadrant.DEFLATION, date(2026, 9, 1))["fragile"] is False
+    # notch: VAGG G 100% TQQQ -> QLD; AGG G QLD -> QQQ; unlevered untouched
+    assert delever_one_notch({"TQQQ": 1.0}) == {"QLD": 1.0}
+    assert delever_one_notch({"QLD": 1.0}) == {"QQQ": 1.0}
+    assert delever_one_notch({"TQQQ": 0.3, "ERX": 0.315, "GDX": 0.1575, "DBC": 0.2275}) == \
+        {"QLD": 0.3, "ERX": 0.315, "GDX": 0.1575, "DBC": 0.2275}

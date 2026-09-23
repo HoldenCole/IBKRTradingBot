@@ -27,7 +27,7 @@ import pandas as pd
 from loguru import logger
 
 from src.data.yahoo import fetch_yahoo_daily
-from src.portfolio.paper_logger import LEDGER_PATH, load_ledger
+from src.portfolio.paper_logger import FRAGILE_EXT_MAX, FRAGILE_RVOL_MIN, LEDGER_PATH, load_ledger
 from src.regime.quadrant import Quadrant
 
 WATCH_PATH = Path(__file__).resolve().parents[2] / "paper" / "watch.csv"
@@ -63,6 +63,14 @@ def run_watch(today: date | None = None, path: Path = WATCH_PATH) -> dict:
     spy_px, spy_th, spy_d = boundary(spy, today)
     dbc_px, dbc_th, dbc_d = boundary(dbc, today)
     prov = provisional_quadrant(spy_d > 0, dbc_d > 0)
+    # provisional fragility (entry 70 shadow): today's price vs the 10m SMA that
+    # would apply if the month ended today, and trailing 20d realized vol
+    spy_hist = spy[spy.index.date < pd.Timestamp(today).date()]
+    m10 = pd.concat([spy_hist.resample("ME").last().iloc[:-1].tail(9), pd.Series([spy_px])])
+    ext_now = float(spy_px / m10.mean() - 1)
+    rvol_now = float(spy_hist.pct_change().dropna().tail(20).std() * (252 ** 0.5))
+    fragile_now = bool(prov in (Quadrant.GROWTH, Quadrant.REFLATION)
+                       and ext_now < FRAGILE_EXT_MAX and rvol_now > FRAGILE_RVOL_MIN)
 
     in_force = None
     ledger = load_ledger()
@@ -76,6 +84,9 @@ def run_watch(today: date | None = None, path: Path = WATCH_PATH) -> dict:
         "provisional": prov.name,
         "in_force": in_force,
         "divergence": in_force is not None and prov.name != in_force,
+        "ext_now": round(ext_now, 4),
+        "rvol20_now": round(rvol_now, 4),
+        "fragile_now": fragile_now,
     }
     path.parent.mkdir(parents=True, exist_ok=True)
     is_new = not path.exists()
@@ -89,6 +100,8 @@ def run_watch(today: date | None = None, path: Path = WATCH_PATH) -> dict:
                 f"growth {'ON' if spy_d > 0 else 'OFF'}")
     logger.info(f"DBC {dbc_px:,.2f} vs boundary {dbc_th:,.2f} ({dbc_d:+.1%}) — "
                 f"inflation {'ON' if dbc_d > 0 else 'OFF'}")
+    logger.info(f"Fragility shadow if month ended today: SPY {ext_now:+.1%} vs 10m SMA, 20d vol {rvol_now:.0%} "
+                f"-> {'FRAGILE' if fragile_now else 'not fragile'} (informational)")
     if row["divergence"]:
         logger.warning(f"If the month ended today: {prov.name} (vs {in_force} in force). "
                        "INFORMATIONAL ONLY — the book rotates at the monthly row, not now.")
