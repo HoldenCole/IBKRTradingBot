@@ -55,7 +55,9 @@ def load_all() -> pd.DataFrame:
     return pd.DataFrame(cols).sort_index()
 
 
-def build(px: pd.DataFrame, first_stamp: str = "2006-12-01"):
+def build(px: pd.DataFrame, first_stamp: str = "2006-12-01", transform=None):
+    """transform(tier, stamp, quad_label, weights) -> weights lets studies
+    modify a month's resolved book ex-ante (e.g. de-lever the equity leg)."""
     rets = px.drop(columns=["^IRX"]).pct_change()
     rf = (px["^IRX"] / 100 / 252).reindex(rets.index).ffill().fillna(0.0)
 
@@ -91,6 +93,8 @@ def build(px: pd.DataFrame, first_stamp: str = "2006-12-01"):
             pw = washout.index[washout.index <= st]
             wo = bool(washout.loc[pw[-1]]) if len(pw) else None
             w = resolve_allocation(tier, quad, tlt_up, mom, include_shorts=True, breadth_washout=wo)
+            if transform is not None:
+                w = transform(tier, st, QMAP[quad], dict(w))
             nxt = stamps[i + 1] if i + 1 < len(stamps) else rets.index[-1]
             win = rets.loc[(rets.index > st) & (rets.index <= nxt)]
             if win.empty:
