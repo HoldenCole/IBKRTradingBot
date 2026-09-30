@@ -230,6 +230,30 @@ def compute_signals(prices: dict[str, pd.Series], today: date) -> dict:
             "fragility": fragility}
 
 
+def provisional_allocations(as_of: date) -> tuple[str, str, dict, dict]:
+    """Resolve NEXT month's books as if `as_of` were the first day of that
+    month (i.e. treating the current month as completed at the latest
+    close). Never writes the ledger — for previewing the coming rotation.
+    Returns (month, quadrant name, per-tier allocations, signals)."""
+    from src.data.yahoo import fetch_yahoo_daily
+
+    signal_tickers = sorted({"SPY", "DBC", "TLT"} | {a for t in R_TILT.values() for a in t}
+                            | set(BREADTH_TICKERS) | set(MANAGED_FUTURES_TICKERS))
+    prices = {}
+    for t in signal_tickers:
+        try:
+            prices[t] = fetch_yahoo_daily(t, "2y")
+        except Exception as exc:  # noqa: BLE001
+            if t in ("SPY", "DBC", "TLT"):
+                raise
+            logger.warning(f"{t}: fetch failed ({exc}) — continuing without it")
+    sig = compute_signals(prices, as_of)
+    quad = sig["quadrant"]
+    allocs = {tier: resolve_allocation(tier, quad, sig["tlt_trend_up"], sig["commodity_momentum"],
+                                       breadth_washout=sig["breadth_washout"]) for tier in TIERS}
+    return as_of.strftime("%Y-%m"), quad.name, allocs, sig
+
+
 def load_ledger(path: Path = LEDGER_PATH) -> pd.DataFrame:
     if not path.exists():
         return pd.DataFrame(columns=LEDGER_COLUMNS)
