@@ -865,3 +865,23 @@ User hypothesis: GDX trades with the equity market more than with gold, and mine
 Bullion improves CAGR, Sortino AND drawdown in both eras — small pre-2007, moderate modern — the standard for adoption. 2x bullion is the modern winner but loses pre-2007 (era-flip; same verdict as entry 57's UGL test; UGL real does track the 2x simulation at corr 0.999, so the simulation isn't the problem — leverage on a slot that had a weak pre-2007 Reflation leg is).
 
 **Honest caveat:** the year-by-year difference runs against the swap in the two most recent years — miners beat bullion by ~12pp in 2025 and ~6pp in 2026 YTD (the full-sample gains come from 2011, 2013, 2020, 2023). A regime of miner outperformance is live right now; the full-sample and era-2 answer is still bullion. **CANDIDATE v9 — AGG/VAGG Reflation cell GDX → GLD, tilt trio ERX/GLD/DBC (matching MOD's XLE/GLD/DBC). User decision.**
+
+## GDX vs GLD, cell by cell — the regime decides the instrument (2026-10-08, entry 72)
+
+User: "It's perfectly fine to have GLD in some places and GDX in others. That's the point of the model." Tested every gold-holding cell in both eras (research/gold_by_cell.py): the cell's gold slot set to bullion or miners with everything else fixed; cell-month Sharpe and full-tier stats. Pre-2007 bullion = CEF, miners = FSAGX; note the legacy era-2 engine had used FKRCX (a miners fund) as its "gold" in the CONS/MOD/D cells, so this test also makes bullion-vs-miners explicit everywhere.
+
+| cell | now | modern: miners − bullion (full-tier Sortino / CAGR) | pre-2007 | verdict |
+|---|---|---|---|---|
+| CONS G | GLD | −0.21 / −0.3pp | −0.01 / +0.2pp | bullion |
+| CONS R | GLD | −0.29 / −0.2pp | −0.17 / −0.2pp | bullion |
+| CONS D | GLD | −0.15 / +1.6pp (maxDD −10→−18%) | +0.14 / +0.8pp | split → keep GLD (mandate) |
+| MOD R | GLD | −0.30 / −0.4pp | −0.12 / −0.2pp | bullion |
+| MOD D | GLD | −0.07 / +1.9pp (maxDD −14→−23%) | +0.10 / +1.0pp | split → keep GLD (drawdown) |
+| AGG R | **GDX** | −0.09 / −0.8pp | −0.03 / −0.3pp | **bullion** |
+| AGG D | GLD | +0.08 / +2.1pp (DD unchanged) | +0.04 / +1.0pp | **miners** |
+| VAGG R | **GDX** | −0.06 / −1.0pp | −0.02 / −0.4pp | **bullion** |
+| VAGG D | GLD | +0.06 / +2.2pp (DD unchanged) | +0.03 / +1.1pp | **miners** |
+
+**The mechanism is the model's own logic.** Miners = bullion + 0.43 equity beta + rate sensitivity (the miners-minus-bullion spread loads 0.45 on TLT) − carry. In Reflation (stocks up, commodities up, rates rising) the equity beta is redundant with the book's equity leg and the rate sensitivity and carry are headwinds — bullion wins. In Deflation (stocks down, rates falling) the rate sensitivity flips to a tailwind, gold's rally is amplified by operating leverage, and the equity beta is small next to the cell's TLT/TMF — miners win: Deflation-month miners +26-51%/yr annualized across tiers vs bullion +14-36%, in both eras. The two defensive tiers can't afford the drawdown that comes with it (CONS −10→−18%, MOD −14→−23%); the two aggressive tiers get it for free (maxDD unchanged).
+
+**Combined candidate v9 (AGG/VAGG only):** Reflation gold slot GDX → GLD with the tilt trio ERX/GLD/DBC; Deflation gold slot GLD → GDX at the same 30%. Full-tier: modern AGG +24.4 → 27.3% / 1.25 → 1.41 / −34 → −33; VAGG +32.1 → 35.3% / 1.10 → 1.22 / −47 → −47; pre-2007 AGG +21.2 → 22.1 / 0.94 → 1.00 / −44 → −43; VAGG +25.8 → 26.9 / 0.75 → 0.79 / −62 → −60. All three metrics improve in both eras. Where it comes from: 2020 (+20/+25pp — miners in the March-May 2020 Deflation months), 2011/2013/2016/2023 (bullion in Reflation). Where it loses: 2024-2026 (−3/−10/−5pp — miners have beaten bullion in recent Reflation months). CONS/MOD unchanged. Supersedes the entry-71 single-cell candidate. User decision.
