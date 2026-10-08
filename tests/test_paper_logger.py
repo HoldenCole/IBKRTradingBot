@@ -156,8 +156,8 @@ def test_short_sleeve_resolves_to_inverse_etf_plus_cash():
 def test_shorts_off_restores_v4_long_only_cells():
     v4_d = {
         "MOD": {"TLT": 0.45, "GLD": 0.30, "XLP": 0.15, "SPY": 0.10},
-        "AGG": {"TLT": 0.40, "TMF": 0.15, "GLD": 0.30, "QQQ": 0.15},
-        "VAGG": {"TMF": 0.35, "TLT": 0.20, "GLD": 0.30, "QLD": 0.15},
+        "AGG": {"TLT": 0.40, "TMF": 0.15, "GDX": 0.30, "QQQ": 0.15},
+        "VAGG": {"TMF": 0.35, "TLT": 0.20, "GDX": 0.30, "QLD": 0.15},
     }
     for tier, expected in v4_d.items():
         a = resolve_allocation(tier, Quadrant.DEFLATION, include_shorts=False)
@@ -407,7 +407,7 @@ def test_current_allocations_restates_old_matrix_rows(tmp_path):
 
     signals = {"tlt_trend_up": False, "include_shorts": True, "breadth_washout": False,
                "commodity_momentum": {"DBC": 0.247, "ERX": 0.2721, "GDX": -0.1496,
-                                      "GLD": -0.1557, "XLE": 0.1596}}
+                                      "GLD": -0.1557, "XLE": 0.1596}}  # GLD < DBC < ERX
     stale = {"AGG": {"QLD": 0.3, "XLE": 0.2275, "GDX": 0.1575, "DBC": 0.315}}
     path = tmp_path / "ledger.csv"
     with path.open("w", newline="") as fh:
@@ -416,7 +416,7 @@ def test_current_allocations_restates_old_matrix_rows(tmp_path):
         w.writerow(["2026-09", "2026-09-01", "REFLATION", "v7", json.dumps(stale), json.dumps(signals)])
     month, quadrant, allocs, restated = current_allocations(path)
     assert restated and month == "2026-09"
-    assert allocs["AGG"] == {"QQQ": 0.3, "ERX": 0.315, "GDX": 0.1575, "DBC": 0.2275}
+    assert allocs["AGG"] == {"QQQ": 0.3, "ERX": 0.315, "DBC": 0.2275, "GLD": 0.1575}
     assert abs(sum(allocs["AGG"].values()) - 1.0) < 1e-9
     # same row stamped with the current version -> returned verbatim
     with path.open("w", newline="") as fh:

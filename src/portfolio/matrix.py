@@ -1,4 +1,4 @@
-"""Playbook matrix v8 — locked allocation per (risk tier, quadrant).
+"""Playbook matrix v9 — locked allocation per (risk tier, quadrant).
 
 Design rules (PORTFOLIOS.md): MOD defines WHAT each regime owns; CONS
 dilutes with cash; AGG/VAGG escalate octane only. v3 changes (validated
@@ -66,6 +66,14 @@ v8 change (reflation tension study, PORTFOLIOS.md entry 69):
   equity leg is the one that breaks on the R->S path; 1x/2x beat
   2x/1x on return and Sortino in both eras. VAGG unchanged (the
   same swap cost 0.6pp in both eras for no risk-adjusted gain).
+
+v9 change (gold instrument by regime, PORTFOLIOS.md entry 72):
+- The regime decides the gold instrument. Miners = bullion + 0.43
+  equity beta + rate sensitivity - carry: a headwind in Reflation,
+  a tailwind in Deflation. AGG/VAGG Reflation gold slot GDX -> GLD
+  (tilt trio ERX/GLD/DBC); AGG/VAGG Deflation gold slot GLD -> GDX.
+  Improves CAGR, Sortino and maxDD in both eras. CONS/MOD keep GLD
+  everywhere (miners in D cost them 8-9pp of drawdown).
 """
 
 from __future__ import annotations
@@ -76,7 +84,7 @@ G, R, Q_S, D = Quadrant.GROWTH, Quadrant.REFLATION, Quadrant.STAGFLATION, Quadra
 
 _MOD_R = {"SPY": 0.30, "XLE": 0.25, "GLD": 0.25, "DBC": 0.20}
 
-MATRIX_VERSION = "v8"
+MATRIX_VERSION = "v9"
 
 # Global switch for the short book. OFF -> every short placeholder
 # resolves to its long fallback, restoring the v4 long-only cells.
@@ -118,15 +126,15 @@ MATRIX: dict[str, dict[Quadrant, dict[str, float]]] = {
     },
     "AGG": {
         G: {"QLD": 1.00},
-        R: {"QQQ": 0.30, "ERX": 0.25, "GDX": 0.25, "DBC": 0.20},  # v8: 1x eq / 2x energy
+        R: {"QQQ": 0.30, "ERX": 0.25, "GLD": 0.25, "DBC": 0.20},  # v8: 1x eq / 2x energy; v9: bullion in R
         Q_S: {"SHY": 0.25, SHORT_ENERGY: 0.15, COND_DURATION: 0.60},
-        D: {"TLT": 0.25, SHORT_OIL: 0.15, "TMF": 0.15, "GLD": 0.30, "QQQ": 0.15},
+        D: {"TLT": 0.25, SHORT_OIL: 0.15, "TMF": 0.15, "GDX": 0.30, "QQQ": 0.15},  # v9: miners in D
     },
     "VAGG": {
         G: {"TQQQ": 1.00},
-        R: {"TQQQ": 0.30, "ERX": 0.25, "GDX": 0.25, "DBC": 0.20},
+        R: {"TQQQ": 0.30, "ERX": 0.25, "GLD": 0.25, "DBC": 0.20},  # v9: bullion in R
         Q_S: {"SHY": 0.15, SHORT_ENERGY: 0.15, COND_DURATION: 0.70},
-        D: {"TMF": 0.35, "TLT": 0.05, SHORT_OIL: 0.15, "GLD": 0.30, "QLD": 0.15},
+        D: {"TMF": 0.35, "TLT": 0.05, SHORT_OIL: 0.15, "GDX": 0.30, "QLD": 0.15},  # v9: miners in D
     },
 }
 
@@ -136,8 +144,8 @@ TIERS = list(MATRIX)
 R_TILT: dict[str, list[str]] = {
     "CONS": ["XLE", "GLD", "DBC"],
     "MOD": ["XLE", "GLD", "DBC"],
-    "AGG": ["ERX", "GDX", "DBC"],  # v8
-    "VAGG": ["ERX", "GDX", "DBC"],
+    "AGG": ["ERX", "GLD", "DBC"],  # v8 ERX; v9 GLD
+    "VAGG": ["ERX", "GLD", "DBC"],  # v9 GLD
 }
 TILT_SHARES = (0.45, 0.325, 0.225)  # best -> worst momentum
 

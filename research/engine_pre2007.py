@@ -1,8 +1,8 @@
 """Pre-2007 (1987-2006) replication engine — the out-of-sample era.
 Proxies: VFINX (SPY), ^NDX (QQQ; NDX2/NDX3 simulated), VUSTX (TLT; VUSTX3
 simulated), FKRCX (GLD), FSENX (XLE; FSENX2 simulated), FSAGX (GDX),
-FDFAX (XLP), ^SPGSCI (DBC), ^IRX cash. Cells mirror the live matrix at v8
-(AGG R = 1x equity + 2x energy). Shorts synthetic. Same transform hook as
+FDFAX (XLP), ^SPGSCI (DBC), ^IRX cash. Cells mirror the live matrix at v9
+(AGG R = 1x equity + 2x energy; bullion CEF in R, miners FSAGX in D for AGG/VAGG). Shorts synthetic. Same transform hook as
 research.engine so rules can be era-checked with identical code."""
 from __future__ import annotations
 import sys
@@ -23,15 +23,16 @@ CELLS = {
           S: {"CASH":.60,"COND":.40}, D: {"VUSTX":.40,"CASH":.25,"FKRCX":.25,"VFINX":.10}},
  "MOD":  {G: {"NDX":.70,"VUSTX":.30}, R: {"VFINX":.30,"FSENX":.25,"FKRCX":.25,"GSCI":.20},
           S: {"CASH":.40,"SH_EN":.10,"COND":.50}, D: {"VUSTX":.35,"SH_CO":.10,"FKRCX":.30,"FDFAX":.15,"VFINX":.10}},
- "AGG":  {G: {"NDX2":1.0}, R: {"NDX":.30,"FSENX2":.25,"FSAGX":.25,"GSCI":.20},
-          S: {"CASH":.25,"SH_EN":.15,"COND":.60}, D: {"VUSTX":.25,"SH_CO":.15,"VUSTX3":.15,"FKRCX":.30,"NDX":.15}},
- "VAGG": {G: {"NDX3":1.0}, R: {"NDX3":.30,"FSENX2":.25,"FSAGX":.25,"GSCI":.20},
-          S: {"CASH":.15,"SH_EN":.15,"COND":.70}, D: {"VUSTX3":.35,"VUSTX":.05,"SH_CO":.15,"FKRCX":.30,"NDX2":.15}},
+ "AGG":  {G: {"NDX2":1.0}, R: {"NDX":.30,"FSENX2":.25,"CEF":.25,"GSCI":.20},  # v9: bullion in R
+          S: {"CASH":.25,"SH_EN":.15,"COND":.60}, D: {"VUSTX":.25,"SH_CO":.15,"VUSTX3":.15,"FSAGX":.30,"NDX":.15}},  # v9: miners in D
+ "VAGG": {G: {"NDX3":1.0}, R: {"NDX3":.30,"FSENX2":.25,"CEF":.25,"GSCI":.20},  # v9: bullion in R
+          S: {"CASH":.15,"SH_EN":.15,"COND":.70}, D: {"VUSTX3":.35,"VUSTX":.05,"SH_CO":.15,"FSAGX":.30,"NDX2":.15}},  # v9: miners in D
 }
 
 def load_all():
     syms = ["VFINX", "VUSTX", "FKRCX", "FSENX", "FDFAX", "FSAGX", "SPGSCI", "NDX", "IRX", "GSPC"] + SECTORS
     px = pd.DataFrame({s: load(s) for s in syms}).sort_index()
+    px["CEF"] = pd.read_csv(CACHE / "CEF.csv", index_col=0, parse_dates=True).iloc[:, 0].reindex(px.index)
     return px.rename(columns={"SPGSCI": "GSCI"})
 
 def build(px, start="1987-01-01", end="2006-12-31", transform=None):
