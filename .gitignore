@@ -11,3 +11,4 @@ notebooks/
 build/
 dist/
 research/cache/
+research/docs/node_modules/
