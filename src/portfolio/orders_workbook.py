@@ -121,7 +121,7 @@ def _write_watch_sheet(wb, include_mtm: bool) -> None:
 
 def build(ledger_path: Path = LEDGER_PATH, out_path: Path = OUT_PATH,
           default_tier: str = "VAGG", include_mtm: bool = True,
-          provisional: "str | None" = None) -> Path:
+          provisional: "str | None" = None, equity: float = 11000.0) -> Path:
     if provisional:
         from datetime import date as _date
         nxt = (_date.today().replace(day=1) + __import__("datetime").timedelta(days=32)).replace(day=1)
@@ -180,7 +180,7 @@ def build(ledger_path: Path = LEDGER_PATH, out_path: Path = OUT_PATH,
     dv.add(ws["C5"])
     ws["A6"] = "Total account value ($)"
     ws["A6"].font = _font(10, bold=True)
-    ws["C6"] = 11000  # user input: cash + market value of rotation positions
+    ws["C6"] = equity  # user input: cash + market value of rotation positions
     ws["C6"].number_format = CUR
     ws["A7"] = "= settled cash + market value of current rotation positions"
     ws["A7"].font = _font(8, color="595959")
@@ -296,8 +296,9 @@ if __name__ == "__main__":
     ap.add_argument("--tier", default="VAGG", choices=TIERS,
                     help="tier pre-selected in the sheet (dropdown stays editable)")
     ap.add_argument("--no-mtm", action="store_true", help="skip the mark-to-market fetch")
+    ap.add_argument("--equity", type=float, default=11000.0, help="account value pre-filled in C6")
     ap.add_argument("--provisional", metavar="LABEL", default=None,
                     help="preview NEXT month's book from current prices (e.g. 'intraday 9/30'); ledger untouched")
     args = ap.parse_args()
-    path = build(default_tier=args.tier, include_mtm=not args.no_mtm, provisional=args.provisional)
+    path = build(default_tier=args.tier, include_mtm=not args.no_mtm, provisional=args.provisional, equity=args.equity)
     print(f"wrote {path}")
