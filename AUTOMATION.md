@@ -66,9 +66,10 @@ Requirements: Linux, Java 17+, Python 3.11+, ~2GB RAM.
 # Contribution deploy: mid-month, after the ACH lands and settles.
 40 15 15-17 * 1-5  cd /home/bot/IBKRTradingBot && python -m src.execution.rotation_executor --tier VAGG --execute >> logs/rotation.log 2>&1
 
-# Weekly read-only regime watch (Mondays): distance-to-boundary +
-# provisional quadrant, logs to paper/watch.csv, trades nothing.
-10 9 * * 1  cd /home/bot/IBKRTradingBot && python -m src.portfolio.watch >> logs/watch.log 2>&1
+# Saturday weekly review (8am ET, after the week's close): watch row,
+# provisional monthly signals, live-book week, mark-to-market, S&P balance.
+# Read-only; trades nothing. Logs to paper/watch.csv + paper/weekly.csv.
+0 8 * * 6  cd /home/bot/IBKRTradingBot && python -m src.portfolio.weekly_review --tier AGG --balance >> logs/weekly.log 2>&1
 
 # Ledger + git push (keeps the paper trail off-box too)
 0 18 1-3 * 1-5  cd /home/bot/IBKRTradingBot && git add paper/ && git commit -m "ledger/executions $(date +\%F)" && git push
