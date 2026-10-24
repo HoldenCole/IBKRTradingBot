@@ -99,8 +99,12 @@ def run_review(tier: str = "AGG", balance: bool = False, today: date | None = No
     ledger = load_ledger()
     month, in_force, allocs, restated = current_allocations()
     tilt_assets = sorted({a for t in R_TILT.values() for a in t})
+    historical: set[str] = set()
+    for blob in ledger.get("allocations", []):
+        for al in json.loads(blob).values():
+            historical.update(al)
     tickers = sorted(set(KEY_ASSETS) | set(tilt_assets) | set(BREADTH_TICKERS) | {"TLT", "DBC", "SPY"}
-                     | {a for al in allocs.values() for a in al})
+                     | {a for al in allocs.values() for a in al} | historical)
     prices: dict[str, pd.Series] = {}
     for t in tickers:
         try:
