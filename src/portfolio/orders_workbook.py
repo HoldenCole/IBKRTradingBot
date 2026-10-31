@@ -76,6 +76,44 @@ def _mark_to_market() -> "pd.DataFrame | None":
         return None
 
 
+def _monthly_book_returns() -> "list[dict] | None":
+    """Each ledger row's books held (daily-rebalanced) over that row's window:
+    per-tier return and SPY for the same window. Fail-soft."""
+    try:
+        import json
+        import pandas as pd
+        from src.data.yahoo import fetch_yahoo_daily
+        from src.portfolio.matrix import TIERS
+        from src.portfolio.paper_logger import load_ledger
+        ledger = load_ledger().sort_values("logged_at").reset_index(drop=True)
+        ref = {"SPY"}
+        for blob in ledger["allocations"]:
+            for al in json.loads(blob).values():
+                ref.update(al)
+        px = pd.DataFrame({t: fetch_yahoo_daily(t, "1y") for t in sorted(ref)}).sort_index()
+        rets = px.pct_change()
+        starts = [pd.Timestamp(d) for d in ledger["logged_at"]]
+        out = []
+        for i in range(len(ledger)):
+            lo = starts[i]; hi = starts[i + 1] if i + 1 < len(ledger) else None
+            win = rets.loc[rets.index > lo]
+            if hi is not None:
+                win = win.loc[win.index <= hi]
+            if win.empty:
+                continue
+            row = {"month": ledger.loc[i, "month"], "quadrant": ledger.loc[i, "quadrant"],
+                   "window": f"{win.index[0].date()} to {win.index[-1].date()}",
+                   "SPY": float((1 + win["SPY"]).prod() - 1)}
+            allocs = json.loads(ledger.loc[i, "allocations"])
+            for t in TIERS:
+                r = sum(win[a].fillna(0.0) * w for a, w in allocs[t].items())
+                row[t] = float((1 + r).prod() - 1)
+            out.append(row)
+        return out
+    except Exception:  # noqa: BLE001
+        return None
+
+
 def _write_watch_sheet(wb, include_mtm: bool) -> None:
     from datetime import date
     ws = wb.create_sheet("Weekly Watch")
@@ -115,7 +153,20 @@ def _write_watch_sheet(wb, include_mtm: bool) -> None:
                     c.number_format = "+0.00%;-0.00%"
         ws.cell(row=r0 + 2 + len(mtm), column=1,
                 value="Daily-rebalanced paper books from each ledger row's logged_at; SPY = buy-and-hold benchmark.").font = _font(8, color="595959")
-    for col, w in {"A": 34, "B": 18, "C": 20, "D": 13, "E": 12, "F": 11}.items():
+    # per-month paper books (each ledger row's books over its own window)
+    monthly = _monthly_book_returns() if include_mtm else None
+    if monthly:
+        r1 = ws.max_row + 2
+        ws.cell(row=r1, column=1, value="Paper books by ledger month (books as logged, held over each row's window)").font = _font(10, bold=True)
+        for j, h in enumerate(["Month", "Quadrant", "CONS", "MOD", "AGG", "VAGG", "SPY", "Window"], start=1):
+            c = ws.cell(row=r1 + 1, column=j, value=h); c.font = _font(9, bold=True); c.fill = GREY; c.border = BOX
+        for i, rec in enumerate(monthly, start=r1 + 2):
+            vals = [rec["month"], rec["quadrant"], rec["CONS"], rec["MOD"], rec["AGG"], rec["VAGG"], rec["SPY"], rec["window"]]
+            for j, v in enumerate(vals, start=1):
+                c = ws.cell(row=i, column=j, value=v); c.font = _font(10); c.border = BOX
+                if 3 <= j <= 7:
+                    c.number_format = "+0.00%;-0.00%"
+    for col, w in {"A": 34, "B": 18, "C": 20, "D": 13, "E": 12, "F": 11, "G": 11, "H": 26}.items():
         ws.column_dimensions[col].width = w
 
 
