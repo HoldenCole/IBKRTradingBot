@@ -71,6 +71,10 @@ Requirements: Linux, Java 17+, Python 3.11+, ~2GB RAM.
 # Read-only; trades nothing. Logs to paper/watch.csv + paper/weekly.csv.
 0 8 * * 6  cd /home/bot/IBKRTradingBot && python -m src.portfolio.weekly_review --tier AGG --balance >> logs/weekly.log 2>&1
 
+# Standalone swing PAPER account (TESTS.md entry 79) — separate from the
+# rotation book; logs signals and paper trades only, places no orders.
+40 16 * * 1-5  cd /home/bot/IBKRTradingBot && python -m src.portfolio.swing_logger >> logs/swing.log 2>&1
+
 # Ledger + git push (keeps the paper trail off-box too)
 0 18 1-3 * 1-5  cd /home/bot/IBKRTradingBot && git add paper/ && git commit -m "ledger/executions $(date +\%F)" && git push
 ```

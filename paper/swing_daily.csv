@@ -1,0 +1,2 @@
+date,logged_at,quadrant,fragile,gate_ok,sp_ext200,sp_rvol20,spy_close,spy_rsi2,spy_pctb,spy_vs200,spy_signal,qqq_close,qqq_rsi2,qqq_pctb,qqq_vs200,qqq_signal,open_positions,actions
+2026-11-13,2026-11-14T04:50:01+00:00,REFLATION,False,True,0.0302,0.2191,754.37,42.83,0.393,0.0344,False,679.89,34.79,0.322,-0.0019,False,,
