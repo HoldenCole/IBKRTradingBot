@@ -1034,3 +1034,39 @@ Trend line = the 210-day SMA, the daily twin of the model's 10-month dial. Equit
 20 trades a year, +64bp per trade, 73% win, invested 15% of days. Caveats: this is the best of nine designs; the non-equity legs are thin (16-33 trades each since 2006) and XLE's leg is negative in 2017-26; levered-ETF returns are modelled (daily N× minus financing and expense), not real fills.
 
 **Verdict.** Shorter-term and higher leverage are compatible with the evidence; tight stops are not — they are the single most reliably destructive element tested in this study, at five bar sizes and with three stop constructions. Risk control for a bounce strategy has to come from position size, the time stop, the regime gate and the trend-line filter. The band on a short chart is useful only as a way to enter a trade the daily chart has already justified. On the second question: our signals support buying hard sell-offs (equities always, real assets only above their trend line) and do not support fading stretched rallies.
+
+### Addendum 3 — buy triggers only, SPY and QQQ (2026-11-14, entry 83)
+
+User request: forget the exit; which sell-off size or Bollinger condition on SPY or QQQ should trigger a buy, on horizons from intraday to one week. Code: `research/swing/study_triggers.py` (60 triggers; SPY 1993-2026, QQQ 1999-2026, daily OHLC; hourly bars for 2024-26). Each trigger is scored by the mean return from the fill to the same-day close (intraday triggers), the next day, 3 days and 5 days; the 5-day win rate; the average and 1-in-20 worst low over the next 5 days ("heat"); and the best high over the next 5 days. Intraday level triggers are filled at the level, or at the open if the price gaps through. Baseline any day: SPY +0.05% next day, +0.23% over 5 days; QQQ +0.05% / +0.26%.
+
+| SPY trigger | days/yr | next day | 5 days | 5d win | avg heat | 1-in-20 heat | eras positive |
+|---|---|---|---|---|---|---|---|
+| close below lower band (20,2) | 12.9 | +0.32% | +0.80% | 64% | −2.3% | −8.4% | 4/4 |
+| 2nd+ straight close below band | 5.4 | +0.33% | +1.11% | 71% | −2.4% | −8.3% | 4/4 |
+| close ≥1% below the band | 2.8 | +1.04% | +1.36% | 67% | −3.6% | −10.8% | 4/4 |
+| close ≥2% below the band | 1.0 | +1.87% | +2.56% | 71% | −5.2% | −14.9% | 3/3 |
+| below band and above 200-day avg | 6.7 | +0.28% | +0.91% | 66% | −1.5% | −5.6% | 4/4 |
+| 1-day drop ≥2% | 10.0 | +0.33% | +0.83% | 60% | −3.3% | −9.8% | 4/4 |
+| 3-day drop ≥5% | 3.1 | +0.97% | +1.59% | 62% | −4.4% | −13.3% | 4/4 |
+| 5-day drop ≥5% | 5.5 | +0.55% | +1.33% | 64% | −4.2% | −13.1% | 4/4 |
+| 5-day drop ≥2 sigma | 7.6 | +0.37% | +0.93% | 67% | −2.7% | −9.6% | 4/4 |
+| 4 down closes in a row | 8.1 | +0.43% | +1.11% | 71% | −1.8% | −5.8% | 4/4 |
+| RSI2 < 2 | 3.9 | +0.52% | +1.24% | 70% | −2.3% | −8.3% | 4/4 |
+| intraday: 3% below the day's open | 3.8 | +1.25% | +1.65% | 65% | −4.6% | −13.9% | 4/4 |
+
+| QQQ trigger | days/yr | next day | 5 days | 5d win | avg heat | 1-in-20 heat | eras positive |
+|---|---|---|---|---|---|---|---|
+| close below lower band (20,2) | 12.5 | +0.43% | +1.06% | 62% | −2.8% | −9.3% | 3/3 |
+| 2nd+ straight close below band | 5.3 | +0.58% | +1.48% | 66% | −2.4% | −8.7% | 3/3 |
+| close ≥1% below the band | 3.6 | +0.90% | +2.00% | 67% | −3.8% | −15.2% | 3/3 |
+| close ≥2% below the band | 1.3 | +1.72% | +3.42% | 76% | −4.0% | −12.9% | 3/3 |
+| below band + 1-day drop ≥1.5% | 7.6 | +0.58% | +1.44% | 64% | −3.2% | −11.3% | 3/3 |
+| 3-day drop ≥5% | 9.2 | +0.67% | +1.37% | 62% | −4.8% | −14.7% | 3/3 |
+| 5-day drop ≥7% | 7.3 | +0.82% | +1.42% | 63% | −5.0% | −14.2% | 3/3 |
+| 5-day drop ≥10% | 2.7 | +2.04% | +2.12% | 65% | −5.1% | −14.3% | 3/3 |
+| 5-day drop ≥2 sigma | 7.3 | +0.59% | +1.29% | 64% | −3.1% | −10.7% | 3/3 |
+| 5 down closes in a row | 3.6 | +1.20% | +1.70% | 69% | −2.1% | −6.1% | 3/3 |
+| RSI2 < 5 | 12.5 | +0.61% | +1.08% | 62% | −2.6% | −8.2% | 3/3 |
+| 1-day drop ≥2% (weak) | 21.8 | +0.23% | +0.63% | 56% | −4.2% | −11.9% | 3/3 |
+
+Readings. (1) The Bollinger band works best as a closing condition, and depth below the band is the dose: the bounce roughly doubles from "below" to "1% below" and again to "2% below". (2) Repeat closes below the band are better entries than the first one — the first is often the start of the move. (3) Multi-day sell-offs beat single-day drops, especially for QQQ, where one-day falls of 2-4% carry almost no extra information. (4) Volatility-scaled 5-day drops and down-day streaks give similar returns with less heat than raw percentage triggers. (5) Intraday triggers have no same-day bounce: buying 1%, 2%, 3% or 4% below yesterday's close returns 0.0-0.3% to that day's close in SPY and QQQ, the hourly band touch returns 0.00%, and "2-3% off the day's high" closes lower than the fill more often than not; the gain comes on days 1-5. Waiting for the close costs nothing on average. The one intraday trigger with a same-day bounce in every era is SPY trading 3% below its own open (+0.86% to the close). (6) Triggers that are not triggers: closing back above the band (+0.17% / +0.13%), QQQ gap-downs, one-day sigma shocks. (7) Every trigger takes heat first: the average worst low over the next five days is 2-6% below the fill and one case in twenty is 8-16% below, which is the arithmetic behind the stop results in entry 80.
