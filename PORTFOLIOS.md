@@ -986,3 +986,51 @@ Invested 11% of days (some position on 15% of days), 16 trades a year, 438 trade
 **Options version (model-based).** Same signal through 30-DTE SPY/QQQ options, risking 10% of the account per trade: call debit spread +6.8%/yr with −39% trade-level drawdown, ATM call +6.0%/−45%, put credit spreads +2.4%/−17% (before bill interest). Levered ETFs deliver more return per unit of drawdown than any option structure modelled, without the model risk.
 
 **Assessment.** As a standalone strategy it is real and small: a statistically solid +4% a year over cash at 1x with shallow drawdowns, scalable to roughly +10% (2x) or +13% (3x) with drawdowns of −27% and −38%. It beat SPY buy-and-hold over the full 27 years only with leverage, and lagged it in the 2017-26 bull decade at any leverage tested. Its strengths are the drawdown profile, the low time in market, and that it needs one decision a day. Its weaknesses are capital idleness, short-term tax treatment on every gain, and dependence on a mean-reversion regime in index returns that has existed since the mid-1990s but is not guaranteed. Not adopted or rejected — it is a user decision whether to run it, at what leverage, and with how much capital.
+
+### Addendum 2 — short-horizon band bounces, tight stops, and fading stretched moves (2026-11-14, entries 80-82)
+
+User clarification: the idea is shorter-term and more aggressive than entry 79 — catch the bounce off a Bollinger band on a short chart (a "3-day view"), sell at the top band, use leverage and tight stops — plus a check on swing-trading our own signals when energy, the S&P or another model asset is over-stretched or sold off hard. Code: `research/swing/intraday_data.py`, `study_bounce.py`, `study_bounce2.py`, `study_stretch.py`, `study_selloff_account.py`. "3-day view" was tested under both readings: intraday bars on a multi-day chart (5m, 15m, 60m) and 3-day bars. Free intraday history is short — 60 days for 5m/15m, 2 years for 60m — so the intraday tables are indicative and the daily tables (27 years) carry the weight.
+
+**The bounce trade, one simulator at every bar size.** Entry: price trades down to the prior bar's lower band (20, 2). Exit: stop, else the upper band, else a time stop. Net of costs.
+
+| bars | history | no stop | 2% stop | 1% stop | 0.5% stop |
+|---|---|---|---|---|---|
+| 5-minute | 42 days | −13bp | −11bp | −11bp | −12bp |
+| 15-minute | 42 days | −43bp | −32bp | −30bp | −17bp |
+| 60-minute | 2 years | **+19bp** (61% win, t 1.9) | +7bp | −3bp (36% win) | −4bp (22% win) |
+| daily, 20 equity ETFs | 27 years | **+40bp** (+36/+54/+26 by era) | −2bp | −3bp (19% win) | |
+| 3-day bars | 27 years | **+138bp** over ~20 days | | 3% stop +48bp, era-unstable | |
+
+The stop is the failure point, not the band. A mean-reversion entry is by construction made into weakness; the first thing price does is wiggle lower, and a stop inside that wiggle sells the low. Three rescues were tested and failed: (1) waiting for the first close back inside the band and stopping under the excursion low — negative in all three eras on daily bars (−10bp), flat on hourly; (2) volatility-scaled stops — negative at 0.5-1 ATR, zero at 2, positive only at 5 ATR where 8% of trades touch it; (3) leverage, which requires a proportionally tighter stop on the underlying — TQQQ on hourly bars with a 1% stop wins 16% of the time.
+
+**The intraday band is entry timing, not a signal.** Hourly lower-band touches earn +71bp (69% win, n=98) when the prior daily bar was sold off (daily RSI2<10 or below the daily lower band) and +7bp when it was not. Over the same two years and ETFs, buying the daily close on that daily signal earned +100bp with an 80% win rate. Shorting upper-band touches on sectors, gold, oil and bonds lost 23-35bp on hourly bars.
+
+**Stretched and sold-off model assets (daily, 1999-2026).** z5 = 5-day return in units of its own volatility; event = first close beyond ±2.
+
+| long the sell-off (z5 < −2) | n | mean | win | by era | above trend line | below |
+|---|---|---|---|---|---|---|
+| S&P / Nasdaq | 184 | +111bp | 76% | +180 / +107 / +74 | +85 | +138 |
+| sectors ex-energy | 1,044 | +65bp | 71% | +97 / +90 / +25 | +79 | +53 |
+| energy equities (XLE) | 97 | +23bp | 74% | +101 / +79 / −70 | **+65** | −5 |
+| oil (USO) | 80 | −52bp | 64% | — / +5 / −89 | **+124** | −132 |
+| broad commodities (DBC) | 77 | −4bp | 60% | — / −9 / +2 | **+88** | −44 |
+| gold | 63 | +51bp | 65% | +45 / +5 / +93 | **+119** | −9 |
+| miners / silver | 126 | +71bp | 61% | +34 / +49 / +96 | **+160** | +30 |
+| long bonds | 67 | +41bp | 66% | −46 / +57 / +59 | +47 | +39 |
+
+Trend line = the 210-day SMA, the daily twin of the model's 10-month dial. Equities bounce from sell-offs in any state; real assets bounce only while their trend is intact — the same asymmetry the daily Bollinger study found for commodities. Fading strength does not work: shorting z5 > +2 earns 0bp on sectors, −13bp on energy, −25bp on gold, −9bp on bonds; the S&P's forward 5-day return after a stretch is 38bp ABOVE average; the trend dial at its own 97th percentile has no stable forward sign. Oil shorts on a stretch outside Reflation made +229bp but on 28 trades with a −32% worst case.
+
+**Standalone account v2 (entry 82).** Entry 79's SPY/QQQ dip-buy under the regime gate, plus z5 sell-off entries on XLE, GLD, GDX, TLT, DBC and USO when above their trend line; exit above the 5-day SMA or after 10 days; two 50% slots; T-bills when idle.
+
+| 1999-2026 | CAGR | Sharpe | maxDD | worst year | A 99-06 | B 07-16 | C 17-26 |
+|---|---|---|---|---|---|---|---|
+| entry 79 (SPY/QQQ only), 1x | +6.3% | 0.87 | −14% | −7% | +8.3% | +3.8% | +7.2% |
+| v2 combined, 1x | **+8.4%** | 0.99 | −14% | −5% | +9.1% | +5.3% | +11.2% |
+| v2 combined, 2x | **+14.1%** | 0.85 | −26% | −14% | +14.3% | +9.1% | +19.1% |
+| v2 combined, 3x | **+19.3%** | 0.81 | −38% | −23% | +19.3% | +12.7% | +26.5% |
+| v2 at 3x with a 5% stop | +16.4% | | −42% | | | | |
+| v2 at 3x with a 1% stop | +5.9% | | −47% | | | | |
+
+20 trades a year, +64bp per trade, 73% win, invested 15% of days. Caveats: this is the best of nine designs; the non-equity legs are thin (16-33 trades each since 2006) and XLE's leg is negative in 2017-26; levered-ETF returns are modelled (daily N× minus financing and expense), not real fills.
+
+**Verdict.** Shorter-term and higher leverage are compatible with the evidence; tight stops are not — they are the single most reliably destructive element tested in this study, at five bar sizes and with three stop constructions. Risk control for a bounce strategy has to come from position size, the time stop, the regime gate and the trend-line filter. The band on a short chart is useful only as a way to enter a trade the daily chart has already justified. On the second question: our signals support buying hard sell-offs (equities always, real assets only above their trend line) and do not support fading stretched rallies.
