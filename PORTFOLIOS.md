@@ -961,3 +961,28 @@ Same sign on CONS, MOD and VAGG, and in both halves on AGG. The sleeve's daily c
 **6. Side results.** Sector short fades: +65bp in growth-off quadrants but −5bp in 2017-26 — no. Fragile state (S&P 0-3% above its 200d with 20d vol above 16%): Bollinger dip-buys −241bp, negative in all three eras, n=77 over 28 distinct weeks — small, but it independently matches the fragility shadow's fingerprint (entry 70b). Levered ETFs on the same signals are just leverage (QQQ signal → TQQQ +230bp/trade, worst −19%). Waiting up to 10 days for a dip to deploy a contribution: no gain, negative in 2017-26.
 
 **Verdict.** The research transfers in one direction: the quadrant model tells you which dips are worth buying (aligned assets, growth on, not fragile, elevated VIX), and that is a statistically solid, era-stable result. It does not transfer into a better portfolio: the edge is ~35bp a trade a few dozen times a year, it arrives correlated with the book's own drawdowns, and every way of funding it (margin, carve-out, options) either worsens risk-adjusted results or hands the edge to costs. No sleeve adopted; no matrix or process change. If swing trading is wanted as an activity anyway, the tested-best form is: Bollinger(20,2) lower-band close with RSI(2)<10 on SPY/QQQ/sector ETFs the book is long that month, skip the fragile state, exit above the 5-day SMA or after 10 days, stock rather than options, ≤25% of equity, IBKR tiered pricing.
+
+### Addendum — the swing strategy as its own account (2026-11-14, entry 79)
+
+User correction: the swing idea is a separate account, not a layer on the portfolio, so it is assessed standalone here. Correlation with the rotation book and the adopt rule for matrix changes do not apply. Code: `research/swing/study_standalone.py`, `study_standalone_checks.py`. The account holds T-bills until a signal fires, then buys up to N equity ETFs; daily account returns include costs and bill interest on idle cash.
+
+**Design search (48 designs, ranked by worst-era Sharpe, not best fit).** Signals: Bollinger+RSI2, RSI2+200d trend, and their union. Universes: SPY+QQQ or 20 equity ETFs. Slots 1/2/4. Gates: none, regime-aligned (Growth/Reflation months only), aligned + not fragile. Findings: (a) SPY+QQQ beats the 20-ETF universe at the account level in every gate — with few slots the wide universe concentrates in single sector dips and 2017-26 goes to roughly zero; (b) the regime gate leaves return about unchanged and halves the bad outcomes (union signal, two slots: maxDD −22% → −14%, worst year −12% → −7%, Sharpe 0.72 → 0.87); (c) all 15 SPY+QQQ designs are positive in all three eras.
+
+**Selected design.** SPY and QQQ. Buy at the close when RSI(2) < 10 and the close is either below the lower Bollinger(20,2) band or above the 200-day SMA; only when the quadrant in force is Growth or Reflation; not when the S&P is 0-3% above its 200d with 20d vol above 16%. Exit at the first close above the 5-day SMA, or after 10 trading days. Two slots of 50%.
+
+| 1999-2026 | CAGR | Sharpe | maxDD | worst year | positive years | A 99-06 | B 07-16 | C 17-26 |
+|---|---|---|---|---|---|---|---|---|
+| selected, 1x | +6.3% | 0.87 | −14% | −7% | 89% | +8.3% | +3.8% | +7.2% |
+| selected, 2x ETFs | +9.9% | 0.71 | −27% | −16% | 89% | +12.7% | +6.4% | +11.3% |
+| selected, 3x ETFs | +13.1% | 0.67 | −38% | −25% | 89% | +16.8% | +8.6% | +15.0% |
+| SPY buy & hold | +8.5% | 0.52 | −55% | −37% | 79% | +2.7% | +6.9% | +14.9% |
+| QQQ buy & hold | +10.5% | 0.51 | −83% | −42% | 79% | −2.2% | +11.6% | +20.2% |
+| T-bills | +2.0% | | | | | +3.2% | +0.6% | +2.5% |
+
+Invested 11% of days (some position on 15% of days), 16 trades a year, 438 trades: +55bp mean, 72% win, average win +1.36% vs average loss −1.54%, worst −10.0%, longest losing streak 4. Excess over T-bills +4.35%/yr on 7.3% vol: excess Sharpe 0.59, t 3.1 over 27 years (0.66/0.49/0.64 by era). Capital earns about 41% annualized while deployed; the constraint is how rarely it is deployed.
+
+**Checks.** Entry at next open instead of the signal close: +5.0% (2x +7.4%). Costs 10bp/side: +5.4%; 20bp: +3.8%. Parameter neighbours (RSI threshold 5/10/15/20 × exit SMA 3/5/8): all 12 positive in every era, CAGR +4.0% to +7.6%. Extra era, SPY only 1994-1998: +11.2%, Sharpe 1.47, n=45, 80% win. Losing years: 2011 −7.4%, 2018 −5.0%, 2016 −0.1%. Yearly correlation with SPY +0.26.
+
+**Options version (model-based).** Same signal through 30-DTE SPY/QQQ options, risking 10% of the account per trade: call debit spread +6.8%/yr with −39% trade-level drawdown, ATM call +6.0%/−45%, put credit spreads +2.4%/−17% (before bill interest). Levered ETFs deliver more return per unit of drawdown than any option structure modelled, without the model risk.
+
+**Assessment.** As a standalone strategy it is real and small: a statistically solid +4% a year over cash at 1x with shallow drawdowns, scalable to roughly +10% (2x) or +13% (3x) with drawdowns of −27% and −38%. It beat SPY buy-and-hold over the full 27 years only with leverage, and lagged it in the 2017-26 bull decade at any leverage tested. Its strengths are the drawdown profile, the low time in market, and that it needs one decision a day. Its weaknesses are capital idleness, short-term tax treatment on every gain, and dependence on a mean-reversion regime in index returns that has existed since the mid-1990s but is not guaranteed. Not adopted or rejected — it is a user decision whether to run it, at what leverage, and with how much capital.
