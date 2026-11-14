@@ -914,3 +914,50 @@ Three readings. (1) Where the map overlaps the book it is right and the book alr
 **Impact, leverage-matched (daily-reset simulated sector baskets):** replacing every cell's equity leg with the phase basket era-splits badly (modern AGG 27.4→19.6%, VAGG 35.2→23.9% — an equal-weight tech+industrials basket cannot keep up with QQQ in the AI era; pre-2007 +1.5/+4pp). The one targeted variant the grid supports — late-phase Reflation months only, equity leg → the late basket (energy/materials/healthcare/staples/utilities) — improves AGG and VAGG on CAGR and Sortino in both eras (AGG +0.2/+0.7pp, Sortino +0.01/+0.02; VAGG +1.0/+2.9pp, +0.04/+0.09) with drawdowns flat, but MOD era-splits on Sortino (1.74→1.81 modern, 1.40→1.36 pre-2007), and the AGG/VAGG gains are earned by 2x/3x sector baskets that do not exist as liquid products (no levered healthcare/staples/utilities ETFs worth holding). Disclosed: this was the third variant of one hypothesis.
 
 **Verdict — NOT adopted; filed.** The late-phase sector effect is real and era-stable at the sector level, but the tier where it is implementable (MOD, 1x) is era-split, and the tiers where it tests well cannot trade the instrument it requires. If levered sector baskets become available, or if the live ledger accumulates enough late-phase Reflation months to re-test MOD forward, revisit. The durable takeaways: the model already owns the two phase-sector effects that survive two eras (tech in Growth, energy in Reflation), and the framework's other two claims (early-cycle financials, recession defensives) do not survive a trend-defined calendar. Entry 74.
+
+## Swing trading — does any of this work day-over-day or week-over-week? (2026-11-14, entries 75-78)
+
+User question: the regime model and its research are monthly; is any of it useful for swing trading, including ETF options, with Bollinger bands tested alone and combined? Code: `research/swing/` (data, lib, strategies, study_daily, study_sleeve, study_weekly, study_options, study_extras, study_checks). Data: adjusted daily OHLC for 30 ETFs (broad, 9 SPDR sectors, 7 sub-sectors, gold/silver/miners, bonds, commodities, international) plus vol indices, 1993/1999-2026. Eras: A 1999-2006, B 2007-2016, C 2017-2026, with a 1987-98 index-only check. Signals use the close; entry at that close (next-open checked); 5bp per side; one position per asset.
+
+**1. Daily dip-buying is a real, era-stable edge on equity ETFs.** Net bp per trade, pooled 30 ETFs:
+
+| signal | hold | all | A 99-06 | B 07-16 | C 17-26 | win |
+|---|---|---|---|---|---|---|
+| Bollinger(20,2) close below lower band → exit above mid | 8.1d | +28 | +33 | +10 | +45 | 59% |
+| same + price above 200d SMA | 7.8d | +52 | +43 | +51 | +57 | 65% |
+| RSI(2)<10 + 200d trend → exit above 5d SMA | 3.8d | +26 | +28 | +28 | +24 | 69% |
+| IBS<0.2 → exit above prior high | 3.2d | +21 | +10 | +21 | +26 | 64% |
+| Bollinger + IBS<0.2 | 8.2d | +45 | +51 | +34 | +56 | 60% |
+| Bollinger + RSI(2)<10 → exit above 5d SMA | 4.1d | +26 | +41 | +26 | +18 | 66% |
+| Bollinger upper-band breakout | 16d | +25 | −0 | −13 | +73 | 39% |
+
+15 of 18 Bollinger grid cells (N 10/20/30 × K 1.5/2/2.5 × two exits) are positive in all three eras; the three exceptions are 2.5-sd bands with one negative era each. By asset group the edge lives in equities (broad +41bp, sectors +42bp, sub-sectors +45bp for plain Bollinger) and is absent or negative elsewhere: bonds −3bp, commodities −82bp (DBC/USO trend; dips keep going), gold only with the trend filter. 1987-98 index check is also positive (S&P RSI2+200d +49bp, t 3.9), even though daily autocorrelation only turned negative after 2000.
+
+**2. The regime model is the best filter found.** "Aligned" = the asset group is one the rotation book is long in the quadrant in force (equities in G/R, energy in R, gold in R/D, bonds in D, commodities in R):
+
+| Bollinger dip-buy | all | A | B | C |
+|---|---|---|---|---|
+| aligned (n=2,466) | **+44bp** | +54 | +39 | +46 |
+| not aligned (n=1,160) | −6bp | +5 | −47 | +42 |
+
+Same split for Bollinger+RSI2 (+41 vs −6) and RSI2+trend (+28 vs +13). Subtracting what the asset earns anyway in that regime (days held × its mean daily return in the same era and quadrant), the aligned-equity edge that remains is +19bp (Bollinger), +16bp (RSI2+trend), **+34bp (Bollinger+RSI2, cluster-t 5.6, positive all eras)**, and ≈0 for IBS alone. Breakouts are −61bp vs drift. The edge concentrates in high-vol dips: VIX≥25 trades earn +111bp (Bollinger), +91bp (RSI2), +75bp (IBS), all eras; VIX<16 trades earn +14bp, +11bp and +1bp.
+
+**3. As a sleeve next to the book it fails the adopt rule.** Four slots, most-oversold first, equity ETFs, aligned gate: 40 trades/yr, 16% average exposure, +3.5%/yr on sleeve capital, sleeve maxDD −7/−18/−16% by era. On the live AGG book, 2007-2026:
+
+| | CAGR | Sortino | maxDD |
+|---|---|---|---|
+| AGG core | +27.4% | 1.42 | −33.1% |
+| + 25% margin overlay | +27.8% | 1.38 | −35.3% |
+| + 50% margin overlay | +28.2% | 1.34 | −37.6% |
+| + 100% margin overlay | +28.9% | 1.25 | −42.7% |
+| 20% carve-out (idle sleeve in bills) | +22.8% | 1.42 | −29.1% |
+
+Same sign on CONS, MOD and VAGG, and in both halves on AGG. The sleeve's daily correlation to the core is +0.39 and it loses −52bp on the core's worst 5% of days: dip-buying adds beta exactly when the book is drawing down. Restricting to VIX≥20 is the closest to neutral (+1.2pp CAGR at 50%, Sortino 1.40, maxDD −36.6%) but still does not improve every metric. Cost sensitivity: at 10bp/side (IBKR fixed pricing's $1 minimum on ~$1,100 slots is 9bp) the 50% overlay adds +0.1pp. In dollars at $17.5k, a 25% overlay is worth roughly $70/yr before tax.
+
+**4. Week-over-week: nothing.** Sector rotation by 1w/4w/13w/26w momentum loses to equal-weight sectors in every era; 1-week reversal is flat then −7.5pp/yr in 2017-26; the regime gate rescues neither. Weekly Bollinger lower-band buys and breakouts are positive raw but at or below drift. Crash weeks (−8% or worse) are followed by +256bp over four weeks vs +76bp unconditional, but only +59bp in 2007-16.
+
+**5. Options (model-based — Black-Scholes on VIX/VXN, no historical chains).** The wrapper gives back most of the edge: SPY/QQQ aligned Bollinger+RSI2 dips earn +72bp on stock, +14bp of notional through an ATM call, +25bp through a 0.96 ITM call, +11bp through put credit spreads. Theta (~4bp/day on a 30-DTE ATM option) and the ~1pt IV decline into the bounce eat it. On risk capital the SPY/QQQ structures are positive in all three eras (call debit spread +7.0%/trade, t 3.4; 0.97/0.92 put credit spread +2.6%, sd 8%, t 4.6; about 7 trades a year). Sector-ETF options are negative in every era: one-cent half-spreads plus $0.65/contract on a $25-80 underlying cost about what the signal earns. Filed with the existing options item; needs real chains.
+
+**6. Side results.** Sector short fades: +65bp in growth-off quadrants but −5bp in 2017-26 — no. Fragile state (S&P 0-3% above its 200d with 20d vol above 16%): Bollinger dip-buys −241bp, negative in all three eras, n=77 over 28 distinct weeks — small, but it independently matches the fragility shadow's fingerprint (entry 70b). Levered ETFs on the same signals are just leverage (QQQ signal → TQQQ +230bp/trade, worst −19%). Waiting up to 10 days for a dip to deploy a contribution: no gain, negative in 2017-26.
+
+**Verdict.** The research transfers in one direction: the quadrant model tells you which dips are worth buying (aligned assets, growth on, not fragile, elevated VIX), and that is a statistically solid, era-stable result. It does not transfer into a better portfolio: the edge is ~35bp a trade a few dozen times a year, it arrives correlated with the book's own drawdowns, and every way of funding it (margin, carve-out, options) either worsens risk-adjusted results or hands the edge to costs. No sleeve adopted; no matrix or process change. If swing trading is wanted as an activity anyway, the tested-best form is: Bollinger(20,2) lower-band close with RSI(2)<10 on SPY/QQQ/sector ETFs the book is long that month, skip the fragile state, exit above the 5-day SMA or after 10 days, stock rather than options, ≤25% of equity, IBKR tiered pricing.
