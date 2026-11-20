@@ -15,7 +15,6 @@ GRID = "#eceff1"
 PAPER = "#f6f5f1"
 SURFACE = "#ffffff"
 REF = "#a9b1b9"          # reference lines (moving averages, trend lines)
-TIER_RAMP = {"CONS": "#9fb8cf", "MOD": "#6d93b5", "AGG": "#3d6d96", "VAGG": "#173f63"}
 
 UNIT = {"D": "day", "W": "week", "M": "month"}
 TF_NAME = {"D": "Daily", "W": "Weekly", "M": "Monthly"}

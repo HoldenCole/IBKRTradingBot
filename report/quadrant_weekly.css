@@ -167,3 +167,16 @@ table.t td.b { font-weight: 600; }
 .method p b, .method li b { color: var(--ink); font-weight: 600; }
 .method ul { margin: 0 0 5pt 10pt; }
 .box.dec .cols3 p { margin-bottom: 4pt; }
+
+/* regime map */
+.rmap { display: grid; grid-template-columns: 0.2in 1fr 1fr; gap: 3pt; }
+.rmap .ax { font-size: 6.2pt; letter-spacing: 0.09em; text-transform: uppercase; font-weight: 600; color: var(--ink2); text-align: center; padding-bottom: 2pt; }
+.rmap .ay { font-size: 6.2pt; letter-spacing: 0.09em; text-transform: uppercase; font-weight: 600; color: var(--ink2); writing-mode: vertical-rl; transform: rotate(180deg); text-align: center; }
+.rc { background: var(--paper); border-radius: 3pt; padding: 9pt 10pt; min-height: 1.22in; display: flex; flex-direction: column; border: 0.75pt solid transparent; }
+.rc.cur { background: var(--ink); color: #fff; }
+.rc.nxt { border: 0.75pt dashed var(--ink); }
+.rc .rn { font-family: var(--serif); font-size: 13pt; font-weight: 540; line-height: 1.1; font-variation-settings: "opsz" 36; }
+.rc .rd { font-size: 7pt; line-height: 1.35; color: var(--ink2); margin-top: 3pt; }
+.rc.cur .rd { color: #c9d0d6; }
+.rc .rt { margin-top: auto; padding-top: 5pt; }
+.rc .tag { font-size: 6.2pt; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; }

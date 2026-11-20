@@ -363,8 +363,9 @@ def classifier_chart(cl: pd.DataFrame, months: list[tuple[str, str]], prov: tupl
     """The regime model's two dials: distance of the S&P 500 and of commodities from their 10-month lines."""
     c = cl.iloc[-n:] * 100; idx = c.index; x = np.arange(len(c))
     fig = plt.figure(figsize=(7.3, height))
-    gs = fig.add_gridspec(2, 1, height_ratios=[1, 0.2 / (height - 0.7)], hspace=0.12, left=0.012, right=0.9, top=1 - 0.22 / height, bottom=0.25 / height)
+    gs = fig.add_gridspec(2, 1, height_ratios=[1, 0.2 / (height - 0.7)], hspace=0.12, left=0.012, right=0.9, top=1 - 0.27 / height, bottom=0.25 / height)
     ax = fig.add_subplot(gs[0])
+    ly = 1 + 0.13 / (height - 0.95)        # legend row a fixed distance above the plot
     ax.axhline(0, color=S.INK2, linewidth=0.7)
     ax.plot(x, c["spy"].values, color=S.INK, linewidth=1.25)
     ax.plot(x, c["dbc"].values, color=S.Q[3], linewidth=1.25)
@@ -374,10 +375,10 @@ def classifier_chart(cl: pd.DataFrame, months: list[tuple[str, str]], prov: tupl
     ends = _spread([float(c["spy"].iloc[-1]), float(c["dbc"].iloc[-1])], (ax.get_ylim()[1] - ax.get_ylim()[0]) * 0.1, *ax.get_ylim())
     for col, lab, yy, colr in (("spy", "S&P 500", ends[0], S.INK), ("dbc", "Commodities", ends[1], S.Q[3])):
         ax.plot([x[-1]], [c[col].iloc[-1]], marker="o", ms=3.6, color=colr, mec="white", mew=0.8, zorder=5, clip_on=False)
-    ax.plot([0.0, 0.022], [1.07, 1.07], color=S.INK, linewidth=1.25, transform=ax.transAxes, clip_on=False)
-    ax.text(0.03, 1.07, f"S&P 500 vs its 10-month line ({c['spy'].iloc[-1]:+.1f}%): the growth dial", transform=ax.transAxes, fontsize=6.4, color=S.INK2, va="center")
-    ax.plot([0.5, 0.522], [1.07, 1.07], color=S.Q[3], linewidth=1.25, transform=ax.transAxes, clip_on=False)
-    ax.text(0.53, 1.07, f"Commodities vs their 10-month line ({c['dbc'].iloc[-1]:+.1f}%): the inflation dial", transform=ax.transAxes, fontsize=6.4, color=S.INK2, va="center")
+    ax.plot([0.0, 0.022], [ly, ly], color=S.INK, linewidth=1.25, transform=ax.transAxes, clip_on=False)
+    ax.text(0.03, ly, f"S&P 500 vs its 10-month line ({c['spy'].iloc[-1]:+.1f}%): the growth dial", transform=ax.transAxes, fontsize=6.4, color=S.INK2, va="center")
+    ax.plot([0.5, 0.522], [ly, ly], color=S.Q[3], linewidth=1.25, transform=ax.transAxes, clip_on=False)
+    ax.text(0.53, ly, f"Commodities vs their 10-month line ({c['dbc'].iloc[-1]:+.1f}%): the inflation dial", transform=ax.transAxes, fontsize=6.4, color=S.INK2, va="center")
     # regime strip: the regime in force each month (set by the dials at the prior month-end); equal runs merged
     ax2 = fig.add_subplot(gs[1]); ax2.set_xlim(-0.5, len(c) - 0.5); ax2.set_ylim(0, 1)
     full = cl.copy(); me = full.groupby(full.index.to_period("M")).last()
@@ -401,30 +402,4 @@ def classifier_chart(cl: pd.DataFrame, months: list[tuple[str, str]], prov: tupl
             ax2.text((a_ + b_ - 1) / 2, 0.5, nm, ha="center", va="center", fontsize=6.0, color=S.INK2)
     ax2.axis("off")
     ax2.text(-0.004, 0.5, "", transform=ax2.transAxes)
-    return svg(fig)
-
-
-def paper_chart(curves: dict[str, pd.Series], width: float = 7.3, height: float = 2.4) -> str:
-    """Paper books since go-live: four tiers on one ordinal ramp, the S&P 500 in ink."""
-    fig, ax = plt.subplots(figsize=(width, height))
-    fig.subplots_adjust(left=0.38 / width, right=1 - 1.5 / width, top=0.95, bottom=0.25 / height)
-    idx = curves["SPY"].index; x = np.arange(len(idx))
-    ax.axhline(0, color=S.INK2, linewidth=0.6)
-    order = ["CONS", "MOD", "AGG", "VAGG"]
-    for t in order:
-        ax.plot(x, curves[t].reindex(idx).values * 100, color=S.TIER_RAMP[t], linewidth=1.3)
-    ax.plot(x, curves["SPY"].values * 100, color=S.INK, linewidth=1.3)
-    clean(ax, right=False); time_ticks(ax, idx, "month")
-    ax.yaxis.set_major_formatter(matplotlib.ticker.FuncFormatter(lambda v, _: f"{v:+.0f}%"))
-    names = order + ["SPY"]; lab = {"CONS": "Conservative", "MOD": "Moderate", "AGG": "Aggressive", "VAGG": "Very aggressive", "SPY": "S&P 500"}
-    vals = [float(curves[t].iloc[-1]) * 100 for t in names]
-    lo, hi = ax.get_ylim()
-    pos = _spread(vals, (hi - lo) * 0.085, lo, hi)
-    for t, v, yy in zip(names, vals, pos):
-        col = S.INK if t == "SPY" else S.TIER_RAMP[t]
-        ax.plot([x[-1]], [v], marker="o", ms=3.4, color=col, mec="white", mew=0.8, zorder=5, clip_on=False)
-        span = len(x)
-        ax.annotate("", (x[-1] + span * 0.008, v), xytext=(x[-1] + span * 0.05, yy), arrowprops=dict(arrowstyle="-", color=S.REF, lw=0.5), annotation_clip=False)
-        ax.plot([x[-1] + span * 0.062], [yy], marker="s", ms=4.2, color=col, clip_on=False)
-        ax.text(x[-1] + span * 0.074, yy, f"{lab[t]}  {v:+.1f}%".replace("-", "\u2212"), fontsize=6.6, color=S.INK, va="center", ha="left")
     return svg(fig)

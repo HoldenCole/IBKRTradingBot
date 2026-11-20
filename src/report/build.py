@@ -28,9 +28,6 @@ BUILD = OUT / ".build"
 FONTS = ROOT / "report" / "fonts"
 TF = ("D", "W", "M")
 UNITS = {"D": "day", "W": "week", "M": "month"}
-ASSET = {"QQQ": "Nasdaq-100", "QLD": "Nasdaq-100, 2x", "TQQQ": "Nasdaq-100, 3x", "SPY": "S&P 500", "ERX": "Energy stocks, 2x",
-         "XLE": "Energy stocks", "GLD": "Gold", "GDX": "Gold miners", "DBC": "Commodity basket", "TLT": "Long Treasuries",
-         "TMF": "Long Treasuries, 3x", "SHY": "Short Treasuries", "SCO": "Crude oil, 2x short", "IEF": "7-10y Treasuries"}
 FLAG_LINE = {
     "INTACT": "Both monthly readings for the S&P 500 are above zero. The long cycle has not broken.",
     "DETERIORATING": "One monthly reading for the S&P 500 is below zero. The long cycle is weakening.",
@@ -130,7 +127,7 @@ def technical_state(close: pd.Series) -> dict:
             "z5": D.z5(close), "vs200": float(close.iloc[-1] / close.rolling(200).mean().iloc[-1] - 1), "downs": downs}
 
 
-# Test 83: mean S&P/Nasdaq ETF return over the next five days after each trigger, win rate, and 1-in-20 worst low.
+# Backtest: mean S&P/Nasdaq ETF return over the next five days after each trigger, win rate, and 1-in-20 worst low.
 TRIGGERS = [
     ("Close below the lower band", lambda s: s["below"], ("+0.80%", "64%", "−8.4%"), ("+1.06%", "62%", "−9.3%")),
     ("Second straight close below it", lambda s: s["run"] >= 2, ("+1.11%", "71%", "−8.3%"), ("+1.48%", "66%", "−8.7%")),
@@ -196,9 +193,8 @@ def auto_commentary(d: dict, f: dict) -> dict:
     t = f["tech"]
     c["technicals"] = (f"SPY closed {'below' if t['SPY']['below'] else 'inside'} its lower Bollinger band with a 2-day RSI of {t['SPY']['rsi2']:.1f}. "
                        f"QQQ closed {'below' if t['QQQ']['below'] else 'inside'} its band with a 2-day RSI of {t['QQQ']['rsi2']:.1f}.")
-    c["model"] = (f"{d['in_force'].title()} is in force for {pd.Period(d['ledger_month']).strftime('%B')}. "
-                  f"On today's prices the next month would be {d['prov_quadrant'].title()}.")
-    c["decision"] = ""
+    c["model"] = (f"{d['in_force'].title()} is the regime in force for {pd.Period(d['month']).strftime('%B')}. "
+                  f"On today's prices {pd.Period(d['prov_month']).strftime('%B')} would be {d['prov_quadrant'].title()}.")
     return c
 
 
@@ -217,7 +213,7 @@ def page(n: int, total: int, section: str, body: str, d: dict, cls: str = "") ->
     return f'''<section class="page {cls}">
 <div class="rh"><div class="brand">{wave_svg(3.2)}<span>Quadrant Weekly</span></div><div>{e(section)}</div><div class="meta">{meta}</div></div>
 {body}
-<div class="rf"><span>Private research for one account. Signals are rules applied to prices, not advice. Sources and method on the last page.</span><span class="pg">{n:02d} / {total:02d}</span></div>
+<div class="rf"><span>Quadrant Weekly. Signals are rules applied to prices, not investment advice. Method and limits on the last page.</span><span class="pg">{n:02d} / {total:02d}</span></div>
 </section>'''
 
 
@@ -301,7 +297,7 @@ def cover(d: dict, f: dict, c: dict, total: int) -> str:
 <div><h3>What changed</h3><ul class="pts">{li(c["changed"])}</ul></div>
 <div><h3>What to watch</h3><ul class="pts">{li(c["watch"])}</ul></div></div>
 {tiles(f)}
-<div class="rf"><span>Private research for one account. Signals are rules applied to prices, not advice. Sources and method on the last page.</span><span class="pg">01 / {total:02d}</span></div>
+<div class="rf"><span>Quadrant Weekly. Signals are rules applied to prices, not investment advice. Method and limits on the last page.</span><span class="pg">01 / {total:02d}</span></div>
 </div></section>'''
 
 
@@ -353,12 +349,12 @@ def page_nasdaq(d, f, c, n, total):
 <tr class="hl"><td>50% or more: washout</td><td>7 / 13</td><td>+9.5% / +8.8%</td><td class="b">+17.5% / +21.4%</td><td>+33.0% / +39.2%</td><td>100% / 92%</td></tr></table>'''
     mq4 = f["mq4"]
     body = (sec(3, "Nasdaq-100, and what the stage has meant", c["nasdaq"])
-            + qb_rows(d, "Nasdaq-100", False, 1.24)
+            + qb_rows(d, "Nasdaq-100", False, 1.2)
             + '<div class="gap"></div><div class="cols2" style="grid-template-columns:3.3in minmax(0,1fr)"><div><h3>S&P 500, next 13 weeks<span class="sub">by week of a weekly trend decline</span></h3>'
             + f'<div class="fig">{C.stage_chart(stage)}</div></div>'
             + f'<div><h3>The monthly state decides<span class="sub">1987-2006 / 2007-2026</span></h3>{disc}</div></div>'
             + f'<div class="gap"></div><h3>The washout thesis<span class="sub">S&P 500 forward return by share of members in a monthly cycle decline, 1987-2006 / 2007-2026. Today: {mq4:.0f}%</span></h3>{wash}'
-            + '<p class="src">Tests 84 and 85. Member history uses today\'s constituents, so past washouts are understated. The 40 to 50% zone is where 2008 passed through on the way down.</p>')
+            + '<p class="src">Source: Quadrant Weekly backtests. Member history uses today\'s constituents, so past washouts are understated. The 40 to 50% zone is where 2008 passed through on the way down.</p>')
     return page(n, total, "Quadrant balances", body, d)
 
 
@@ -473,7 +469,7 @@ def page_commodities(d, f, c, n, total):
     items = [sm_item(d, nm, sym, "small" if by[nm]["last"] < 20 else "price", r=by[nm]) for nm, sym in names]
     body = (sec(6, "Energy and commodities", c["commodities"])
             + '<h3>Levels and stretch<span class="sub">5-day move in units of its own 60-day volatility</span></h3>' + tbl
-            + '<p class="src">Test 81: buying a 5-day drop beyond 2 sigma paid in energy, oil, commodities and gold only while price was still above its 210-day line. Below the line the sell-off continued. Informational, not traded.</p>'
+            + '<p class="src">Backtest: buying a 5-day drop beyond 2 sigma paid in energy, oil, commodities and gold only while price was still above its 210-day line. Below the line the sell-off continued.</p>'
             + '<div class="gap"></div><h3>One year<span class="sub">daily close and 200-day average</span></h3>'
             + f'<div class="fig">{C.small_multiples(items, row_h=1.5)}</div>')
     return page(n, total, "Energy and commodities", body, d)
@@ -492,28 +488,6 @@ def trigger_table(f: dict) -> str:
     return "".join(out)
 
 
-def swing_box(d: dict, f: dict) -> str:
-    px = d["px"]
-    rows, tot = [], 0.0
-    for t in d["swing_trades"]:
-        if t.get("exit_date"):
-            continue
-        last = float(px[t["symbol"]].iloc[-1]); ep = float(t["entry_px"])
-        ret = last / ep - 1; tot += 0.5 * ret
-        held = int((px[t["symbol"]].index > pd.Timestamp(t["entry_date"])).sum())
-        sma5 = float(px[t["symbol"]].tail(5).mean())
-        rows.append(f'<tr><td>{t["symbol"]}</td><td>{pd.Timestamp(t["entry_date"]):%-d %b}</td><td>{ep:,.2f}</td><td>{last:,.2f}</td>'
-                    f'<td>{pct(ret)}</td><td>{held} of 10</td><td>close above {sma5:,.2f}</td></tr>')
-    closed = [t for t in d["swing_trades"] if t.get("exit_date")]
-    if not rows:
-        tbl = '<p class="note">No open positions.</p>'
-    else:
-        tbl = ('<table class="t tight"><tr><th class="l">Open</th><th>Entered</th><th>Entry</th><th>Last</th><th>Open result</th><th>Days held</th><th>Exit rule today</th></tr>'
-               + "".join(rows) + "</table>")
-    return (f'<h3>Swing paper account<span class="sub">separate from the portfolio. Two half-size slots, SPY and QQQ, exit on a close above the 5-day average or after 10 days</span></h3>{tbl}'
-            f'<p class="src">{len(closed)} closed trades since the log began on 13 November. Open result on the account at 1x: {pct(tot)}. Long-run test: +6.3% a year, worst drawdown −14% at 1x.</p>')
-
-
 def page_technicals(d, f, c, n, total):
     px = d["px"]
     body = (sec(7, "Technicals", c["technicals"])
@@ -521,128 +495,96 @@ def page_technicals(d, f, c, n, total):
             + f'<div class="fig" style="margin-top:4pt">{C.technical_chart(px["QQQ"], "QQQ  ·  Nasdaq-100 ETF")}</div>'
             + '<div class="gap"></div><h3>Which buy triggers fired on Friday<span class="sub">with what each has returned since 1993 (SPY) and 1999 (QQQ)</span></h3>'
             + trigger_table(f)
-            + '<p class="src">Test 83. Next 5 days is the mean return from the trigger close. 1-in-20 low is the fifth-percentile worst low over those five days. Any day: SPY +0.23%, QQQ +0.26%. Open positions in the swing paper account are on page 9.</p>')
+            + '<p class="src">Backtest. Next 5 days is the mean return from the trigger close. 1-in-20 low is the fifth-percentile worst low over those five days. Any day: SPY +0.23%, QQQ +0.26%.</p>')
     return page(n, total, "Technicals", body, d)
 
 
-def books_table(d: dict, tier: str = "AGG") -> str:
-    books = [(f"In force, {pd.Period(d['ledger_month']).strftime('%B')}", d["in_force"].title(), d["allocs"][tier]),
-             (f"Model, {pd.Period(d['prov_month']).strftime('%B')}", d["prov_quadrant"].title() + " (provisional)", d["prov_allocs"][tier])]
-    if d["candidate"]:
-        books.append(("Candidate", "25% stay-in (not adopted)", d["candidate"][tier]))
-    tick = []
-    for _, _, b in books:
-        for k in sorted(b, key=lambda k: -b[k]):
-            if k not in tick:
-                tick.append(k)
-    head = "".join(f'<th>{e(a)}<br><span style="text-transform:none;letter-spacing:0;font-weight:400">{e(b)}</span></th>' for a, b, _ in books)
+REGIMES = {  # (growth on, inflation on) -> name, one-line description
+    (True, False): ("Growth", "Stocks above trend, commodities below"),
+    (True, True): ("Reflation", "Stocks and commodities both above trend"),
+    (False, False): ("Deflation", "Stocks and commodities both below trend"),
+    (False, True): ("Stagflation", "Stocks below trend, commodities above"),
+}
+
+
+def regime_map(d: dict) -> str:
+    now, nxt = d["in_force"].title(), d["prov_quadrant"].title()
+    m_now, m_nxt = pd.Period(d["month"]).strftime("%B"), pd.Period(d["prov_month"]).strftime("%B")
+    def cell(g, i):
+        name, desc = REGIMES[(g, i)]
+        tags = ""
+        if name == now:
+            tags += f'<span class="tag on">In force, {m_now}</span>'
+        if name == nxt:
+            tags += f'<span class="tag">Provisional, {m_nxt}</span>'
+        cls = "rc" + (" cur" if name == now else "") + (" nxt" if name == nxt else "")
+        return f'<div class="{cls}"><div class="rn">{name}</div><div class="rd">{desc}</div><div class="rt">{tags}</div></div>'
+    return (f'<div class="rmap"><div></div><div class="ax">Inflation dial off</div><div class="ax">Inflation dial on</div>'
+            f'<div class="ay">Growth dial on</div>{cell(True, False)}{cell(True, True)}'
+            f'<div class="ay">Growth dial off</div>{cell(False, False)}{cell(False, True)}</div>')
+
+
+def dial_table(d: dict, f: dict) -> str:
+    cl = d["classifier"].iloc[-1]
     rows = []
-    for k in tick:
-        cells = "".join("<td>" + (f"{b[k] * 100:.1f}%{weightbar(b[k])}" if k in b else '<span style="color:var(--muted)">none</span>' + weightbar(0)) + "</td>"
-                        for _, _, b in books)
-        rows.append(f'<tr><td>{k}<span class="sym" style="font-family:var(--sans)">{ASSET.get(k, "")}</span></td>{cells}</tr>')
-    return f'<table class="t tight"><tr><th class="l">Aggressive tier</th>{head}</tr>{"".join(rows)}</table>'
+    for k, nm in (("spy", "Growth: S&P 500"), ("dbc", "Inflation: commodity index")):
+        on = cl[k] > 0
+        rows.append(f'<tr><td>{nm}</td><td>{pct(cl[k])}</td><td class="b">{"On" if on else "Off"}</td><td>{pct(d["to_boundary"][k])}</td></tr>')
+    return ('<table class="t tight"><tr><th class="l">Dial</th><th>vs 10-month<br>line</th><th>State</th>'
+            f'<th>Move to the line<br>by {f["month_end"]:%-d %b}</th></tr>' + "".join(rows) + "</table>")
+
+
+GROWTH_OFF = '''<table class="t tight"><tr><th class="l">Growth dial off, and</th><th>Months</th><th>S&P 500<br>next month</th><th>Positive</th></tr>
+<tr class="hl"><td class="w">Both monthly quadrant readings above zero</td><td>19 / 20</td><td class="b">+1.7% / +3.2%</td><td>74% / 70%</td></tr>
+<tr><td class="w">A monthly quadrant reading below zero</td><td>37 / 29</td><td class="b">−0.1% / −0.4%</td><td>54% / 55%</td></tr></table>'''
 
 
 def page_model(d, f, c, n, total):
-    dec = (f'<div class="box dec"><h3>Decision for 1 {pd.Period(d["prov_month"]).strftime("%B")}</h3><div class="cols3">{c["decision"]}</div></div>'
-           if c.get("decision") else "")
     body = (sec(8, "Regime model", c["model"])
-            + '<h3>The two dials<span class="sub">distance from the 10-month line. Above zero is on. The month-end reading sets next month\'s book</span></h3>'
-            + f'<div class="fig">{C.classifier_chart(d["classifier"], d["regime_months"], (d["prov_month"], d["prov_quadrant"]), height=3.1)}</div>'
-            + '<div class="gap"></div><h3>Books<span class="sub">weights by holding</span></h3>' + books_table(d)
-            + '<div class="gap"></div>' + dec)
+            + '<h3>The two dials<span class="sub">distance from the 10-month line. Above zero is on. The month-end reading sets next month\'s regime</span></h3>'
+            + f'<div class="fig">{C.classifier_chart(d["classifier"], [], (d["prov_month"], d["prov_quadrant"]), height=3.7)}</div>'
+            + '<div class="gap"></div><div class="cols2" style="grid-template-columns:3.2in minmax(0,1fr);align-items:start">'
+            + f'<div><h3>Regime map</h3>{regime_map(d)}</div>'
+            + f'<div><h3>Where the dials stand</h3>{dial_table(d, f)}'
+            + '<div class="gap"></div><h3>When the two signals disagree<span class="sub">1987-2006 / 2007-2026</span></h3>' + GROWTH_OFF
+            + '<p class="src">Source: Quadrant Weekly backtests. A growth-off reading has more often been a whipsaw while the monthly quadrant readings were intact, and a real exit once they had broken. The exception to remember: March 2020 began with the monthly readings intact.</p></div></div>')
     return page(n, total, "Regime model", body, d)
 
 
-def month_table(d: dict, tier: str = "AGG") -> tuple[str, str]:
-    px, al = d["px"], d["allocs"][tier]
-    base = d["anchors"]["mtd"]
-    rows, tot = [], 0.0
-    for k, w in sorted(al.items(), key=lambda kv: -kv[1]):
-        r = float(px[k].iloc[-1] / px[k][px[k].index <= base].iloc[-1] - 1)
-        tot += w * r
-        rows.append(f'<tr><td>{k}<span class="sym" style="font-family:var(--sans)">{ASSET.get(k, "")}</span></td><td>{w * 100:.1f}%</td><td>{pct(r)}</td><td>{signed(w * r * 100, 1, " pts")}</td></tr>')
-    rows.append(f'<tr class="hl"><td>Aggressive book, month to date</td><td>100%</td><td></td><td class="b">{pct(tot)}</td></tr>')
-    note = ""
-    for o in d["overrides"]:
-        if o.get("ledger_month") == d["ledger_month"] and "exit QQQ" in o.get("override", "") and "QQQ" in al:
-            q = px["QQQ"]; day = pd.Timestamp(o["date"])
-            r_to = float(q[q.index <= day].iloc[-1] / q[q.index <= base].iloc[-1] - 1)
-            r_all = float(q.iloc[-1] / q[q.index <= base].iloc[-1] - 1)
-            alt = tot - al["QQQ"] * (r_all - r_to)
-            note = (f"With QQQ sold at the {day:%-d %b} close and held as cash, the same book is {pct(alt)} month to date. "
-                    f"The exit is worth {signed((alt - tot) * 100, 1)} points so far.")
-    tbl = ('<table class="t tight"><tr><th class="l">Holding</th><th>Weight</th><th>Month to date</th><th>Contribution</th></tr>' + "".join(rows) + "</table>")
-    return tbl, note
-
-
-def page_paper(d, f, c, n, total):
-    mt = d["mtm"]
-    lab = {"CONS": "Conservative", "MOD": "Moderate", "AGG": "Aggressive", "VAGG": "Very aggressive", "SPY (bench)": "S&P 500"}
-    rows = "".join(f'<tr><td>{lab.get(r.tier, r.tier)}</td><td>{pct(r.ret)}</td><td>{pct(r.maxDD)}</td></tr>' for r in mt.itertuples())
-    since = pd.Timestamp(mt["since"].iloc[0])
-    mtm = f'<table class="t tight"><tr><th class="l">Since {since:%-d %b %Y}</th><th>Return</th><th>Worst drawdown</th></tr>{rows}</table>'
-    mtbl, note = month_table(d)
-    ov = ""
-    for o in d["overrides"][-1:]:
-        ov += (f'<div><p><b>{pd.Timestamp(o["date"]):%-d %b}: {e(o["override"][:1].upper() + o["override"][1:])}.</b></p></div>'
-               f'<div><p><b>Reason given.</b> {e(o["user_reason"][:1].upper() + o["user_reason"][1:])}.</p>'
-               f'<p><b>Status.</b> {e(o["status"][:1].upper() + o["status"][1:])}. Re-entry: {e(o["re_entry_rule"])}.</p></div>')
-        ov += f"<div><p><b>Effect so far.</b> {note}</p></div>" if note else "<div></div>"
-    ov_box = f'<div class="box"><h3>Your overrides on file</h3><div class="cols3">{ov}</div></div>' if ov else ""
-    ag = float(mt.loc[mt["tier"] == "AGG", "ret"].iloc[0]); sp = float(mt.loc[mt["tier"].str.startswith("SPY"), "ret"].iloc[0])
-    lede = c.get("paper") or (f"Since the paper books went live on {since:%-d %B}, the Aggressive tier has returned {pct(ag)} against {pct(sp)} for the S&P 500. "
-                              "These are model books marked at the close, with no costs.")
-    body = (sec(9, "Paper portfolios and overrides", lede)
-            + '<h3>Model books since go-live<span class="sub">four risk tiers and the S&P 500, cumulative return</span></h3>'
-            + f'<div class="fig">{C.paper_chart(d["curves"])}</div>'
-            + '<div class="gap"></div><div class="cols2" style="grid-template-columns:4.0in minmax(0,1fr);align-items:start">'
-            + f'<div><h3>This month, holding by holding<span class="sub">{d["in_force"].title()} book, Aggressive tier</span></h3>{mtbl}</div>'
-            + f'<div><h3>All tiers</h3>{mtm}<p class="src">Live tier: Aggressive. Marked daily at the close, no costs or taxes.</p></div></div>'
-            + '<div class="gap"></div>' + ov_box
-            + '<div class="gap"></div>' + swing_box(d, f))
-    return page(n, total, "Paper portfolios", body, d)
-
-
 def page_method(d, f, c, n, total):
-    body = (sec(10, "Method and limits", "What each signal is, what has been tested, and what this report cannot tell you.")
+    body = (sec(9, "Method and limits", "What each signal is, how it was tested, and what this report cannot tell you.")
             + f'''<div class="cols2 method"><div>
 <h3>Quadrant balances</h3>
 <p><b>Cycle</b> is the 5-bar simple average of the close minus the 15-bar average. <b>Trend</b> is a Coppock curve: a 10-bar weighted average of the 14-bar and 11-bar rates of change. Each is computed on daily, weekly and monthly bars. The current week and month count as bars in progress.</p>
-<p>Quadrant 1 is below zero and rising. Quadrant 2 is above zero and rising. Quadrant 3 is above zero and falling. Quadrant 4 is below zero and falling. The names Recovering, Advancing, Rolling over and Declining are this report's labels.</p>
-<p>Member balances are the share of {d["n_members"]} current S&P 500 members in each quadrant. The formulas were recovered from a desk workbook and reproduce its 18 index codes exactly and its 24 member values within 0.4 points.</p>
+<p>Quadrant 1 is below zero and rising. Quadrant 2 is above zero and rising. Quadrant 3 is above zero and falling. Quadrant 4 is below zero and falling. This report calls them Recovering, Advancing, Rolling over and Declining.</p>
+<p>The state code gives the quadrant, the number of bars spent in it, and the number of bars spent on that side of zero. Member balances are the share of {d["n_members"]} current S&P 500 members in each quadrant.</p>
 <h3>The flag</h3>
 <p><b>Intact</b>: both S&P 500 monthly readings above zero. <b>Deteriorating</b>: one below. <b>Broken</b>: both below. <b>Washout</b>: 50% or more of members in a monthly cycle decline. The weekly stage is Early through week 3 of a decline and Mature from week 4.</p>
-<p>The monthly readings are slow. They will read Intact through any ordinary correction and through the first months of a real bear market. March 2020 began with the flag intact.</p>
+<p>The monthly readings are slow. They will read Intact through any ordinary correction and through the first months of a real bear market.</p>
 <h3>Regime model</h3>
-<p>Two dials set one of four regimes each month. Growth is on when SPY closes the month above the average of its prior nine month-end closes. Inflation is on when the commodity fund DBC does the same. Each regime maps to a fixed book per risk tier (matrix v9). Books change only at month-end.</p>
+<p>Two dials set one of four regimes each month. Growth is on when the S&P 500 fund closes the month above the average of its prior nine month-end closes. Inflation is on when a broad commodity fund does the same. The reading at month-end holds for the whole of the next month.</p>
 </div><div>
-<h3>What is adopted and what is not</h3>
-<ul><li><b>Adopted and held:</b> the regime model and its monthly books.</li>
-<li><b>Candidate, your decision:</b> the 25% stay-in. When growth is off but the flag is intact, hold 25% of the growth-on book. It raised return and Sortino in all eight tier and era cells and cost one point of drawdown in the modern era. That is a near miss under the house rule, so it is not adopted.</li>
-<li><b>Paper only:</b> the swing account on SPY and QQQ.</li>
-<li><b>Informational:</b> quadrant balances, buy triggers, commodity stretch reads. They do not trade.</li></ul>
+<h3>Technicals and stretch</h3>
+<p>Bollinger bands use a 20-day average and two standard deviations. A buy trigger is a daily close, never an intraday touch. The commodity stretch measure is the 5-day move divided by its own 60-day volatility, read against a 210-day trend line.</p>
 <h3>Evidence standard</h3>
-<p>Every figure quoted as history comes from the research log and is shown for two separate eras, 1987-2006 and 2007-2026, wherever the data allow. A rule is adopted only if every metric improves in both.</p>
+<p>Every historical figure is shown for two separate eras, 1987-2006 and 2007-2026, wherever the data allow. A result that holds in only one era is treated as unproven.</p>
 <h3>Limits</h3>
 <ul><li>Member history uses today's index constituents. Past breadth is survivorship-biased.</li>
 <li>Forward-return tables are averages over few episodes. The washout row rests on 20 months.</li>
-<li>Paper results ignore costs, taxes and slippage. Leveraged funds decay in choppy markets.</li>
+<li>Backtests ignore costs, taxes and slippage.</li>
 <li>Prices are end-of-day from Yahoo Finance and can be revised. Futures are front-month continuous contracts.</li>
 <li>Narrative text is written from the tables on these pages. Where it interprets, it says so.</li></ul>
 <h3>Disclosure</h3>
-<p>This report is produced for the personal use of one account holder. It is not investment advice, a solicitation, or a recommendation to any other person. Past results do not guarantee future results.</p>
+<p>This report is for information only. It is not investment advice, a solicitation, or a recommendation to buy or sell any security. Past results do not guarantee future results.</p>
 <p class="src">Data through the close of {d["asof"]:%A %-d %B %Y}. Built {pd.Timestamp.now(tz="UTC"):%Y-%m-%d %H:%M} UTC.</p>
 </div></div>
 <div class="gap"></div><h3>Signal register</h3>
-<table class="t tight"><tr><th class="l">Signal</th><th class="l">Question it answers</th><th class="l">Status</th><th class="l">Pages</th><th>Research log</th></tr>
-<tr><td>Regime model</td><td class="l">Which book to hold next month</td><td class="l b">Adopted, traded</td><td class="l">8, 9</td><td>matrix v9</td></tr>
-<tr><td>Quadrant balances flag</td><td class="l">Is the long cycle intact, breaking or washed out</td><td class="l">Informational</td><td class="l">1, 2, 3</td><td>tests 84, 85</td></tr>
-<tr><td>Weekly stage</td><td class="l">Is a weekly decline young or mature</td><td class="l">Informational</td><td class="l">1, 3</td><td>test 84</td></tr>
-<tr><td>25% stay-in</td><td class="l">Keep some growth exposure when the model exits and the flag is intact</td><td class="l">Candidate</td><td class="l">8</td><td>test 85</td></tr>
-<tr><td>Closing buy triggers</td><td class="l">Is a bounce likely over the next week</td><td class="l">Paper account</td><td class="l">7, 9</td><td>tests 79, 83</td></tr>
-<tr><td>Commodity stretch</td><td class="l">Has a real asset sold off hard while still in an uptrend</td><td class="l">Informational</td><td class="l">6</td><td>test 81</td></tr>
+<table class="t tight"><tr><th class="l">Signal</th><th class="l">Question it answers</th><th class="l">Horizon</th><th class="l">History used</th><th>Pages</th></tr>
+<tr><td>Regime model</td><td class="l">Which macro regime is in force</td><td class="l">Month</td><td class="l">1987-2026</td><td>8</td></tr>
+<tr><td>Quadrant balances flag</td><td class="l">Is the long cycle intact, breaking or washed out</td><td class="l">Months to years</td><td class="l">1986-2026</td><td>1, 2, 3</td></tr>
+<tr><td>Weekly stage</td><td class="l">Is a weekly decline young or mature</td><td class="l">One quarter</td><td class="l">1987-2026</td><td>1, 3</td></tr>
+<tr><td>Closing buy triggers</td><td class="l">Is a bounce likely over the next week</td><td class="l">Five days</td><td class="l">1993-2026, 1999-2026</td><td>7</td></tr>
+<tr><td>Commodity stretch</td><td class="l">Has a real asset sold off hard while still in an uptrend</td><td class="l">Five days</td><td class="l">Split by era</td><td>6</td></tr>
 </table>''')
     return page(n, total, "Method", body, d)
 
@@ -663,7 +605,7 @@ def font_css() -> str:
 def build(d: dict) -> Path:
     f = facts(d)
     c = load_commentary(d, f)
-    makers = [page_qb, page_nasdaq, page_equities, page_macro, page_commodities, page_technicals, page_model, page_paper, page_method]
+    makers = [page_qb, page_nasdaq, page_equities, page_macro, page_commodities, page_technicals, page_model, page_method]
     total = len(makers) + 1
     pages = [cover(d, f, c, total)] + [m(d, f, c, i + 2, total) for i, m in enumerate(makers)]
     css = (ROOT / "report" / "quadrant_weekly.css").read_text()

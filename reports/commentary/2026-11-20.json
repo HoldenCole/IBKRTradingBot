@@ -4,21 +4,20 @@
   "changed": [
     "<b>Stocks.</b> All 11 S&P sectors fell. Technology lost 12.5%, staples 2.0%. The Nasdaq-100 is 19.8% below its high.",
     "<b>Weekly trend turned down.</b> The S&P 500 weekly trend crossed below zero. That is week 1 of a weekly decline.",
-    "<b>Regime model flipped.</b> The S&P 500 is 5.5% below its 10-month line. December is provisionally Deflation.",
+    "<b>Regime model flipped.</b> The S&P 500 is 5.5% below its 10-month line. On today's prices December would be Deflation.",
     "<b>Liquidation tape.</b> Gold fell 8.9%, silver 16.2%, copper 10.1%. Treasuries and the dollar rose. VIX closed at 35.9."
   ],
   "watch": [
-    "<b>Month-end, 30 Nov.</b> SPY needs +5.8% to regain its 10-month line. Short of that the model moves to the Deflation book.",
+    "<b>Month-end, 30 Nov.</b> The S&P 500 fund needs +5.8% to regain its 10-month line. Short of that the regime turns to Deflation.",
     "<b>Stage of the decline.</b> Weeks 1 to 3 have been poor entries. Weeks 4 to 5 were followed by +5.3% and +4.0% over 13 weeks.",
     "<b>Monthly washout line.</b> 50% of members in a monthly cycle decline. Today 21%. Not yet the generational entry.",
-    "<b>Your QQQ exit.</b> Logged on 16 Nov as unconfirmed. QQQ has fallen 8.1% since that close."
+    "<b>Energy.</b> Energy stocks fell more than 2 sigma but hold above their 210-day line. That met the bounce rule. Crude is below its own line."
   ],
   "qb": "Three clocks, three answers. The <b>daily</b> is washed out: 77% of members are in a daily cycle decline, the most since April 2025. The <b>weekly</b> decline is young: cycle week 3, trend week 1. The <b>monthly</b> is rolling over but has stayed above zero for 43 months.",
   "nasdaq": "The same picture, one step further along: weekly trend in week 2 of a decline, monthly readings still above zero. The lower half shows what each stage has meant for the S&P 500 in two separate eras.",
   "equities": "Every sector fell and the leaders fell most. Technology lost 12.5% and sits 12.9% below its 200-day average. The equal-weight index lost 6.2% against 8.6% for the cap-weighted index, so the damage is concentrated in the largest stocks. Staples, health care, energy and financials still hold above their 200-day averages.",
-  "macro": "Money moved toward safety. The 10-year yield fell 24 bp to 4.91% and the 5-year fell 28 bp. Long Treasuries gained 2.6% and the dollar index is within 0.1% of its one-year high. Credit barely moved: high-yield bonds lost 0.8% in a week when VIX closed at 35.9. The 10-year yield is still 75 bp above where it started the year, so the model's long-bond trend filter remains off.",
+  "macro": "Money moved toward safety. The 10-year yield fell 24 bp to 4.91% and the 5-year fell 28 bp. Long Treasuries gained 2.6% and the dollar index is within 0.1% of its one-year high. Credit barely moved: high-yield bonds lost 0.8% in a week when VIX closed at 35.9. The 10-year yield is still 75 bp above where it started the year, and long Treasuries remain below their 200-day average.",
   "commodities": "This was a liquidation, not an inflation scare. Gold fell 8.9%, silver 16.2% and copper 10.1% in the same week as stocks. WTI lost 5.6% and is down 19.7% this month, though still up 45.6% on the year. Natural gas rose 17.4%. One mean-reversion rule fired: energy stocks. Oil is trading on political headlines, which a price rule cannot see.",
-  "technicals": "Every closing buy trigger we track fired on SPY, and all but one on QQQ. SPY closed <b>2.6%</b> below its lower band, its seventh straight down close, with a 2-day RSI of 0.3. Closes this deep have been followed by a higher price five days later about seven times in ten. The cost is heat: one time in twenty, the next five days saw a low 13% to 15% below the trigger close.",
-  "model": "The model holds the Reflation book through November. Both dials are now below zero, so on today's prices December would be the Deflation book. The quadrant balances flag is still Intact. Since 1987 that disagreement has more often been a whipsaw than a real exit: the S&P 500 averaged +1.7% and +3.2% in the following month across the two eras, against −0.1% and −0.4% once the monthly readings had broken.",
-  "decision": "<p><b>Option A, the model.</b> Move to the Deflation book: long Treasuries 40%, gold miners 30%, Nasdaq-100 15%, short crude 7.5%, cash-like 7.5%.</p><p><b>Option B, the candidate.</b> Keep 25% of the growth-on book. That adds 25% in 2x Nasdaq-100 and trims every other line by a quarter.</p><p><b>Two conflicts with your stated views.</b> Both books hold Nasdaq-100, which you exited on 16 Nov. Both hold short crude, and you expect energy to rally. Those are your calls, not the model's.</p>"
+  "technicals": "Every closing buy trigger tracked here fired on SPY, and all but one on QQQ. SPY closed <b>2.6%</b> below its lower band, its seventh straight down close, with a 2-day RSI of 0.3. Closes this deep have been followed by a higher price five days later about seven times in ten. The cost is heat: one time in twenty, the next five days saw a low 13% to 15% below the trigger close.",
+  "model": "Reflation is the regime in force for November. Both dials are now below zero, so on today's prices December would be Deflation. The quadrant balances flag is still Intact. Since 1987 that disagreement has more often been a whipsaw than a real exit: the S&P 500 averaged +1.7% and +3.2% in the following month across the two eras, against −0.1% and −0.4% once the monthly readings had broken."
 }

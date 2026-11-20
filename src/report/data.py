@@ -4,8 +4,6 @@ cached under research/cache/ for 12 hours so a rebuild is fast.
 """
 from __future__ import annotations
 
-import csv
-import json
 import pickle
 import time
 from datetime import date
@@ -16,10 +14,6 @@ import pandas as pd
 
 from src.data.yahoo import fetch_yahoo_daily
 from src.portfolio import trend_cycle as tc
-from src.portfolio.paper_logger import (current_allocations, load_ledger, mark_to_market,
-                                        provisional_allocations)
-from src.portfolio.matrix import TIERS, resolve_allocation
-from src.regime.quadrant import Quadrant
 
 ROOT = Path(__file__).resolve().parents[2]
 CACHE = ROOT / "research" / "cache"
@@ -37,7 +31,7 @@ MACRO = [("US 10-year yield", "^TNX", "yield"), ("US 30-year yield", "^TYX", "yi
 COMMODITIES = [("WTI crude", "CL=F"), ("Brent crude", "BZ=F"), ("Natural gas", "NG=F"), ("Gold", "GC=F"),
                ("Silver", "SI=F"), ("Copper", "HG=F"), ("Commodity index (DBC)", "DBC"),
                ("Energy equities (XLE)", "XLE"), ("Gold miners (GDX)", "GDX")]
-EXTRA = ["SPY", "QQQ", "DBC", "USO", "GLD", "ERX", "IEF", "SHY", "TMF", "SCO", "QLD", "TQQQ", "XLE", "GDX", "TLT"]
+EXTRA = ["SPY", "QQQ", "DBC", "XLE", "GDX", "TLT"]
 
 
 def _cached(name: str, builder):
@@ -165,74 +159,23 @@ def gather(verbose: bool = True) -> dict:
     d["flag"] = tc.market_flag(d["states"]["S&P 500"], d["balances"])
     d["n_members"] = len(member_daily)
 
-    # --- regime model
+    # --- regime model: the two dials only. The report is shareable research, so it reads no ledger,
+    # no allocations, no paper accounts and no overrides.
     say("regime model")
-    ledger = load_ledger()
-    month, in_force, allocs, restated = current_allocations()
-    d["ledger_month"], d["in_force"], d["allocs"] = month, in_force, allocs
-    nxt = (asof + pd.offsets.MonthBegin(1)).date()
-    pm, pq, pallocs, psig = provisional_allocations(nxt)
-    d["prov_month"], d["prov_quadrant"], d["prov_allocs"], d["prov_sig"] = pm, pq, pallocs, psig
     d["classifier"] = classifier_history(px["SPY"], px["DBC"])
-    growth_on = bool(d["classifier"]["spy"].iloc[-1] > 0)
+    cl = d["classifier"]
+    names = {(True, True): "REFLATION", (True, False): "GROWTH", (False, True): "STAGFLATION", (False, False): "DEFLATION"}
+    me = cl.groupby(cl.index.to_period("M")).last()
+    this_m = asof.to_period("M")
+    prior = me.loc[me.index < this_m].iloc[-1]
+    d["month"] = str(this_m)
+    d["in_force"] = names[(bool(prior["spy"] > 0), bool(prior["dbc"] > 0))]
+    d["prov_month"] = str(this_m + 1)
+    d["prov_quadrant"] = names[(bool(cl["spy"].iloc[-1] > 0), bool(cl["dbc"].iloc[-1] > 0))]
     d["to_boundary"] = {}
     for k, sym in (("spy", "SPY"), ("dbc", "DBC")):
-        me = px[sym].resample("ME").last().dropna()
-        d["to_boundary"][k] = float(me.iloc[-10:-1].mean() / px[sym].iloc[-1] - 1)
-    cand = {}
-    if not growth_on and d["flag"]["flag"] == "INTACT":
-        on_q = Quadrant.GROWTH if pq == "DEFLATION" else Quadrant.REFLATION
-        for t in TIERS:
-            g = resolve_allocation(t, on_q, psig["tlt_trend_up"], psig["commodity_momentum"],
-                                   breadth_washout=psig["breadth_washout"])
-            b: dict = {}
-            for k, v in pallocs[t].items():
-                b[k] = b.get(k, 0) + 0.75 * v
-            for k, v in g.items():
-                b[k] = b.get(k, 0) + 0.25 * v
-            cand[t] = dict(sorted(b.items(), key=lambda kv: -kv[1]))
-    d["candidate"] = cand
-    d["ledger"] = ledger
-
-    # paper books: equity curves per tier since inception
-    hist = set()
-    for blob in ledger.get("allocations", []):
-        for al in json.loads(blob).values():
-            hist.update(al)
-    for t in sorted(hist):
-        if t not in px:
-            try:
-                px[t] = fetch_yahoo_daily(t, rng="2y")
-            except Exception:  # noqa: BLE001
-                pass
-    frame = pd.DataFrame({t: px[t] for t in px if not t.startswith("^") and "=" not in t})
-    d["mtm"] = mark_to_market(ledger, frame)
-    rets = frame.sort_index().pct_change()
-    lg = ledger.sort_values("logged_at").reset_index(drop=True)
-    starts = [pd.Timestamp(x) for x in lg["logged_at"]]
-    curves = {}
-    for tier in TIERS:
-        parts = []
-        for i in range(len(lg)):
-            al = json.loads(lg.loc[i, "allocations"])[tier]
-            win = rets.loc[rets.index > starts[i]]
-            if i + 1 < len(lg):
-                win = win.loc[win.index <= starts[i + 1]]
-            if len(win):
-                parts.append(sum(win[a] * w for a, w in al.items()))
-        if parts:
-            curves[tier] = (1 + pd.concat(parts).dropna()).cumprod() - 1
-    curves["SPY"] = (1 + rets["SPY"].loc[rets.index > starts[0]].dropna()).cumprod() - 1
-    d["curves"] = curves
-    d["regime_months"] = [(r["month"], r["quadrant"]) for _, r in lg.iterrows()]
-
-    # swing paper account and overrides
-    def read_csv(p):
-        p = ROOT / p
-        return list(csv.DictReader(open(p))) if p.exists() else []
-    d["swing_trades"] = read_csv("paper/swing_trades.csv")
-    d["swing_daily"] = read_csv("paper/swing_daily.csv")
-    d["overrides"] = read_csv("paper/overrides.csv")
+        mclose = px[sym].resample("ME").last().dropna()
+        d["to_boundary"][k] = float(mclose.iloc[-10:-1].mean() / px[sym].iloc[-1] - 1)
     return d
 
 

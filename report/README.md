@@ -1,7 +1,12 @@
 # Quadrant Weekly
 
-A ten-page PDF built from the same data the routines log: quadrant balances, equities, macro and rates,
-energy and commodities, technicals, the regime model, the paper books and the method.
+A nine-page research PDF: quadrant balances, equities, macro and rates, energy and commodities, technicals,
+the regime model and the method.
+
+**It is written to be passed around.** It contains research and market signals only. Nothing about the
+account goes in it: no holdings, books, tiers or weights, no paper accounts, no overrides, no personal views
+or decisions. The data layer does not read the ledger or any file under `paper/`, and the commentary must
+keep to the same rule. Anything personal belongs in the chat briefing, not the PDF.
 
 ## Build
 
@@ -26,8 +31,7 @@ back to a sentence generated from the data. Inline `<b>` is allowed.
 | `deck` | cover | 3 lines, about 300 characters |
 | `changed`, `watch` | cover, lists | 4 items each, about 130 characters per item |
 | `qb`, `nasdaq` | pages 2 and 3 ledes | 3 lines and 2 lines |
-| `equities`, `macro`, `commodities`, `technicals`, `model`, `paper` | section ledes | up to 4 lines |
-| `decision` | page 8 box | three `<p>` blocks, shown as three columns |
+| `equities`, `macro`, `commodities`, `technicals`, `model` | section ledes | up to 4 lines |
 
 Every number written by hand must be checked against the tables on the same page before the PDF is sent.
 
