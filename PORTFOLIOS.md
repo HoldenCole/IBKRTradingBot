@@ -1070,3 +1070,49 @@ User request: forget the exit; which sell-off size or Bollinger condition on SPY
 | 1-day drop ≥2% (weak) | 21.8 | +0.23% | +0.63% | 56% | −4.2% | −11.9% | 3/3 |
 
 Readings. (1) The Bollinger band works best as a closing condition, and depth below the band is the dose: the bounce roughly doubles from "below" to "1% below" and again to "2% below". (2) Repeat closes below the band are better entries than the first one — the first is often the start of the move. (3) Multi-day sell-offs beat single-day drops, especially for QQQ, where one-day falls of 2-4% carry almost no extra information. (4) Volatility-scaled 5-day drops and down-day streaks give similar returns with less heat than raw percentage triggers. (5) Intraday triggers have no same-day bounce: buying 1%, 2%, 3% or 4% below yesterday's close returns 0.0-0.3% to that day's close in SPY and QQQ, the hourly band touch returns 0.00%, and "2-3% off the day's high" closes lower than the fill more often than not; the gain comes on days 1-5. Waiting for the close costs nothing on average. The one intraday trigger with a same-day bounce in every era is SPY trading 3% below its own open (+0.86% to the close). (6) Triggers that are not triggers: closing back above the band (+0.17% / +0.13%), QQQ gap-downs, one-day sigma shocks. (7) Every trigger takes heat first: the average worst low over the next five days is 2-6% below the fill and one case in twenty is 8-16% below, which is the arithmetic behind the stop results in entry 80.
+
+## Trend & Cycle / Quadrant Balances — the real tool, rebuilt from the user's workbook (2026-11-21, entry 84)
+
+The user pointed out that my "fragile" flag and four-phase snapshot were not their old desk's tool, and supplied an Optuma workbook (dated 2026-11-20). It shows what entries 53-55 only approximated. Code: `src/portfolio/trend_cycle.py` (module + CLI + weekly log `paper/trend_cycle.csv`), `tests/test_trend_cycle.py`, `research/trend_cycle/study_states.py`.
+
+**What it is.** Two oscillators computed on daily, weekly and monthly bars (the in-progress bar counts):
+
+- **Cycle** (the workbook's "D", series DAS/DAL): 5-bar SMA minus 15-bar SMA of the close.
+- **Trend** (the workbook's "T", series TPL): the Coppock curve, a 10-bar weighted average of (14-bar ROC + 11-bar ROC).
+
+Each is in one of four quadrants — Q1 below zero and rising, Q2 above zero and rising, Q3 above zero and falling, Q4 below zero and falling. The header code is Q-CC-NN: quadrant, bars spent in that quadrant (01 = it just started), bars spent on that side of zero. **Quadrant Balances** are the percentage of an index's members in each quadrant, per oscillator and bar size, plus Q1+Q2 (the share rising).
+
+**Verification.** The formulas were recovered by fitting the 18 header codes in the workbook (S&P 500 and Nasdaq-100; daily/weekly/monthly; 2026-08-21 and 2026-11-20). Trend = standard Coppock matched 6 of 6 at once. Cycle = SMA5 − SMA15 was the only one of 25,710 candidate oscillators to match all 12. The member balances, recomputed from ~499 current S&P members as of the workbook's breadth date (Nov 19), match all 24 printed values within 0.4pp.
+
+**Reading at the Nov 20 close.**
+
+| | S&P 500 cycle | S&P 500 trend | Nasdaq-100 cycle | Nasdaq-100 trend |
+|---|---|---|---|---|
+| daily | 4-05-25 | 4-05-22 | 4-03-28 | 4-05-26 |
+| weekly | 4-03-03 | 4-01-01 | 4-03-03 | 4-02-02 |
+| monthly | 3-03-43 | 3-04-40 | 3-02-43 | 3-05-41 |
+
+S&P members in Q4 (declining), Nov 19 → Nov 20: daily cycle 58% → 77%, daily trend 31% → 41%, weekly cycle 23% → 28%, weekly trend 33% → 37%, monthly 19% → 21% and 17% → 18%.
+
+**What the stage count has meant (S&P 500, weekly bars, 1987-2006 / 2007-2026).** Baseline any week: next 4 weeks +0.7% / +0.8%, next 13 weeks +2.3% / +2.5%.
+
+| Weekly decline (Q4), by weeks in it | Cycle: next 4w | Cycle: next 13w | Trend: next 4w | Trend: next 13w |
+|---|---|---|---|---|
+| 01 | +1.0% / −0.3% | +1.6% / +2.4% | +0.2% / −0.2% | +1.0% / +1.2% |
+| 02 | +0.9% / −0.5% | +2.0% / +2.6% | −0.5% / +3.4% | +1.3% / +4.5% |
+| 03 | +1.3% / +1.1% | +2.8% / +4.4% | −0.9% / +3.6% | +1.4% / +5.6% |
+| 04-05 | +0.4% / +2.4% | +3.7% / +4.5% | +1.0% / +2.6% | +5.3% / +4.0% |
+| 06-08 | +3.5% / +4.8% | +5.7% / +9.6% | +2.9% / +2.3% | +5.6% / +2.5% |
+
+A weekly cycle decline lasts a median 3 weeks (90th percentile 7); a weekly trend decline a median 5 (90th percentile 9). When the weekly trend first turns down while the monthly oscillators are still positive (45 episodes since 1986), it then stays below zero a median 12 weeks, the next 4 weeks average +0.6%, the next 13 weeks +3.3% (70% positive), with an average further low of −5.6%.
+
+**The monthly state is the discriminator.** Weeks with weekly cycle and trend both in Q4:
+
+| | n (old / modern) | next 4w | next 13w | up at 13w | worst 13w |
+|---|---|---|---|---|---|
+| both monthly oscillators above zero | 65 / 68 | +1.5% / +2.7% | +4.6% / +7.0% | 80% / 81% | −10% / −10% |
+| a monthly oscillator below zero | 33 / 21 | −1.1% / +3.7% | −0.8% / +1.1% | 61% / 52% | −21% / −30% |
+
+**How this corrects the Nov 20 briefing.** That briefing leaned on short-horizon bounce statistics and the old snapshot's "48% in the crash phase" and called the setup capitulation. The real tool says something more specific: on the weekly scale the decline is young (trend week 1, cycle week 3), which is the stage with the weakest forward month in both eras; the monthly oscillators are still above zero (43 and 40 months) but have been falling for 3-4 months, which is the condition under which weekly declines have historically resolved higher over the following quarter. Both statements hold: an oversold bounce is likely, and the weekly down-leg is not statistically mature.
+
+**Status.** Informational dashboard only — same standing as the shadow classifier and fragility shadow. Logged weekly to `paper/trend_cycle.csv` and reported in the Saturday briefing. The August proxy (`sp500_balance` in the ledger) keeps being logged for continuity but is superseded for interpretation. Open items: Nasdaq-100 and sector member balances (need constituent lists); a history of member balances (needs point-in-time constituents to avoid survivorship); testing whether stage counts improve the swing account's entries (entry 79) — the obvious next experiment, since "skip week 01-02 of a weekly decline" is exactly the kind of filter that account lacks.
