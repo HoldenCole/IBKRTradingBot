@@ -71,6 +71,10 @@ Requirements: Linux, Java 17+, Python 3.11+, ~2GB RAM.
 # Read-only; trades nothing. Logs to paper/watch.csv + paper/weekly.csv.
 0 8 * * 6  cd /home/bot/IBKRTradingBot && python -m src.portfolio.weekly_review --tier AGG --balance >> logs/weekly.log 2>&1
 
+# Quadrant Balances (TESTS.md entries 84-85): daily/weekly/monthly state codes,
+# S&P member balances and the market flag. A reading only; places no orders.
+35 16 * * 1-5  cd /home/bot/IBKRTradingBot && python -m src.portfolio.trend_cycle --members --log >> logs/quadrant_balances.log 2>&1
+
 # Standalone swing PAPER account (TESTS.md entry 79) — separate from the
 # rotation book; logs signals and paper trades only, places no orders.
 40 16 * * 1-5  cd /home/bot/IBKRTradingBot && python -m src.portfolio.swing_logger >> logs/swing.log 2>&1

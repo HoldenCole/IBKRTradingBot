@@ -1,4 +1,4 @@
-"""Trend & Cycle state codes and Quadrant Balances — INFORMATIONAL ONLY.
+"""QUADRANT BALANCES (trend & cycle state codes + member balances) — a FLAG, never an order.
 
 Rebuilt 2026-11-21 from the user's Optuma workbook (the tool their former
 desk called "trend and cycle / quadrant balances"). Reverse-engineered from
@@ -26,6 +26,25 @@ bars, below zero for 25.
 Quadrant Balances = the share of an index's MEMBERS in each quadrant, per
 oscillator and bar size (workbook codes like SPX.DAL.W.Q4), plus Q1+Q2 (the
 share that is rising).
+
+MARKET FLAG (TESTS.md entries 84-85) — one reading from the three bar sizes:
+
+  WASHOUT       >= 50% of members in monthly cycle Q4. S&P next 12 months
+                +17% / +21% in the two eras; 2008 fired early (-28% first).
+  BROKEN        index monthly cycle AND trend below zero. Regime exits in
+                this state were real in both eras (S&P next month -0.1% / -0.4%).
+  DETERIORATING one monthly oscillator below zero.
+  INTACT        both monthly oscillators above zero; qualified by the weekly
+                stage: decline EARLY (weeks 1-3: poor entries), decline MATURE
+                (week 4+: the favourable window), or no weekly decline.
+
+Tie-in to the regime classifier: when the classifier turns growth OFF while
+the flag is INTACT, the exit was a whipsaw more often than not in both eras
+(S&P next month +1.7% / +3.2%). The tested candidate — hold 25% of the
+risk-on book alongside 75% of the defensive book in those months — raised
+CAGR and Sortino in all eight tier-era cells and cost ~1pp of max drawdown
+in the modern era (March 2020). It is a CANDIDATE: reported every run,
+adopted only on the user's decision.
 
 Nothing here feeds the ledger, the matrix, or any order.
 
@@ -201,14 +220,112 @@ def log_row(out: dict, path: Path = LOG_PATH) -> dict:
             r = (bal.get(tf) or {}).get(m) or {}
             for q in ("q1", "q2", "q3", "q4"):
                 row[f"bal_{tf}_{m}_{q}"] = r.get(q, "")
+    row["flag"] = (out.get("reading") or {}).get("flag", "")
+    row["weekly_stage"] = (out.get("reading") or {}).get("weekly_stage", "")
     path.parent.mkdir(parents=True, exist_ok=True)
-    new = not path.exists()
-    with path.open("a", newline="") as fh:
-        w = csv.DictWriter(fh, fieldnames=list(row))
-        if new:
-            w.writeheader()
-        w.writerow(row)
+    fields, existing = list(row), []
+    if path.exists():
+        with path.open() as fh:
+            reader = csv.DictReader(fh)
+            old_fields = reader.fieldnames or []
+            existing = list(reader)
+        if any(r.get("date") == row["date"] for r in existing):
+            return row                      # one row per price date
+        fields = list(old_fields) + [f for f in fields if f not in old_fields]
+    with path.open("w", newline="") as fh:
+        w = csv.DictWriter(fh, fieldnames=fields)
+        w.writeheader()
+        for r in existing:
+            w.writerow({k: r.get(k, "") for k in fields})
+        w.writerow({k: row.get(k, "") for k in fields})
     return row
+
+
+WASHOUT_Q4 = 50.0          # % of members in monthly cycle Q4
+EARLY_WEEKS = 3            # a weekly decline is "early" through this count
+
+
+def market_flag(spx: dict, balances: dict | None) -> dict:
+    """The quadrant-balance market flag from the S&P 500 states (and member balances when available)."""
+    mc, mt = spx["M"]["cycle"], spx["M"]["trend"]
+    wc, wt = spx["W"]["cycle"], spx["W"]["trend"]
+    above = [st.quadrant in (2, 3) for st in (mc, mt)]
+    m_q4 = ((balances or {}).get("M") or {}).get("cycle", {}).get("q4")
+    declines = [st.in_quadrant for st in (wc, wt) if st.quadrant == 4]
+    if not declines:
+        stage = "no weekly decline"
+    elif max(declines) <= EARLY_WEEKS:
+        stage = "weekly decline EARLY"
+    else:
+        stage = "weekly decline MATURE"
+    if m_q4 is not None and m_q4 >= WASHOUT_Q4:
+        flag = "WASHOUT"
+    elif not any(above):
+        flag = "BROKEN"
+    elif not all(above):
+        flag = "DETERIORATING"
+    else:
+        flag = "INTACT"
+    return {"flag": flag, "weekly_stage": stage, "monthly_above_zero": all(above), "monthly_q4_share": m_q4}
+
+
+FLAG_TEXT = {
+    "WASHOUT": "Monthly washout: at least half the index is in a monthly decline. Historically the best long-horizon entry "
+               "(S&P +17% / +21% over the next 12 months in the two eras), but 2008 shows it can fire many months early.",
+    "BROKEN": "Monthly trend broken: both monthly readings are below zero. Regime exits in this state were real in both eras.",
+    "DETERIORATING": "Monthly trend deteriorating: one monthly reading is below zero.",
+    "INTACT": "Monthly trend intact: both monthly readings are above zero.",
+}
+STAGE_TEXT = {
+    "weekly decline EARLY": "The weekly decline is early (weeks 1-3), historically a poor entry point.",
+    "weekly decline MATURE": "The weekly decline is mature (week 4 or later), historically the favourable entry window.",
+    "no weekly decline": "No weekly decline is in force.",
+}
+
+
+def regime_growth_on() -> tuple[bool | None, bool | None]:
+    """The classifier's two dials at the latest close (SPY and DBC vs their 10-month lines)."""
+    from datetime import timedelta
+
+    from src.data.yahoo import fetch_yahoo_daily
+    from src.portfolio.watch import boundary
+    try:
+        spy, dbc = fetch_yahoo_daily("SPY", rng="2y"), fetch_yahoo_daily("DBC", rng="2y")
+        after = (spy.index[-1] + timedelta(days=1)).date()
+        return boundary(spy, after)[2] > 0, boundary(dbc, after)[2] > 0
+    except Exception:  # noqa: BLE001
+        return None, None
+
+
+def print_reading(out: dict) -> dict:
+    spx = out["indices"]["S&P 500"]; bal = out.get("balances")
+    r = market_flag(spx, bal)
+    growth_on, infl_on = regime_growth_on()
+    r["classifier_growth_on"] = growth_on
+    print(f"\nQUADRANT BALANCES FLAG: {r['flag']} — {r['weekly_stage']}")
+    print(f"   {FLAG_TEXT[r['flag']]} {STAGE_TEXT[r['weekly_stage']]}")
+    for tf, name in TIMEFRAMES.items():
+        c, t = spx[tf]["cycle"], spx[tf]["trend"]
+        line = f"   {name:8s} cycle {c.quadrant}-{c.in_quadrant:02d}-{c.on_side:02d}, trend {t.quadrant}-{t.in_quadrant:02d}-{t.on_side:02d}"
+        if bal:
+            line += (f"; members declining (Q4) {bal[tf]['cycle']['q4']:.0f}% cycle / {bal[tf]['trend']['q4']:.0f}% trend, "
+                     f"rising (Q1+Q2) {bal[tf]['cycle']['q1q2']:.0f}% / {bal[tf]['trend']['q1q2']:.0f}%")
+        print(line)
+    if growth_on is not None:
+        if growth_on and r["flag"] in ("INTACT", "DETERIORATING"):
+            verdict = "Regime model: growth ON. Quadrant balances agree."
+        elif growth_on:
+            verdict = f"Regime model: growth ON, but quadrant balances read {r['flag']}."
+        elif r["flag"] == "INTACT":
+            verdict = ("DISAGREEMENT: the regime model has growth OFF while the monthly quadrant balances are intact. In both eras "
+                       "these exits were whipsaws more often than not (S&P next month +1.7% / +3.2%). Candidate tie-in: hold 25% of "
+                       "the risk-on book with 75% of the defensive book.")
+        else:
+            verdict = f"Regime model: growth OFF. Quadrant balances read {r['flag']} — they agree the exit is real."
+        r["verdict"] = verdict
+        print(f"   {verdict}")
+    out["reading"] = r
+    return r
 
 
 def report(with_members: bool = False) -> dict:
@@ -233,6 +350,7 @@ def report(with_members: bool = False) -> dict:
                 for m in MEASURES:
                     r = bal[tf][m]
                     print(f"   {name:8s} {m:5s}  Q1 {r['q1']:5.1f}  Q2 {r['q2']:5.1f}  Q3 {r['q3']:5.1f}  Q4 {r['q4']:5.1f}   rising (Q1+Q2) {r['q1q2']:5.1f}")
+    print_reading(out)
     return out
 
 

@@ -5,7 +5,7 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
-from src.portfolio.trend_cycle import State, cycle, quadrant_balances, quadrants, state, state_history, to_bars, trend
+from src.portfolio.trend_cycle import State, cycle, market_flag, quadrant_balances, quadrants, state, state_history, to_bars, trend
 
 
 def osc(vals):
@@ -60,3 +60,24 @@ def test_balances_sum_to_100_and_q1q2_is_the_rising_share():
             assert abs(r["q1"] + r["q2"] + r["q3"] + r["q4"] - 100) < 0.05
             assert abs(r["q1q2"] - (r["q1"] + r["q2"])) < 0.02 and r["n"] == 60
     assert quadrant_balances({k: members[k] for k in list(members)[:10]}) is None
+
+
+def _spx(mc, mt, wc, wt):
+    S = lambda q, c=1: State(q, c, c)
+    return {"D": {"cycle": S(4), "trend": S(4)}, "W": {"cycle": wc, "trend": wt}, "M": {"cycle": S(mc), "trend": S(mt)}}
+
+
+def test_market_flag_states():
+    S = lambda q, c=1: State(q, c, c)
+    # monthly intact, weekly decline in week 3 and week 1 -> INTACT / early   (the 2026-11-20 reading)
+    f = market_flag(_spx(3, 3, S(4, 3), S(4, 1)), {"M": {"cycle": {"q4": 20.6}}})
+    assert (f["flag"], f["weekly_stage"]) == ("INTACT", "weekly decline EARLY")
+    # week 5 of a weekly decline -> mature
+    assert market_flag(_spx(3, 2, S(4, 5), S(1, 2)), None)["weekly_stage"] == "weekly decline MATURE"
+    assert market_flag(_spx(2, 2, S(2, 4), S(3, 2)), None) == {"flag": "INTACT", "weekly_stage": "no weekly decline",
+                                                               "monthly_above_zero": True, "monthly_q4_share": None}
+    # one / both monthly readings below zero
+    assert market_flag(_spx(4, 3, S(4, 2), S(4, 2)), None)["flag"] == "DETERIORATING"
+    assert market_flag(_spx(4, 1, S(4, 2), S(4, 2)), None)["flag"] == "BROKEN"
+    # half the members in a monthly cycle decline -> washout, whatever the index says
+    assert market_flag(_spx(4, 4, S(4, 6), S(4, 6)), {"M": {"cycle": {"q4": 53.0}}})["flag"] == "WASHOUT"

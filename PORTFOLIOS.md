@@ -1116,3 +1116,57 @@ A weekly cycle decline lasts a median 3 weeks (90th percentile 7); a weekly tren
 **How this corrects the Nov 20 briefing.** That briefing leaned on short-horizon bounce statistics and the old snapshot's "48% in the crash phase" and called the setup capitulation. The real tool says something more specific: on the weekly scale the decline is young (trend week 1, cycle week 3), which is the stage with the weakest forward month in both eras; the monthly oscillators are still above zero (43 and 40 months) but have been falling for 3-4 months, which is the condition under which weekly declines have historically resolved higher over the following quarter. Both statements hold: an oversold bounce is likely, and the weekly down-leg is not statistically mature.
 
 **Status.** Informational dashboard only — same standing as the shadow classifier and fragility shadow. Logged weekly to `paper/trend_cycle.csv` and reported in the Saturday briefing. The August proxy (`sp500_balance` in the ledger) keeps being logged for continuity but is superseded for interpretation. Open items: Nasdaq-100 and sector member balances (need constituent lists); a history of member balances (needs point-in-time constituents to avoid survivorship); testing whether stage counts improve the swing account's entries (entry 79) — the obvious next experiment, since "skip week 01-02 of a weekly decline" is exactly the kind of filter that account lacks.
+
+## Quadrant Balances as an in/out flag, and how it ties to the regime switch (2026-11-21, entry 85)
+
+User request: name the tool Quadrant Balances, run it daily, make it one of the main in/out flags, find the best way to tie it to the regime classifier, and test it on the present. Thesis offered: a monthly washout is a generational buying opportunity. Code: `research/trend_cycle/{data,signals,study_integration,study_integration2}.py`; flag logic in `src/portfolio/trend_cycle.py` (`market_flag`).
+
+**Data.** S&P 500 index codes on monthly bars back to 1986 (exact). Member balances from the monthly closes of today's 503 constituents (201 with data in 1986, 396 by 2007): survivorship-biased, so past washouts are understated if anything.
+
+**The washout thesis.** Baseline S&P, any month: next 12 months +9.7% / +10.1% (1987-2006 / 2007-2026).
+
+| members in a monthly cycle decline (Q4) | n | next 6m | next 12m | next 24m | 12m positive |
+|---|---|---|---|---|---|
+| under 10% | 72 / 93 | +5.3% / +5.4% | +9.8% / +10.2% | +26.6% / +17.6% | 86% / 81% |
+| 30-40% | 13 / 16 | +3.7% / +7.9% | +7.4% / +13.7% | +25.3% / +32.0% | 69% / 88% |
+| 40-50% | 13 / 12 | +10.3% / −3.3% | +13.4% / −1.2% | +14.4% / +21.7% | 69% / 67% |
+| **50% or more** | 7 / 13 | **+9.5% / +8.8%** | **+17.5% / +21.4%** | **+33.0% / +39.2%** | 100% / 92% |
+
+True in both eras at the extreme. The zone just below it is treacherous in the modern era because 2008 passed through it on the way down. Episodes where the member trend-Q4 share first reached 45%: April 1988 (+18.5% next 12 months), January 2003 (+32.2%), June 2008 (−28.2%, further low −42.6%, the share then rose to 89%), September 2022 (+19.6%, +86.5% over 36 months). Three generational entries and one that was nine months early.
+
+**Tie-in rules tested** (each overrides the classifier's growth dial at the monthly stamp; the unchanged matrix resolves the book). CAGR change vs v9, modern / pre-2007:
+
+| rule | CONS | MOD | AGG | VAGG | drawdown effect |
+|---|---|---|---|---|---|
+| QB-out (both monthly readings below zero → growth off) | −0.2 / −0.1 | −0.5 / +0.1 | −1.2 / −1.3 | −2.0 / −2.0 | none |
+| QB-only dial (growth = monthly trend above zero) | +0.3 / −0.1 | 0.0 / −0.5 | +1.7 / −3.2 | +2.7 / −5.9 | much worse |
+| Full stay-in (growth off but both monthly above zero → stay on) | +0.9 / +0.5 | +1.5 / +0.9 | +5.0 / +2.4 | +8.0 / +2.3 | modern AGG −33→−52% |
+| Washout-buy (≥50% members in monthly Q4) | +0.1 / +0.1 | +0.1 / +0.4 | −1.6 / +1.3 | −2.9 / +3.2 | modern AGG −33→−51% |
+| Washout + turn (washout in last 6m and index cycle rising) | −0.2 / −0.2 | −0.2 / −0.1 | +1.1 / 0.0 | +1.7 / +0.1 | ≈ none |
+| Turn-buy (index monthly cycle Q1) | −0.1 / −0.4 | 0.0 / −2.4 | +1.9 / −6.3 | +2.8 / −9.9 | era flip |
+| Early-out (trend falling, ≥30% members trend Q4) | −0.2 / +0.6 | −0.5 / +0.5 | −2.2 / +0.1 | −3.3 / +0.4 | era flip |
+| **Partial stay-in 25%** | **+0.3 / +0.1** | **+0.4 / +0.3** | **+1.6 / +0.7** | **+2.9 / +0.9** | **modern −1pp; pre-2007 equal or better** |
+| Partial stay-in 50% | +0.5 / +0.3 | +0.8 / +0.5 | +3.0 / +1.4 | +5.2 / +1.5 | modern AGG −33→−38% |
+
+**The finding that matters.** Months when the classifier had growth OFF, split by the monthly quadrant-balance state at that month-end:
+
+| | n (modern / old) | S&P next month | positive | AGG as held | AGG if kept growth-on | worst month if kept on |
+|---|---|---|---|---|---|---|
+| both monthly readings above zero | 20 / 19 | **+3.2% / +1.7%** | 70% / 74% | +2.9% / +1.6% | +7.8% / +4.2% | −20.0% / −7.3% |
+| a monthly reading below zero | 29 / 37 | −0.4% / −0.1% | 55% / 54% | +2.1% / +1.0% | +0.7% / −2.2% | −32.4% / −47.4% |
+
+The classifier's exits are whipsaws more often than not while the monthly quadrant balances are intact, and are real once they break — in both eras. Acting on that fully costs tail risk (March 2020 began with the monthly readings intact). A 25% stay-in keeps most of the benefit per unit of added risk: CAGR and Sortino improve in all eight tier-era cells (modern Sortino CONS 1.54→1.59, MOD 1.65→1.69, AGG 1.35→1.43, VAGG 1.14→1.24), max drawdown is equal or better pre-2007 and 1pp worse in each modern tier. Under the house rule (all metrics, both eras) it is a near miss, so it is a CANDIDATE, not adopted.
+
+**The flag** (computed on every run, logged in `paper/trend_cycle.csv`): WASHOUT (≥50% of members in a monthly cycle decline), BROKEN (both index monthly readings below zero), DETERIORATING (one below), INTACT (both above), qualified by the weekly stage — decline EARLY (weeks 1-3), decline MATURE (week 4+), or none (entry 84) — and compared with the classifier's growth dial.
+
+**Tested on the present (close of 2026-11-20).**
+
+| bars | S&P cycle | S&P trend | members declining (cycle / trend) | members rising |
+|---|---|---|---|---|
+| daily | 4-05-25 | 4-05-22 | 77% / 41% | 6% / 16% |
+| weekly | 4-03-03 | 4-01-01 | 28% / 37% | 53% / 38% |
+| monthly | 3-03-43 | 3-04-40 | 21% / 18% | 45% / 40% |
+
+Flag: INTACT, weekly decline EARLY. The daily is washed out, the weekly decline is young, and the monthly is nowhere near a washout — 21% against a 50% line, around the 70th percentile of its own history. On the user's own thesis this is not yet the generational entry; if something larger is under way, the monthly has a long way to deteriorate first. The classifier is provisionally DEFLATION for December while the flag is INTACT: the disagreement state above. Candidate December AGG book (75% defensive + 25% growth-on): QLD 25, GDX 22.5, TLT 18.75, TMF 11.25, QQQ 11.25, SCO 5.6, SHY 5.6, against the model's TLT 25 / TMF 15 / GDX 30 / QQQ 15 / SCO 7.5 / SHY 7.5.
+
+**Limits.** The monthly readings are slow: the monthly cycle would need the S&P near 5,500 at December's close (−20%) to turn negative, and the monthly trend far lower, so INTACT will persist through any ordinary correction and through the first months of a real bear market. Sixteen variants were tried; the partial stay-in is a refinement chosen after seeing the full stay-in's drawdown. Member history is survivorship-biased.
