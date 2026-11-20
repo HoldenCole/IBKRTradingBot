@@ -181,6 +181,22 @@ def fetch_close(symbol: str, rng: str = "5y") -> pd.Series:
     return _closes(_result(_get_json(url), symbol), symbol, "1d", adjusted=False)
 
 
+def fetch_bars(symbol: str, interval: str = "1mo", start: str = "1984-01-01") -> pd.Series:
+    """UNADJUSTED closes at a native bar size over an explicit window (monthly bars are stamped at month end)."""
+    from datetime import datetime, timezone
+
+    from src.data.yahoo import _CHART, _closes, _get_json, _result
+
+    p1 = int(pd.Timestamp(start, tz="UTC").timestamp())
+    p2 = int(datetime.now(tz=timezone.utc).timestamp())
+    url = f"{_CHART.format(symbol=symbol)}?period1={p1}&period2={p2}&interval={interval}"
+    s = _closes(_result(_get_json(url), symbol), symbol, interval, adjusted=False)
+    if interval == "1mo":
+        s.index = s.index.to_period("M").to_timestamp("M")
+        s = s[~s.index.duplicated(keep="last")]
+    return s
+
+
 def fetch_sp500_members() -> list[str]:
     import urllib.request
 

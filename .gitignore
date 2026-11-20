@@ -12,3 +12,4 @@ build/
 dist/
 research/cache/
 research/docs/node_modules/
+reports/.build/

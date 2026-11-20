@@ -122,3 +122,13 @@ which is the failure mode silent automation actually has.
 - Reading the monthly summary — know what your money is doing.
 - Tier changes, matrix version changes, and the annual glide-path
   review: the executor executes; it never decides policy.
+
+## Weekly PDF report
+
+`python3 -m src.report.build` writes `reports/Quadrant_Weekly_YYYY-MM-DD.pdf`
+(ten pages: cover with the quadrant-balances signal board, S&P 500 and
+Nasdaq-100 quadrant charts, equities, macro and rates, energy and
+commodities, technicals, the regime model, paper books and overrides,
+method). It reads the ledger and paper logs and never writes to them.
+The Saturday routine writes that week's commentary file, builds the PDF,
+checks every page, commits it and sends it. Details: `report/README.md`.
