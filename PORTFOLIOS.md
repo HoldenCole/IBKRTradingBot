@@ -1237,7 +1237,7 @@ User request: find when the tool indicates a buy and a sell, on two levels — t
 | SELL trend crosses below zero (→Q4) | 10 / 3 / 3 | +7.3% / thin / thin (3 months: −2.8%) | 70% | −11.3% |
 | SELL both below zero and falling, first month | 15 / 4 / 5 | +15.3% / −4.4% / +3.0% (6 months: +1.3 / +2.9 / −6.4%) | 87% / 25% / 60% | −10.5% / −13.8% / −16.9% |
 
-**Against the 13 bear markets (20% moves on daily closes).** Monthly trend turning up caught 11 of 13 lows, a median 4 months and 18% after the low (missed: 1987 and 2020, both too fast). Monthly cycle back above zero caught 11, a median 8 months and 28% after. On the way down: a roll-over into Q3 appears within 2 months of 8-10 of the 13 tops — and 60-85 other times. The trend crossing below zero caught 8 tops a median 9.5 months and 12% late.
+**Against the 13 bear markets (20% moves on daily closes).** Monthly trend turning up caught 11 of 13 lows, a median 4 months and 18% after the low (missed: the interim low of November 2008, whose final low in March 2009 was caught, and March 2020, which was too fast; the 1987 low was caught nine months late). Monthly cycle back above zero caught 11, a median 8 months and 28% after. On the way down: a roll-over into Q3 appears within 2 months of 8-10 of the 13 tops — and 60-85 other times. The trend crossing below zero caught 8 tops a median 9.5 months and 12% late.
 
 Monthly trend turns up: 1954-01, 1957-07, 1958-04, 1960-12, 1963-01, 1967-01, 1970-08, 1975-01, 1978-04, 1982-08, 1984-12, 1988-09, 1991-02, 2001-12, 2002-11, 2003-04, 2009-05, 2016-05, 2023-03. Monthly trend crosses below zero: 1953-09, 1957-05, 1960-07, 1962-07, 1966-08, 1969-10, 1973-09, 1977-08, 1982-01, 1984-09, 1988-04, 1990-11, 2001-02, 2008-05, 2016-02, 2022-09.
 
