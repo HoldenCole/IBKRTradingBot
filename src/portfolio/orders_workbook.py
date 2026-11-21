@@ -7,6 +7,9 @@ One command regenerates the workbook from the latest ledger row:
 The user then opens it, picks the risk tier, types the account value and
 current holdings, and reads off dollar amounts to trade (IBKR order
 entry accepts dollar amounts directly with fractional shares enabled).
+The file never carries an account value of its own: the cell is left
+empty, the weights always show, and the dollar columns stay blank until
+a value is typed in.
 The workbook embeds the CURRENT month's resolved weights — regenerate it
 each month after the ledger row lands; the screener's output IS the
 Data sheet. Interim tool while the automated executor is staged
@@ -172,7 +175,7 @@ def _write_watch_sheet(wb, include_mtm: bool) -> None:
 
 def build(ledger_path: Path = LEDGER_PATH, out_path: Path = OUT_PATH,
           default_tier: str = "VAGG", include_mtm: bool = True,
-          provisional: "str | None" = None, equity: float = 11000.0) -> Path:
+          provisional: "str | None" = None, equity: "float | None" = None) -> Path:
     if provisional:
         from datetime import date as _date
         nxt = (_date.today().replace(day=1) + __import__("datetime").timedelta(days=32)).replace(day=1)
@@ -218,9 +221,10 @@ def build(ledger_path: Path = LEDGER_PATH, out_path: Path = OUT_PATH,
                 '"  —  regenerate monthly: python -m src.portfolio.orders_workbook"')
     ws["A2"].font = GREEN
     ws.merge_cells("A3:I3")
-    ws["A3"] = ("YELLOW cells are yours: pick the tier, enter total account value, list "
+    ws["A3"] = ("YELLOW cells are yours: pick the tier, type your total account value, list "
                 "current holdings (example rows below show the format — overwrite the 0s). "
-                "Everything else computes. Trade the SELL ALL rows first, then the book.")
+                "Weights always show; dollar columns fill in once an account value is entered. "
+                "Trade the SELL ALL rows first, then the book.")
     ws["A3"].font = _font(9, color="595959")
 
     ws["A5"] = "Risk tier"
@@ -231,9 +235,9 @@ def build(ledger_path: Path = LEDGER_PATH, out_path: Path = OUT_PATH,
     dv.add(ws["C5"])
     ws["A6"] = "Total account value ($)"
     ws["A6"].font = _font(10, bold=True)
-    ws["C6"] = equity  # user input: cash + market value of rotation positions
+    ws["C6"] = equity  # user input, EMPTY by default: no account value is stored in the file
     ws["C6"].number_format = CUR
-    ws["A7"] = "= settled cash + market value of current rotation positions"
+    ws["A7"] = "Settled cash plus the market value of current rotation positions"   # no leading "=": Excel would read it as a formula
     ws["A7"].font = _font(8, color="595959")
     for c in ("C5", "C6"):
         ws[c].fill = YELLOW
@@ -286,16 +290,16 @@ def build(ledger_path: Path = LEDGER_PATH, out_path: Path = OUT_PATH,
             f'=IF(INDEX(Data!$A:$A,{idx})=0,"",INDEX(Data!$A:$A,{idx}))')
         ws.cell(row=r, column=5).value = f'=IF($D{r}="","",INDEX(Data!$B:$B,{idx}))'
         ws.cell(row=r, column=5).number_format = "0.00%"
-        ws.cell(row=r, column=6).value = f'=IF($D{r}="","",ROUND(E{r}*$C$6,0))'
+        ws.cell(row=r, column=6).value = f'=IF(OR($D{r}="",$C$6=""),"",ROUND(E{r}*$C$6,0))'
         ws.cell(row=r, column=6).number_format = CUR
         ws.cell(row=r, column=7).value = (
             f'=IF($D{r}="","",SUMIF($A$12:$A$21,$D{r},$B$12:$B$21))')
         ws.cell(row=r, column=7).number_format = CUR
         ws.cell(row=r, column=8).value = (
-            f'=IF($D{r}="","",IF(F{r}-G{r}>0,"BUY",'
+            f'=IF(OR($D{r}="",$C$6=""),"",IF(F{r}-G{r}>0,"BUY",'
             f'IF((G{r}-F{r})/$C$6>0.05,"SELL","HOLD")))')
         ws.cell(row=r, column=9).value = (
-            f'=IF($D{r}="","",IF(H{r}="BUY",F{r}-G{r},'
+            f'=IF(OR($D{r}="",$C$6=""),"",IF(H{r}="BUY",F{r}-G{r},'
             f'IF(H{r}="SELL",-(G{r}-F{r}),0)))')
         ws.cell(row=r, column=9).number_format = CUR_SIGNED
         for col in range(4, 10):
@@ -314,7 +318,7 @@ def build(ledger_path: Path = LEDGER_PATH, out_path: Path = OUT_PATH,
     ws["C23"].number_format = CUR
     ws["A24"] = "Cash remainder after all trades"
     ws["A24"].font = _font(10)
-    ws["C24"] = "=$C$6-SUM(F12:F19)"
+    ws["C24"] = '=IF($C$6="","",$C$6-SUM(F12:F19))'
     ws["C24"].number_format = CUR
     ws["A26"] = ("Execution: sells first (SELL ALL rows, then book SELLs), then buys. Limit "
                  "orders near the midpoint; IBKR order entry accepts these dollar amounts "
@@ -347,7 +351,8 @@ if __name__ == "__main__":
     ap.add_argument("--tier", default="VAGG", choices=TIERS,
                     help="tier pre-selected in the sheet (dropdown stays editable)")
     ap.add_argument("--no-mtm", action="store_true", help="skip the mark-to-market fetch")
-    ap.add_argument("--equity", type=float, default=11000.0, help="account value pre-filled in C6")
+    ap.add_argument("--equity", type=float, default=None,
+                    help="optional: pre-fill the account value (default: leave the cell empty)")
     ap.add_argument("--provisional", metavar="LABEL", default=None,
                     help="preview NEXT month's book from current prices (e.g. 'intraday 9/30'); ledger untouched")
     args = ap.parse_args()
