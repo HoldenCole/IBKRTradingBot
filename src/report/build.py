@@ -552,7 +552,7 @@ def page_model(d, f, c, n, total):
 
 
 def page_method(d, f, c, n, total):
-    body = (sec(9, "Method and limits", "What each signal is, how it was tested, and what this report cannot tell you.")
+    body = (sec(9, "Method and limits", "What each signal is, how it was tested, and what this report cannot show.")
             + f'''<div class="cols2 method"><div>
 <h3>Quadrant balances</h3>
 <p><b>Cycle</b> is the 5-bar simple average of the close minus the 15-bar average. <b>Trend</b> is a Coppock curve: a 10-bar weighted average of the 14-bar and 11-bar rates of change. Each is computed on daily, weekly and monthly bars. The current week and month count as bars in progress.</p>
