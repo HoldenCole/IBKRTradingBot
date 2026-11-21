@@ -5,7 +5,7 @@ failed its first honest backtest, and the project became what it is now:
 
 1. **A monthly regime-rotation portfolio.** Two market dials pick one of four macro regimes each month. Each regime
    maps to a fixed book of ETFs for each of four risk tiers.
-2. **A research log.** More than 85 ideas tested against two separate 20-year eras. Every verdict is recorded.
+2. **A research log.** More than 87 ideas tested against two separate 20-year eras. Every verdict is recorded.
 3. **Quadrant Balances.** A trend and cycle tool on daily, weekly and monthly bars that flags whether the long
    equity cycle is intact, breaking or washed out.
 4. **Quadrant Weekly.** A nine-page research PDF built every Saturday, written to be passed around.
@@ -232,6 +232,17 @@ What the history says (two eras, 1987-2006 and 2007-2026):
   next month. Once the flag had broken: −0.1% and −0.4%. The classifier's exits are whipsaws more often than
   not while the monthly is intact.
 - Limit: the monthly readings are slow. March 2020 began with the flag Intact.
+
+**When it says buy and sell** (test 87, 1950-2026). It is a bottom tool. It does not call tops.
+
+| Level | Buy | Sell |
+|---|---|---|
+| Monthly, multi-year | Monthly trend turns up from below zero (caught 11 of 13 bear-market lows, about 4 months late). Confirmed when the monthly cycle is back above zero. Extreme: a member washout | Only one: monthly trend crosses below zero. Late by design. A roll-over above zero is a caution, not a sell |
+| Weekly, intra-year | Only while the monthly is intact: weekly trend decline in week 4 or later, then the weekly cycle turns up | None |
+
+Under a broken monthly, weekly buy signals fail. Replacing the classifier with the monthly signal was tested
+and rejected: it exits too late for the leveraged books. Nothing, including this tool, predicted the
+November 2026 sell-off (test 86).
 
 Earlier attempts to trade a breadth-phase version of this (tests 53 to 55) added nothing over the washout
 rule already in the matrix. It is a dashboard and a flag, not a lever.

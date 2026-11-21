@@ -1170,3 +1170,121 @@ The classifier's exits are whipsaws more often than not while the monthly quadra
 Flag: INTACT, weekly decline EARLY. The daily is washed out, the weekly decline is young, and the monthly is nowhere near a washout — 21% against a 50% line, around the 70th percentile of its own history. On the user's own thesis this is not yet the generational entry; if something larger is under way, the monthly has a long way to deteriorate first. The classifier is provisionally DEFLATION for December while the flag is INTACT: the disagreement state above. Candidate December AGG book (75% defensive + 25% growth-on): QLD 25, GDX 22.5, TLT 18.75, TMF 11.25, QQQ 11.25, SCO 5.6, SHY 5.6, against the model's TLT 25 / TMF 15 / GDX 30 / QQQ 15 / SCO 7.5 / SHY 7.5.
 
 **Limits.** The monthly readings are slow: the monthly cycle would need the S&P near 5,500 at December's close (−20%) to turn negative, and the monthly trend far lower, so INTACT will persist through any ordinary correction and through the first months of a real bear market. Sixteen variants were tried; the partial stay-in is a refinement chosen after seeing the full stay-in's drawdown. Member history is survivorship-biased.
+
+
+## The November 2026 sell-off: was it visible beforehand? (2026-11-21, entry 86)
+
+User question: looking only at Quadrant Balances, was the sell-off indicated, and did any of our models predict it. Code: `research/trend_cycle/study_selloff.py` (day-by-day reconstruction, ex-ante, partial week and month included as the tool does) and `study_signals2.py` (crash-week census and base rates, S&P 500 1950-2026).
+
+**What happened.** The S&P 500 made its closing high of 7,819 on 6 October inside a flat ten-week range (7,550-7,820), wobbled on 5 November (−4.4% in a day), recovered to 3.3% under the high by Friday 13 November, then fell 8.6% in the week of 16-20 November.
+
+**What Quadrant Balances showed, in order.**
+
+| when | reading |
+|---|---|
+| from July | weekly trend falling above zero (Q3); the 6 Oct index high came on a lower trend reading |
+| September | monthly cycle and monthly trend both rolling over above zero (Q3 and Q3), and staying there |
+| 6 Oct, the high | 48% of S&P members in a weekly cycle decline, only 33% rising; under half of members rising on the monthly |
+| mid-Oct to 13 Nov | members HEALED while the index went sideways: weekly cycle rising 33% → 74%, weekly Q4 share 48% → 18% |
+| 2 Nov | index weekly cycle crosses below zero (Q4) |
+| 12-13 Nov | 6% of members in a daily cycle decline, the lowest of the autumn |
+| 16 Nov | index weekly trend crosses below zero |
+| flag | INTACT on every day |
+
+So the tool showed a slow multi-month roll-over, and a member divergence at the high that had repaired itself before the break. It did not show an alarm.
+
+**Do those states predict anything? Base rates (1950-86 / 1987-2006 / 2007-2026).**
+
+| state on a Friday | weeks | next 4 weeks | chance of a 5%+ fall next week | chance of a 7% low within 4 weeks |
+|---|---|---|---|---|
+| any week | 1906 / 1044 / 1038 | +0.6 / +0.7 / +0.8% | 0.8 / 1.3 / 2.5% | 4.2 / 5.3 / 7.4% |
+| weekly trend rolling over (Q3) | 599 / 379 / 397 | +1.0 / +0.9 / +0.7% | 0.3 / 1.1 / 1.8% | 2.0 / 3.4 / 4.0% |
+| weekly cycle Q4 with weekly trend Q3 (13 Nov) | 124 / 76 / 62 | +1.4 / +1.7 / +0.5% | 0.0 / 3.9 / 3.2% | 0.8 / 5.3 / 6.5% |
+| monthly both rolling over | 399 / 267 / 225 | −0.1 / +1.4 / +0.8% | 1.0 / 0.4 / 3.1% | 5.3 / 3.4 / 8.4% |
+| all of the above together | 21 / 4 / 8 | +1.9% / thin / −1.9% | 0.0% / thin / 12.5% | 0.0% / thin / 25.0% |
+
+The 13 November state is the same weekly state as the Friday before the 1987 crash (cycle Q4 week 1, trend Q3 week 6, monthly intact) and the week of 13 March 2020. It roughly triples the weekly crash odds in the two house eras and does nothing before 1987; even at its worst it is a 96% chance of an ordinary week. The full combination looks dangerous only in the modern era on eight weeks.
+
+**The crash-week census.** 36 weekly falls of 6% or more since 1950. 56% started from weekly trend Q4 (17% of all weeks) and 58% from weekly cycle Q4 (19%): crash weeks come out of markets that are already declining. Only 8 of 36 began within 5% of a 52-week high — 1978, 1979, 1986, 1989, April 2000, May 2010, February 2020 and this one. Half began with the monthly intact.
+
+**What the other models said.**
+
+| model | last reading before the break | verdict |
+|---|---|---|
+| Regime classifier | 31 Oct: SPY 4.6% above its line, DBC 16.9% above; 13 Nov: 3.4% / 3.4% | clean, Reflation |
+| Shadow classifier | Reflation | clean |
+| Sector breadth | 67% above their 10-month averages on 1 Nov and 13 Nov | clean |
+| Fragility shadow (entry 70) | FRAGILE on 5, 6, 10 and 16 Nov; 13 Nov missed the 3% band by 0.02 points | **flagged** |
+| Quadrant Balances flag | INTACT; weekly cycle Q4 from 2 Nov | deteriorating, not flagged |
+| Swing account | blocked on 16 Nov by the fragile gate, bought SPY on 17 Nov | caught in it |
+
+The fragile state is the only thing that fired. On daily closes a 7% low within 10 days follows 1.2 / 5.2 / 6.5% of fragile days against 0.7 / 1.4 / 1.3% of days when the index is more than 3% above its 200-day average, so in the two house eras it marks four to five times the crash risk. Its average forward return is still positive (+0.6 to +3.3% over 21 days), which is why de-levering on it failed the two-era test (entry 70) and why it runs as a shadow. Days BELOW the 200-day average are riskier still (12.6% in the modern era).
+
+**Verdict.** Nothing predicted the sell-off. Two risk states were up — the fragile state, and the weekly cycle below zero under a rolling-over monthly — and neither has a base rate that would justify acting on it. Consistent with every earlier attempt at early warning (entries 32-33, 41-45, 47, 70).
+
+## Quadrant Balances: when it says buy and when it says sell (2026-11-21, entry 87)
+
+User request: find when the tool indicates a buy and a sell, on two levels — the monthly for multi-year bottoms and tops, the weekly for intra-year ones. Code: `research/trend_cycle/study_signals.py`, `study_signals2.py`, `study_integration3.py`. S&P 500 index states (exact) on completed weekly and monthly bars, 1950-2026. Eras: 1950-86 (extra, price only), 1987-2006, 2007-2026. Rules use total return from 1987 (index fund, 3-month bills when out).
+
+**Monthly transitions, next 12 months** (baseline +8.4 / +9.7 / +10.2%, higher 69 / 79 / 79% of the time):
+
+| signal | n | next 12 months | higher | average worst point |
+|---|---|---|---|---|
+| BUY trend turns up from below zero (Q4→Q1) | 11 / 5 / 3 | +21.7% / +10.3% / thin (all 3 up) | 91% / 80% | −2.1% / −7.8% |
+| BUY cycle crosses back above zero | 11 / 4 / 7 | +15.2% / +16.0% / +13.5% | 91% / 100% / 86% | −3.4% / −1.7% / −4.3% |
+| SELL trend rolls over above zero (→Q3) | 24 / 23 / 20 | +5.9% / +11.2% / +8.3% | 58% / 83% / 72% | −7.5% / −3.6% / −8.6% |
+| SELL both rolling over, first month | 33 / 23 / 21 | +5.3% / +8.2% / +4.7% | 61% / 78% / 58% | −5.7% / −4.8% / −7.8% |
+| SELL trend crosses below zero (→Q4) | 10 / 3 / 3 | +7.3% / thin / thin (3 months: −2.8%) | 70% | −11.3% |
+| SELL both below zero and falling, first month | 15 / 4 / 5 | +15.3% / −4.4% / +3.0% (6 months: +1.3 / +2.9 / −6.4%) | 87% / 25% / 60% | −10.5% / −13.8% / −16.9% |
+
+**Against the 13 bear markets (20% moves on daily closes).** Monthly trend turning up caught 11 of 13 lows, a median 4 months and 18% after the low (missed: 1987 and 2020, both too fast). Monthly cycle back above zero caught 11, a median 8 months and 28% after. On the way down: a roll-over into Q3 appears within 2 months of 8-10 of the 13 tops — and 60-85 other times. The trend crossing below zero caught 8 tops a median 9.5 months and 12% late.
+
+Monthly trend turns up: 1954-01, 1957-07, 1958-04, 1960-12, 1963-01, 1967-01, 1970-08, 1975-01, 1978-04, 1982-08, 1984-12, 1988-09, 1991-02, 2001-12, 2002-11, 2003-04, 2009-05, 2016-05, 2023-03. Monthly trend crosses below zero: 1953-09, 1957-05, 1960-07, 1962-07, 1966-08, 1969-10, 1973-09, 1977-08, 1982-01, 1984-09, 1988-04, 1990-11, 2001-02, 2008-05, 2016-02, 2022-09.
+
+**As rules on the index** (CAGR / worst drawdown / Sharpe):
+
+| rule | 1950-86 | 1987-2006 | 2007-2026 | switches a year |
+|---|---|---|---|---|
+| buy and hold | +6.6% / −46% / 0.53 | +11.6% / −45% / 0.82 | +9.0% / −52% / 0.64 | 0 |
+| 10-month average (the classifier's rule) | +6.4% / −18% / 0.66 | +10.0% / −24% / 0.89 | +8.0% / −22% / 0.79 | 1.4 |
+| **out only while monthly trend is Q4** | +7.2% / −23% / 0.65 | +11.4% / −31% / 0.87 | +10.4% / −25% / 0.81 | 0.4 |
+| out on Q4, or on trend Q3 with cycle Q4 | +7.4% / −19% / 0.71 | +10.9% / −30% / 0.85 | +10.4% / −20% / 0.85 | 0.7 |
+| in only while trend rising | +6.1% / −15% / 0.73 | +6.6% / −24% / 0.73 | +6.2% / −20% / 0.73 | 2.3 |
+| in only while trend above zero | +4.4% / −23% / 0.46 | +11.3% / −30% / 0.89 | +9.0% / −28% / 0.73 | 0.3 |
+
+Of the 19 round trips of the first rule, 7 bought back lower (1957, 1970, 1975, 1982, 2001, 2002, 2009) and 12 paid up, including four exits at the exact low month (1988, 1990, 2016, 2022). The rule earns its keep in the long bears and gives some back in the fast ones.
+
+**Weekly.** No weekly transition shows an edge in all three eras, in either direction. After a weekly trend cross below zero the next 26 weeks returned +3.0 / +6.7 / +6.5% (base 4.3 / 4.6 / 5.0). All 17 weekly long/flat rules lose to buy-and-hold on return; "in while weekly trend rising" earns +3.1 / +5.7 / +5.1%. Skipping only the first three weeks of a weekly decline helps the modern era (+2.6pp) and costs the one before (−0.9pp).
+
+**The weekly only works through the monthly.** Monthly state = last completed month; intact = both readings above zero, broken = both below.
+
+| weekly event | monthly intact: next 13w / 26w | monthly broken: next 13w |
+|---|---|---|
+| weekly cycle turns up while weekly trend decline is in week 4+ | +3.8 / +4.8 / +4.9% and +7.2 / +7.2 / +6.6% (n 15 / 12 / 13; higher at 13w 60 / 75 / 85%) | +0.4% / thin / thin |
+| same turn in weeks 1-3 of the decline | −0.3% / thin / +1.0% | thin |
+| every week of a weekly trend decline, week 4+ | +1.8 / +5.6 / +7.1% | +2.0 / +2.6 / −13.0% |
+| weekly trend turns up from below zero | −1.7 / +2.9 / +2.8% | +2.3 / −5.0% / thin |
+
+**Member balances (monthly, today's constituents, 1987-2006 / 2007-2026).** Washout (50%+ in a monthly cycle decline): +17.5 / +21.4% over 12 months. Every member-based sell tested (45%+ rolling over, index trend up on under 45% of members, members rising under 30% with the index trend above zero, index near a high with 40%+ rolling over) is followed by returns at or above baseline in at least one era.
+
+**In the matrix (CAGR change vs v9, modern / pre-2007; AGG drawdown).**
+
+| use of the monthly signal | CONS | MOD | AGG | VAGG | AGG drawdown |
+|---|---|---|---|---|---|
+| replaces the classifier (growth on unless trend Q4) | +0.9 / 0.0 | +1.6 / −1.0 | +6.3 / −3.0 | +9.5 / −6.8 | −33→−52% / −43→−64% |
+| replaces it, earlier exit | +1.0 / +0.4 | +1.8 / +0.4 | +6.5 / +0.6 | +9.8 / −2.4 | −52% / −44% |
+| classifier, but stay on unless trend Q4 | +0.8 / −0.1 | +1.3 / −1.3 | +5.3 / −3.0 | +8.1 / −6.4 | −52% / −64% |
+| classifier AND not trend Q4 (second veto) | +0.1 / +0.1 | +0.3 / +0.3 | +1.0 / 0.0 | +1.2 / −0.5 | −33% / −41% |
+
+The index-level result does not carry into the leveraged books: the monthly signal exits too late for them. The second veto changes five months per era and improves all three metrics in five of eight cells. Filed as a near miss on a thin sample; no change.
+
+**The map.**
+
+| level | BUY | SELL |
+|---|---|---|
+| Monthly (multi-year) | early: monthly trend turns up from below zero. Confirmed: monthly cycle back above zero. Extreme: 50%+ of members in a monthly cycle decline | only one: monthly trend crosses below zero. Late by design. A roll-over above zero is a caution, not a sell |
+| Weekly (intra-year) | only with the monthly intact: weekly trend decline in week 4 or later, then the weekly cycle turns up | none. No weekly state marks a top |
+
+**Where this puts 20 November 2026.** Monthly intact but both readings rolling over (caution state, month 3 and 4). No multi-year sell: the monthly trend turns negative only if the S&P is near 5,480 at the January close, 6,020 at the February close or 6,680 at the April close; the monthly cycle goes negative at about 6,200 by the December close. Weekly: trend decline in week 1, cycle in week 3. The intra-year buy is not armed before the week ending 11 December (week 4), and then needs the weekly cycle to turn up.
+
+**Limits.** 13 bear markets and 19 monthly buy signals in 76 years; the modern era has three monthly buys. The 1950-86 era has no dividends or reliable bill yields before 1960. Signals were defined before looking at the forward tables, but the "week 4+" threshold comes from entry 84's stage table on the same data. Member history is survivorship-biased.
