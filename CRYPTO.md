@@ -43,10 +43,9 @@ Binance's trading API (451) and Bybit (403) are blocked here; neither is usable 
    spot at US costs, with the two-era and hold-out discipline used elsewhere in this project. Risk: bitcoin's
    volatility is about 3 to 4 times the S&P 500's, so crypto at 1x already carries 3x-fund risk; leverage is a
    separate question.
-3. **Short-term BTC-led signals, levered (C3). Done, entry 103: every short-term signal loses; the BTC daily trend,
-   long only, passed the development gates and the sealed hold-out, and leverage works on BTC (2-3x: x6-x12 over
-   2024-26, drawdowns 8-12%) but not on the altcoins (liquidations at 3-5x). Candidate for paper trading.**
-4. Only a design that passes goes to paper trading, then to a small live account with the safety controls listed
+3. **Short-term BTC-led signals, levered (C3). Done, entry 103 (corrected): every short-term signal loses; the BTC daily trend first appeared to pass but that was a look-ahead bug; corrected, it trails holding and leverage wipes it out. 0 of 30 pass.**
+4. **Do the project's signals predict bitcoin (C4)? Done, entry 104: the equity signals do not; bitcoin's own 10-month average does, a little. Post-hoc lead: a manual monthly rule (hold BTC while above its 10-month average), 1x.**
+5. Only a design that passes goes to paper trading, then to a small live account with the safety controls listed
    in the survey (kill switch, position limits, reconciliation, exchange-resident stops).
 
 ## Standing rules carried over

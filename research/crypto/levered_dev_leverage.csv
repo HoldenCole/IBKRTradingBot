@@ -104,24 +104,24 @@ S5 4-hour RSI(2) dip and rip,XRP,5,0.0000,-1.0000,-1.0000,25,True
 S5 4-hour RSI(2) dip and rip,DOGE,1,0.0000,-0.9757,-1.0000,2,True
 S5 4-hour RSI(2) dip and rip,DOGE,2,0.0000,-0.9998,-1.0000,6,True
 S5 4-hour RSI(2) dip and rip,DOGE,3,0.0000,-1.0000,-1.0000,10,True
-S6 daily trend (long only),BTC,1,12.7033,1.3221,-0.0637,0,False
-S6 daily trend (long only),BTC,2,53.6442,2.7432,-0.1253,0,False
-S6 daily trend (long only),BTC,3,164.3033,4.4245,-0.1847,0,False
-S6 daily trend (long only),BTC,5,945.5133,8.6887,-0.2975,0,False
-S6 daily trend (long only),BTC,10,17675.0744,24.5716,-0.5441,0,False
-S6 daily trend (long only),ETH,1,75.9996,3.2013,-0.1099,0,False
-S6 daily trend (long only),ETH,2,623.4699,7.4396,-0.2148,0,False
-S6 daily trend (long only),ETH,3,2969.7586,13.1582,-0.3148,0,False
-S6 daily trend (long only),ETH,5,26789.7387,28.3507,-0.5072,0,False
-S6 daily trend (long only),ETH,10,17123.9643,24.3045,-0.9657,2,False
-S6 daily trend (long only),SOL,1,14.4886,3.4710,-0.1907,0,False
-S6 daily trend (long only),SOL,2,49.5402,7.9025,-0.3813,0,False
-S6 daily trend (long only),SOL,3,96.3662,11.9239,-0.5720,0,False
-S6 daily trend (long only),SOL,5,20.5646,4.4401,-0.9750,1,False
-S6 daily trend (long only),XRP,1,11.7016,1.2598,-0.1269,0,False
-S6 daily trend (long only),XRP,2,43.5588,2.4935,-0.2484,0,False
-S6 daily trend (long only),XRP,3,2.1305,0.2849,-0.9850,1,False
-S6 daily trend (long only),XRP,5,0.0205,-0.7241,-0.9986,2,True
-S6 daily trend (long only),DOGE,1,1.3013,0.1590,-0.3470,0,False
-S6 daily trend (long only),DOGE,2,1.0796,0.0439,-0.5998,0,False
-S6 daily trend (long only),DOGE,3,0.0162,-0.9006,-0.9939,1,True
+S6 daily trend (long only),BTC,1,1.7712,0.2084,-0.6402,0,False
+S6 daily trend (long only),BTC,2,1.0768,0.0248,-0.8868,0,False
+S6 daily trend (long only),BTC,3,0.4419,-0.2370,-0.9690,0,False
+S6 daily trend (long only),BTC,5,0.0308,-0.6840,-0.9986,0,True
+S6 daily trend (long only),BTC,10,0.0000,-0.9995,-1.0000,6,True
+S6 daily trend (long only),ETH,1,6.3075,0.8402,-0.5791,0,False
+S6 daily trend (long only),ETH,2,4.5914,0.6565,-0.8496,0,False
+S6 daily trend (long only),ETH,3,1.6600,0.1827,-0.9576,0,False
+S6 daily trend (long only),ETH,5,0.0216,-0.7192,-0.9995,0,True
+S6 daily trend (long only),ETH,10,0.0000,-0.9998,-1.0000,9,True
+S6 daily trend (long only),SOL,1,1.4403,0.2264,-0.8038,0,False
+S6 daily trend (long only),SOL,2,0.4142,-0.3893,-0.9720,0,False
+S6 daily trend (long only),SOL,3,0.0016,-0.9729,-0.9999,1,True
+S6 daily trend (long only),SOL,5,0.0000,-0.9999,-1.0000,3,True
+S6 daily trend (long only),XRP,1,1.3121,0.0941,-0.6168,0,False
+S6 daily trend (long only),XRP,2,0.5655,-0.1720,-0.8942,0,False
+S6 daily trend (long only),XRP,3,0.0038,-0.8420,-0.9994,1,True
+S6 daily trend (long only),XRP,5,0.0000,-0.9975,-1.0000,3,True
+S6 daily trend (long only),DOGE,1,0.2361,-0.5540,-0.7639,0,False
+S6 daily trend (long only),DOGE,2,0.0297,-0.8601,-0.9703,0,True
+S6 daily trend (long only),DOGE,3,0.0000,-0.9962,-1.0000,1,True

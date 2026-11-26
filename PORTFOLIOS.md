@@ -1620,6 +1620,8 @@ At 50 bp, the realistic US retail cost, every figure falls further: top 20 +6.1%
 
 ## Crypto C3: bitcoin signals, levered, in bitcoin and the altcoins (2026-11-26, entry 103)
 
+**CORRECTION (2026-11-26, same day).** The daily-trend rows below are wrong and are kept only as the record of the error. Each trend trade exited at the close of its last ON day. The OFF signal is only known at the next close, so a real trade would have held through that day, which is usually the down day that ends the trend. Drawdowns were also measured on closed trades only. Corrected, with marked-to-market drawdowns, the daily trend passes nothing (0 of 30 trials). Over 2024-01 to 2026-10 at 1x: BTC x1.55 (holding x1.82), drawdown -51%; ETH x0.86 (holding x0.99); SOL x0.63 (x0.94); XRP x1.82 (x2.03). At 3x: BTC x1.91 with -81%, the altcoins x0.00-0.17. The short-term findings stand.
+
 User direction: short-term, highly levered positions; coins move together, so read the signal from bitcoin and trade an altcoin; judge by absolute return. Pre-registered in `research/crypto/PREREGISTRATION_C3.md`. Code: `research/crypto/levered.py`, tested in `tests/test_crypto_levered.py`. Results: `research/crypto/levered_dev.csv`, `levered_dev_leverage.csv` and `levered_holdout.csv`.
 
 Data: Binance USD-M perpetual hourly candles and real funding. Costs are 10 bp a side plus funding. A position is liquidated on a move of 1/L - 0.5% against its entry, using hourly highs and lows. Leverage runs up to each coin's US limit: BTC and ETH 10x, SOL and XRP 5x, DOGE 4x (Coinbase).
@@ -1652,3 +1654,38 @@ The maximum drawdown is in brackets.
 2. The one thing that works is slow: the daily bitcoin trend, held for days to months. It passed the development gates and the sealed hold-out, beating holding the coin in all four cases.
 3. The lever belongs on bitcoin. The altcoins add their own crashes on top of bitcoin's. ETH fell 26% (14 points of it funding) through a 14-month position while bitcoin rose 77%. XRP took a 38% wick against its entry on 10 October 2025. Bitcoin's worst move against an entry in the hold-out was 8.9%, so it held up to 10x, but 10x sat 0.6% from liquidation once. 2x to 3x on bitcoin gave x6 to x12 with drawdowns of 8% to 12%.
 4. Limits. The sample holds two bull runs (2020-21, 2024-25) and one bear market, so the leveraged multiples are not forecasts. Overnight margin on the US contracts may be stricter than the intraday limits quoted. Funding cost longs 13-15% over the 14-month 2024 position, and it is charged against the margin.
+
+## Crypto C4: do this project's signals predict bitcoin? (2026-11-26, entry 104)
+
+User question: do our current signals help predict bitcoin at all? Pre-registered in `research/crypto/PREREGISTRATION_C4.md`. Code: `research/crypto/predict_btc.py`. Results: `research/crypto/predict_btc_results.csv` and `predict_btc_filters.csv`. Bitcoin data is Coinbase BTC-USD, July 2015 to November 2026. A signal "helps" if bitcoin's forward return is higher when it is on, in both halves (2015-20 and 2021-26), with |t| at least 2.
+
+| signal (when on) | horizon | BTC when on | when off | difference | t | 2015-20 / 2021-26 difference | helps |
+|---|---|---|---|---|---|---|---|
+| regime Growth or Reflation | next month | +6.5% | +3.7% | +2.8 | 0.6 | +5.3 / +0.2 | no |
+| S&P monthly flag INTACT | next month | +6.2% | +5.1% | +1.1 | 0.3 | -0.2 / +2.6 | no |
+| S&P monthly trend rising | next month | +8.6% | +2.7% | +5.9 | 1.7 | +8.0 / +4.2 | no (closest) |
+| BTC monthly trend rising | next month | +6.9% | +3.3% | +3.6 | 0.9 | +4.0 / +2.0 | no |
+| BTC monthly cycle rising | next month | +8.0% | +1.4% | +6.6 | 1.7 | +13.8 / +1.9 | no |
+| BTC above its 10-month average | next month | +8.5% | +1.3% | +7.2 | 2.0 | +8.9 / +6.6 | yes |
+| S&P weekly trend rising | next week | +1.8% | +0.9% | +1.0 | 1.3 | +1.0 / +0.7 | no |
+| BTC weekly trend rising | next week | +1.9% | +0.7% | +1.2 | 1.5 | +1.2 / +1.0 | no |
+| BTC weekly cycle rising | next week | +2.0% | +0.4% | +1.7 | 2.2 | +1.0 / +2.0 | yes |
+| VIX above 25 | next week | +1.1% | +1.4% | -0.3 | -0.3 | +0.5 / -1.1 | no |
+| equity fragile state | next week | +0.7% | +1.3% | -0.6 | -0.3 | -1.6 / +0.4 | no |
+| BTC daily trend on | next 5 days | +1.2% | 0.0% | +1.1 | 3.7 | +1.9 / +0.4 | yes |
+
+By regime quadrant in force, bitcoin's next month averaged: Growth +9.7% (42 months), Reflation +4.5% (71), Deflation +6.8% (15), Inflation -1.4% (9).
+
+No filter improves the bitcoin trend in both halves: S&P above its 10-month average, S&P flag not BROKEN, BTC weekly trend rising. Each fails at least one half on CAGR or drawdown.
+
+**Post-hoc lead (not pre-registered): the monthly 10-month rule.** Hold bitcoin while its month-end close is above its 10-month average; cash otherwise.
+
+| | holding | rule, 1x | rule, 2x | rule, 3x | switches |
+|---|---|---|---|---|---|
+| 2016-06 to 2026-11 | +57% / -84% | +67% / -73% | +104% / -95% | +79% / -100% | 12 |
+| 2021-01 to 2026-11 | +13% / -77% | +30% / -53% | +36% / -83% | +13% / -95% | 4 |
+| 2024-01 to 2026-11 | +13% / -53% | +19% / -46% | +19% / -73% | +1% / -87% | 2 |
+
+Each cell is CAGR / maximum drawdown.
+
+**Reading.** The equity tools (the regime classifier, Quadrant Balances on the S&P 500, VIX, the fragile state) carry no reliable information about bitcoin's next week or month. Bitcoin's own trend carries a little: above its 10-month average, the next month averaged 7 points better, in both halves. As a manual rule, checked once a month, it beat holding with a smaller drawdown and has traded 12 times in ten years. Leverage on it does not survive the drawdowns. On 26 November 2026, bitcoin ($60,515) is below its 10-month average ($70,648). The November month-end close decides the next signal.

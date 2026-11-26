@@ -110,8 +110,8 @@ def windows(idx, btc: pd.DataFrame) -> dict[str, list[tuple[int, int, int]]]:
             k = j
             while k + 1 < len(on) and on[k + 1]:
                 k += 1
-            if k > j:
-                tr.append((int(dpos[j]), int(dpos[k] if k < len(on) - 1 else dpos[-1]), 1))
+            if k >= j:                       # on through day k; the off signal comes at the NEXT close, so exit there
+                tr.append((int(dpos[j]), int(dpos[k + 1] if k + 1 < len(on) else dpos[-1]), 1))
             j = k + 1
             continue
         j += 1
