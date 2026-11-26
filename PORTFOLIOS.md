@@ -1418,3 +1418,25 @@ Net per trade, large moves. A pass needed t of at least 3, positive in both eras
 **Reading.** Earnings moves keep going: fading them loses money at every horizon, often with very high confidence. That matches the post-earnings drift literature. "Too much" on earnings behaves the same. Moves with no filing are the only ones that snap back, mostly on the same day: fading the opening gap made about 0.7% to 0.8% a trade. But crisis days (2008, the March 2023 bank run) make the results too scattered to pass. Splitting after the fact, lone no-news gap-ups (at most two that day) faded from the open made +69 bp, won 63% of the time, and were positive in both eras (t 3.0, n 260, about 14 a year). That split was chosen after seeing the data, so it is a lead, not a result.
 
 **Limits.** SEC filings miss analyst calls, interviews and sector news, so "no filing" is not "no news". Yahoo has no delisted stocks: prices cover 53% of member-days in 2005 and 94% in 2023, which flatters buying falls. The hold-out was not opened. At about 14 lone events a year it holds too few trades to confirm a +0.7% edge, so a forward paper record is the realistic next test.
+
+## Fading big single-stock moves with price exits (2026-11-26, entry 93)
+
+User follow-up: exit on a percentage move, not on time, whether that takes part of a day or more than a week. Pre-registered in `research/stock_reversal/PREREGISTRATION_93.md`; code `research/stock_reversal/price_exits.py`; all 192 trials in `research/stock_reversal/results_93_dev.csv`. Same events as entry 92. The trade fades the move at the open (after a gap) or at the close (after a day move), takes profit at 1, 2, 3 or 5% of the entry price, stops out at 3, 6 or 10%, and otherwise exits after 20 sessions. Costs are 10 bp a side, plus 10 bp of slippage on stops. The control is the same bracket on 20 random days of the same stock.
+
+| 3% target, 6% stop | trades | net per trade | win rate | stopped out | sessions held | vs random days |
+|---|---|---|---|---|---|---|
+| earnings pop, short at the open | 1,529 | -82 bp | 58% | 36% | 5.2 | -22 bp |
+| earnings drop, buy at the open | 1,630 | -56 bp | 62% | 34% | 4.3 | -71 bp |
+| too much on earnings, pop, short at the open | 946 | -67 bp | 59% | 35% | 5.0 | -3 bp |
+| too much on earnings, drop, buy at the open | 1,117 | -38 bp | 64% | 33% | 4.0 | -55 bp |
+| no-filing pop, short at the open | 507 | +26 bp | 71% | 27% | 3.7 | +76 bp |
+| no-filing drop, buy at the open | 565 | -28 bp | 64% | 32% | 3.5 | -36 bp |
+
+| no-filing pop, short at the open | 3% stop | 6% stop | 10% stop |
+|---|---|---|---|
+| 1% target | -77 bp (62% win) | -56 bp (81%) | -20 bp (90%) |
+| 2% target | -34 bp (58%) | -11 bp (76%) | +13 bp (84%) |
+| 3% target | +4 bp (55%) | +26 bp (71%) | +42 bp (78%) |
+| 5% target | +27 bp (45%) | -1 bp (56%) | +13 bp (63%) |
+
+**Reading.** None of the 192 passes, and none of the positive ones has a t above 1.6. Exiting on price does not rescue the earnings fades: they lose against random days of the same stock as well, because earnings moves continue. High win rates are the trap. A small target with a wide stop wins 80 to 90% of the time and still loses, because the occasional stop is many times the target. Tight stops do worst on no-filing pops, which often run further before they turn. The best no-filing bracket (+42 bp) is weaker than simply covering at the close (+67 bp in entry 92).
