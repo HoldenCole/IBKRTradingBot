@@ -37,7 +37,9 @@ Binance's trading API (451) and Bybit (403) are blocked here; neither is usable 
    pays only in manias. No bot; an alert at most.** Is the long-spot / short-perpetual trade still paying, by year and by coin,
    after the costs of both legs? Descriptive; it decides whether a carry bot is worth building. The live venue
    would have to be a US one (Coinbase or Kraken perpetual-style futures), whose funding history is short.
-2. **Daily trend following (C2).** Pre-registered replication of the Donchian ensemble on liquid coins, long-only
+2. **Daily trend following (C2). Done, entry 102: the published method replicates on bitcoin, but on Binance
+   2018-2025 it is weaker than published (Sharpe 0.94-1.18) and since publication it has earned about nothing;
+   fails its gates. Kept as a paper-trading watch, not a bot.** Pre-registered replication of the Donchian ensemble on liquid coins, long-only
    spot at US costs, with the two-era and hold-out discipline used elsewhere in this project. Risk: bitcoin's
    volatility is about 3 to 4 times the S&P 500's, so crypto at 1x already carries 3x-fund risk; leverage is a
    separate question.

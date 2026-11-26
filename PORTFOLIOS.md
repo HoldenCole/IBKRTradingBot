@@ -1592,3 +1592,28 @@ The trade: hold a coin and short the same amount of its perpetual future. Price 
 Last 12 months on Kraken futures: BTC +3.65%, ETH +3.56%, SOL +0.31%, with 32% to 49% of hours negative.
 
 **Reading.** The carry trade paid 14% to 38% a year in 2020, 2021 and 2024, and has fallen to 2-4% since 2025. The capital earns less than the funding rate, because the spot leg is paid in full and the short needs margin: about half the rate at 1x margin, so about 1.8% a year for bitcoin now, below T-bills. Rule-based switching does not rescue it. Carry is a mania trade: worth a monitor that alerts when trailing funding runs above about 15% a year, not a bot to run now.
+
+## Crypto C2: the published trend ensemble, replicated and tested after publication (2026-11-26, entry 102)
+
+Method: Zarattini, Pagani and Barbon, "Catching Crypto Trends" (2025), read from the paper. A long-only Donchian breakout runs on each coin over nine lookbacks from 5 to 360 days, each with a trailing stop at the channel midpoint that only rises. Each position is sized to 25% volatility, capped at 200%, and the nine lookbacks are averaged. The top coins by 30-day median volume are re-picked monthly. Pre-registered in `research/crypto/PREREGISTRATION_C2.md`. Code: `research/crypto/trend.py`; all 27 runs in `research/crypto/trend_results.csv`. The paper's data ended on 19 March 2025, so everything after is out of sample.
+
+**Implementation check, bitcoin on Coinbase, no costs.** Mine: +29.7% CAGR, 16.3% volatility, Sharpe 1.68, -18.9% max drawdown (July 2015 to March 2025). Published: +30%, 17%, 1.58, -19%. Single lookbacks also match within a few points.
+
+**Portfolio on Binance**, every USDT pair including delisted ones; 25 bp a side:
+
+| | 2018-09 to 2025-03: CAGR | Sharpe | max drawdown | Sharpe, 2018-21 / 2022-25 | after publication: CAGR | Sharpe | max drawdown |
+|---|---|---|---|---|---|---|---|
+| paper sizing, top 20 | +7.0% | 0.94 | -14% | 1.29 / 0.55 | -0.1% | 0.01 | -8% |
+| paper sizing, top 10 | +10.5% | 1.18 | -16% | 1.57 / 0.73 | -0.6% | -0.07 | -9% |
+| paper sizing, top 5 | +11.2% | 1.09 | -18% | 1.51 / 0.58 | -1.9% | -0.22 | -13% |
+| spot, 50% target, top 10 | +21.3% | 1.18 | -30% | 1.59 / 0.70 | -2.1% | -0.12 | -16% |
+| spot, 100% target, top 10 | +33.2% | 1.11 | -46% | 1.53 / 0.56 | -5.0% | -0.22 | -23% |
+| hold top 10 equally | +15.6% | 0.59 | -91% | | -17.9% | -0.04 | -63% |
+| hold bitcoin | +46.3% | 0.91 | -77% | | -5.0% | 0.08 | -53% |
+| bitcoin-only trend (Coinbase) | | | | | -3.2% | -0.26 | -16% |
+
+At 50 bp, the realistic US retail cost, every figure falls further: top 20 +6.1% and Sharpe 0.82, then -1.4% a year after publication.
+
+**Gates** (paper sizing, top 20, 25 bp): replication Sharpe 0.94 against the required 1.0, FAIL; both halves above 0.5, pass; after publication -0.1% with Sharpe 0.01, FAIL.
+
+**Reading.** The code reproduces the paper on bitcoin, so the gap is not a bug. On Binance from 2018 the portfolio is weaker than published, because the paper's sample includes the 2015-2017 run-up. Its Sharpe has fallen by half between 2018-21 and 2022-25. Since publication it has earned about nothing at any size or risk level. It did its defensive job: drawdowns of 8% to 23% while the coins fell 53% to 68%. The higher-risk spot versions earned 21-33% a year from 2018 to early 2025 with drawdowns of 30-46%, the "inspirational" range. But that return came from the 2018-21 trends, and they have lost money since. Not adopted. Worth watching as a paper record: a trend rule can only earn when trends return, and the next crypto bull run is the test.
