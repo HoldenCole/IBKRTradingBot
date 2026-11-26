@@ -1575,3 +1575,20 @@ User follow-up: try entry 99's 30% stop version at 2x. Chosen after seeing entry
 | swing plan at 3x (1999 on) | | +12.4% | -39% | | -24% | | | |
 
 **Reading.** At 2x the 30% stop triggers on a 15% fall in the index, so it fires about half as often as at 3x (19 times against 37). The worst drawdown drops from -69% to -50%. But the return falls with it, to +12.5%. That is about what the swing plan makes at 3x, with a deeper drawdown and much rarer trades. Neither leverage gets the account inside a 25% loss limit.
+
+## Crypto C1: funding carry, measured (2026-11-26, entry 101)
+
+The trade: hold a coin and short the same amount of its perpetual future. Price moves cancel, and the short collects funding when funding is positive, paying it when negative. Code: `research/crypto/carry.py`; yearly table in `research/crypto/carry_binance_yearly.csv`. Binance has the deepest public record, though a US person cannot trade there. Kraken is the US-relevant venue, but only 12 months of its history are public.
+
+| funding collected by the short, % of notional a year | 2020 | 2021 | 2022 | 2023 | 2024 | 2025 | 2026 to Oct |
+|---|---|---|---|---|---|---|---|
+| BTC (Binance) | +17.2 | +30.6 | +4.2 | +7.9 | +12.0 | +5.1 | +2.6 |
+| ETH | +27.5 | +37.5 | +0.8 | +8.3 | +13.0 | +4.9 | +1.7 |
+| SOL | -3.7 | +28.6 | -38.0 | +1.3 | +13.7 | +0.4 | -0.5 |
+| median of 10 coins | +14.1 | +38.0 | +0.4 | +8.0 | +13.5 | +4.2 | +2.0 |
+| median, switched rule, net of costs | | | | | | | about 0 in 2025-26 |
+| BTC (Hyperliquid, closed to US persons) | | | | +8.7 | +24.2 | +10.6 | +5.0 |
+
+Last 12 months on Kraken futures: BTC +3.65%, ETH +3.56%, SOL +0.31%, with 32% to 49% of hours negative.
+
+**Reading.** The carry trade paid 14% to 38% a year in 2020, 2021 and 2024, and has fallen to 2-4% since 2025. The capital earns less than the funding rate, because the spot leg is paid in full and the short needs margin: about half the rate at 1x margin, so about 1.8% a year for bitcoin now, below T-bills. Rule-based switching does not rescue it. Carry is a mania trade: worth a monitor that alerts when trailing funding runs above about 15% a year, not a bot to run now.

@@ -78,11 +78,14 @@ def main():
         try:
             k = kraken_funding(sym)
             span = (k.time.iloc[-1] - k.time.iloc[0]).days
-            print(f"Kraken {sym}: last {span} days, funding {k.rate.sum() * 100:+.1f}% of notional "
-                  f"(annualised {k.rate.sum() * 365 / span * 100:+.1f}%), negative {(k.rate < 0).mean():.0%} of hours")
+            print(f"Kraken {sym}: last {span} days, funding {k.rate.sum() * 100:+.2f}% of notional "
+                  f"(annualised {k.rate.sum() * 365 / span * 100:+.1f}%), negative {(k.rate < 0).mean():.1%} of hours")
         except Exception as e:
             print(f"Kraken {sym}: {e}")
-    last12 = {c: binance_funding(c).set_index("time")["rate"].last("365D").sum() for c in COINS}
+    def _last12(c):
+        f = binance_funding(c)
+        return f[f.time > f.time.iloc[-1] - pd.Timedelta(days=365)].rate.sum()
+    last12 = {c: _last12(c) for c in COINS}
     print("\nBinance, last 12 months of data, % of notional:", {k: round(v * 100, 1) for k, v in last12.items()})
     print("Return on capital = funding / (1 + 1/L): at L=1 half the funding, at L=3 three quarters.")
     t.to_csv("research/crypto/carry_binance_yearly.csv", float_format="%.5f")

@@ -33,7 +33,8 @@ Binance's trading API (451) and Bybit (403) are blocked here; neither is usable 
 
 ## Studies, in order
 
-1. **Funding carry, measured (C1).** Is the long-spot / short-perpetual trade still paying, by year and by coin,
+1. **Funding carry, measured (C1). Done, entry 101: collapsed to 2-4% a year since 2025 (about 2% on capital);
+   pays only in manias. No bot; an alert at most.** Is the long-spot / short-perpetual trade still paying, by year and by coin,
    after the costs of both legs? Descriptive; it decides whether a carry bot is worth building. The live venue
    would have to be a US one (Coinbase or Kraken perpetual-style futures), whose funding history is short.
 2. **Daily trend following (C2).** Pre-registered replication of the Donchian ensemble on liquid coins, long-only
