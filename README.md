@@ -464,6 +464,10 @@ These came from the investor and from mistakes already made. They are not sugges
 
 ---
 
+**Small live account and crypto (26 November 2026).** `SMALL_ACCOUNT.md` holds the goal, the milestone
+arithmetic, tests 89 to 100 and the decision: the 3x swing plan is the engine once the account is funded, and
+research moves to crypto. `CRYPTO.md` holds the crypto plan.
+
 ## 15. State at the last update (close of 20 November 2026)
 
 This section goes stale. Check `paper/` for the present.
