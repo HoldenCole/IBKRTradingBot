@@ -1,0 +1,7 @@
+trade,horizon,fee,n,mean_return,win,avg_price,t,2024,2025,2026,top5 categories positive,passes
+K1 favourite 90-99c,24h,taker,169,-0.0071,0.9645,0.9732,-0.6279,,,-0.0071,3,False
+K1 favourite 90-99c,24h,none,169,0.0031,0.9763,0.9732,0.2686,,,0.0031,3,False
+K2 favourite 75-90c,24h,taker,75,-0.0244,0.8133,0.8200,-0.4530,,,-0.0244,3,False
+K2 favourite 75-90c,24h,none,75,-0.0055,0.8133,0.8200,-0.0996,,,-0.0055,3,False
+K3 long shot 1-10c,24h,taker,165,-0.4601,0.0242,0.0263,-1.3818,,,-0.4601,0,False
+K3 long shot 1-10c,24h,none,165,-0.1145,0.0242,0.0263,-0.1826,,,-0.1145,0,False

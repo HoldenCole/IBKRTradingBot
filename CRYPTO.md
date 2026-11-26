@@ -45,7 +45,10 @@ Binance's trading API (451) and Bybit (403) are blocked here; neither is usable 
    separate question.
 3. **Short-term BTC-led signals, levered (C3). Done, entry 103 (corrected): every short-term signal loses; the BTC daily trend first appeared to pass but that was a look-ahead bug; corrected, it trails holding and leverage wipes it out. 0 of 30 pass.**
 4. **Do the project's signals predict bitcoin (C4)? Done, entry 104: the equity signals do not; bitcoin's own 10-month average does, a little. Post-hoc lead: a manual monthly rule (hold BTC while above its 10-month average), 1x.**
-5. Only a design that passes goes to paper trading, then to a small live account with the safety controls listed
+5. **The swing plan and the bitcoin rule in one account (C5). Done, entry 105: bitcoin on the swing plan's idle cash
+   fails; a fixed half-and-half split was the best 2021-26 combination (+31% a year, -24% max drawdown).**
+6. **Kalshi favourite-longshot bias (entry 106). Done: no edge after fees in a thin 2026 sample.**
+7. Only a design that passes goes to paper trading, then to a small live account with the safety controls listed
    in the survey (kill switch, position limits, reconciliation, exchange-resident stops).
 
 ## Standing rules carried over

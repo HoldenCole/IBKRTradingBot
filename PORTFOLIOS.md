@@ -1706,3 +1706,17 @@ Idea: the 3x swing plan holds positions on only 16% of days, and its idle cash e
 The half columns show CAGR / max drawdown. $19,750 is deposited in every case.
 
 **Reading.** Putting bitcoin on the swing plan's idle cash (V2) fails its gate. Every swing entry sells bitcoin, often in the middle of a bitcoin rally, and the account ends below the rule alone in 2016-20 with a deeper drawdown. The fixed half-and-half (V4) is the better construction. In 2021-26 it earned +31% a year with a -24% maximum drawdown, against +29% / -53% for the rule alone and +25% / -19% for the swing plan alone. The long-run totals are dominated by bitcoin's 2016-17 run, so the 2021-26 column is the more realistic guide. The 10-month rule needs a forward record before any money depends on it; it has been logged forward since October 2026 (`paper/btc_rule.csv`).
+
+## Kalshi: the favourite-longshot bias after fees (2026-11-26, entry 106)
+
+User direction: try prediction markets, where a small account is not a handicap. Pre-registered in `research/kalshi/PREREGISTRATION.md`; amendment 1 cut the sample size for the API's rate limit before any result was seen. Code: `research/kalshi/study.py`. Results: `research/kalshi/results.csv` and `calibration.csv`.
+
+The sample: 480 series drawn at random across 16 categories. Kept were settled binary markets that closed in 2024-2026, were open at least 48 hours and traded at least 100 contracts. That left 311 markets in 124 events, all closing in 2026: the public archive returned no qualifying older markets for the sampled series. Mentions (105), Elections (41) and Financials (38) are the largest categories. The price used is the last trade 24 hours before close. Kalshi's taker fee is 0.07 x p x (1 - p) per contract, rounded up to the cent.
+
+| buy, 24 hours before close | markets | average price | win rate | return after taker fee | return with no fee | t (after fee) |
+|---|---|---|---|---|---|---|
+| favourite at 90-99c | 169 | 97.3c | 96% | -0.7% | +0.3% | -0.6 |
+| favourite at 75-90c | 75 | 82.0c | 81% | -2.4% | -0.6% | -0.5 |
+| long shot at 1-10c | 165 | 2.6c | 2.4% | -46% | -11% | -1.4 |
+
+**Reading.** No trade passes. The prices were roughly fair: contracts at 95-99c won 96% of the time, and none of the 86 contracts under 5c won. The long-shot side loses heavily mainly because of the fee: the minimum 1-cent fee on a 2-3 cent contract is 40-50% of the stake. Buying favourites earns about nothing; with no fee, as a maker, it is +0.3% a contract. The sample is small and covers one year, so this rules out a large, easy edge but not a small or category-specific one. Not worth building a bot on this evidence.
