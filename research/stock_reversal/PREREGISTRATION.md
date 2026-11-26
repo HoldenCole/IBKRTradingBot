@@ -98,3 +98,11 @@ Events, mean gross and net, median, win rate, both eras, clustered t, Holm-adjus
 raw (not market-adjusted) net return. Results for fading falls (buying crashes) carry the
 survivorship warning, since the missing delisted names are disproportionately crashes that kept
 falling.
+
+## Amendment 1 (2026-11-26, before any event was measured)
+
+Filings are matched to stocks through the company's current SEC registrant number. A company that
+changed registrant (for example Google to Alphabet in 2015) has earlier filings under another
+number, and its earnings days would wrongly fall into bucket N. Rule: a stock-day is used only
+if that stock has an Item 2.02 filing accepted in the 130 sessions before t, which shows its
+filings are being seen.
