@@ -1379,3 +1379,19 @@ Question: would options on UPRO or TQQQ do better than holding the fund for the 
 | call debit spread 1.00/1.10, 25% a trade | $30,691 | -86% |
 
 **Reading.** The swing edge is 1-2% over three to five days. A 30-day option on a 3x fund costs 50-60% implied vol, so the time decay and spread consume the edge, and the strikes are rarely far enough in the money to act like the fund. Per contract at risk: UPRO ATM about $152, TQQQ ATM about $49, so the small account can trade them, but nothing in the model says it should. Put credit spreads are left out: they need a margin account, and the model is unreliable for them at extreme volatility. The live plan stays with the 3x funds themselves.
+
+## Weekly options on the 3x funds (2026-11-26, entry 91)
+
+Follow-up to entry 90: a few-day trade does not need a 30-day option. Code: `research/swing/study_options_3x_weekly.py`; table in `research/swing/options_3x_weekly_results.csv`. Same 295 trades and option model. Expiry is the first Friday at least 3, 7 or 14 days after entry; if the signal has not exited by then, the option is sold at that Friday's close. Trades are held a median 5 calendar days, the longest 14.
+
+| long ATM call | days to expiry, median | per trade | round-trip spread, share of premium | first day's decay | cost per contract, UPRO / TQQQ | account at 10% a trade | account at 25% a trade |
+|---|---|---|---|---|---|---|---|
+| Friday 3+ days out | 7 | -14.5% | 12% | 6.4% | $73 / $19 | $27,973 (-52%) | $27,783 (-86%) |
+| Friday 7+ days out | 9 | -15.0% | 9% | 5.3% | $87 / $28 | $23,325 (-50%) | $25,794 (-85%) |
+| Friday 14+ days out | 16 | -10.7% | 7% | 3.0% | $113 / $37 | $29,459 (-41%) | $55,894 (-81%) |
+| 30 days | 30 | -7.2% | 6% | 1.6% | $152 / $49 | $30,116 (-31%) | $67,559 (-72%) |
+| 3x fund itself | | +1.4% | | | | $86,654 (-27%) | |
+
+Accounts start at $1,000 with $150 a month added ($29,500 deposited); the worst drop is in brackets.
+
+**Reading.** A cheaper, nearer option buys more leverage per dollar but loses value faster and pays a larger share of its price in spread. A one-week ATM call needs the fund to rise about 2% before it breaks even; the average swing trade rises 1.4%. In-the-money calls and debit spreads cut the decay but keep the spread, and none beat the fund. With the spread doubled, every weekly variant ends between $3,000 and $20,000. The live plan stays with the 3x funds.
