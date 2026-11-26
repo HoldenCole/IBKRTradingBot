@@ -1440,3 +1440,19 @@ User follow-up: exit on a percentage move, not on time, whether that takes part 
 | 5% target | +27 bp (45%) | -1 bp (56%) | +13 bp (63%) |
 
 **Reading.** None of the 192 passes, and none of the positive ones has a t above 1.6. Exiting on price does not rescue the earnings fades: they lose against random days of the same stock as well, because earnings moves continue. High win rates are the trap. A small target with a wide stop wins 80 to 90% of the time and still loses, because the occasional stop is many times the target. Tight stops do worst on no-filing pops, which often run further before they turn. The best no-filing bracket (+42 bp) is weaker than simply covering at the close (+67 bp in entry 92).
+
+## Levering the no-news gap-up short (2026-11-26, entry 94)
+
+User: a 70% win rate is good, so lever it. Code: `research/stock_reversal/leverage_93.py`. The trade is entry 93's short of a no-filing gap-up at the open, with a 3% target, a 6% or 10% stop and a 20-session cap. The account holds at most two positions, each sized at leverage x equity / 2. Covers 2005 to 2023.
+
+| leverage | 6% stop: CAGR | max drawdown | 10% stop: CAGR | max drawdown | worst single trade, 10% stop |
+|---|---|---|---|---|---|
+| 1x | +3.2% | -32% | +4.7% | -24% | -14% of equity |
+| 2x | +5.2% | -55% | +8.0% | -44% | -27% |
+| 3x | +5.9% | -72% | +9.3% | -62% | -41% |
+| 4x | +5.0% | -83% | +8.2% | -77% | -54% |
+| 6x | -3.2% | -98% | -3.9% | -95% | -82% |
+| 8x | wiped out | -100% | wiped out | -100% | -109% |
+| swing account at 3x (test 89) | +14.4% | -38% | | | |
+
+**Reading.** The win rate hides the shape. With the 6% stop a win averages +2.9% and a loss -6.3%, and gaps through the stop reach -22%. The edge is +0.26% a trade overall but only +0.03% in 2015-2023. Leverage multiplies wins and losses alike, so growth tops out near 3x and then the drawdowns compound into ruin. At its best this stays well behind the 3x swing account. Shorting also needs a margin account of at least $2,000, and Reg T caps overnight leverage at 2x.
