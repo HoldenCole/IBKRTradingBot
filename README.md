@@ -173,6 +173,7 @@ Everything under `paper/` is append-only. Never edit or restate a row.
 | `paper/watch.csv`, `paper/weekly.csv` | Saturday routine | Distance of each dial from its line, the provisional regime, the week |
 | `paper/trend_cycle.csv` | daily routine | Quadrant Balances codes, member balances and the flag |
 | `paper/swing_trades.csv`, `paper/swing_daily.csv` | daily routine | The standalone swing paper account |
+| `paper/swing_live_account.json`, `paper/swing_live_orders.csv`, `paper/swing_live_trades.csv` | `src/portfolio/swing_live.py` | The live 3x swing account ($1,000 start, about $150 a month added): orders issued before each close, fills booked at the close until the real fill is confirmed |
 | `paper/overrides.csv` | by hand | Any time the investor departs from the model's book, with the reason and the re-entry rule |
 
 Signals that are computed and logged but **do not trade**:

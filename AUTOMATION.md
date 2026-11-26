@@ -133,3 +133,16 @@ research: it reads market prices only, never the ledger or the paper
 logs, and carries nothing about the account or its books.
 The Saturday routine writes that week's commentary file, builds the PDF,
 checks every page, commits it and sends it. Details: `report/README.md`.
+
+## Live 3x swing account (user-run orders)
+
+`src/portfolio/swing_live.py` follows the paper swing rules (tests 79 and 89) for a separate
+$1,000 IBKR cash account held in UPRO and TQQQ. It places no orders: about 15:40 New York it
+prints the market-on-close orders to enter by hand (`--preclose`), after the close it books them
+at the closing price (`--settle`), and `--fill` records the real fill. Positions are always held
+overnight, so the $25,000 day-trading rule never applies.
+
+```cron
+40 15 * * 1-5  cd /home/bot/IBKRTradingBot && python -m src.portfolio.swing_live --preclose >> logs/swing_live.log 2>&1
+45 16 * * 1-5  cd /home/bot/IBKRTradingBot && python -m src.portfolio.swing_live --settle >> logs/swing_live.log 2>&1
+```
