@@ -141,3 +141,112 @@ if __name__ == "__main__":
     for c in ("BTC", "ETH"):
         h = hyperliquid_funding(c)
         print(f"Hyperliquid {c}: {h.time.iloc[0].date()} to {h.time.iloc[-1].date()} ({len(h)})")
+
+
+# ---------------------------------------------------------------- C2: full Binance USDT spot universe
+S3 = "https://s3-ap-northeast-1.amazonaws.com/data.binance.vision"
+EXCLUDE_BASE = {"USDC", "BUSD", "TUSD", "USDP", "PAX", "DAI", "FDUSD", "USDS", "USDSB", "SUSD", "UST", "USTC", "EUR",
+                "GBP", "AUD", "TRY", "BRL", "RUB", "UAH", "NGN", "ZAR", "IDRT", "BIDR", "BVND", "EURI", "AEUR", "XUSD",
+                "USD1", "RLUSD", "PAXG", "WBTC", "WBETH", "WETH", "BETH", "BKRW", "VAI", "USDE", "BFUSD", "PYUSD"}
+LEVERAGED = ("UP", "DOWN", "BULL", "BEAR")
+
+
+def _list(prefix: str) -> tuple[list[str], list[str]]:
+    """S3 listing: (sub-prefixes, keys), following pagination."""
+    import re
+    subs, keys, marker = [], [], ""
+    while True:
+        raw = _get(f"{S3}?prefix={prefix}&delimiter=/&marker={marker}")
+        txt = raw.decode()
+        subs += re.findall(r"<Prefix>([^<]+/)</Prefix>", txt)[1:] if "<CommonPrefixes>" in txt else []
+        keys += re.findall(r"<Key>([^<]+)</Key>", txt)
+        if "<IsTruncated>true</IsTruncated>" not in txt:
+            break
+        nm = re.search(r"<NextMarker>([^<]+)</NextMarker>", txt)
+        marker = nm.group(1) if nm else (keys[-1] if keys else subs[-1])
+    return subs, keys
+
+
+def usdt_symbols() -> list[str]:
+    f = CACHE / "binance_usdt_symbols.json"
+    if f.exists():
+        return json.loads(f.read_text())
+    subs, _ = _list("data/spot/monthly/klines/")
+    syms = sorted({s.rstrip("/").split("/")[-1] for s in subs})
+    out = []
+    for s in syms:
+        if not s.endswith("USDT"):
+            continue
+        base = s[:-4]
+        if base in EXCLUDE_BASE or any(base.endswith(x) and len(base) > len(x) for x in LEVERAGED):
+            continue
+        out.append(s)
+    CACHE.mkdir(parents=True, exist_ok=True)
+    f.write_text(json.dumps(out))
+    return out
+
+
+def spot_daily_symbol(sym: str) -> pd.DataFrame | None:
+    """Daily candles for one Binance pair across all archived months, with quote volume."""
+    f = CACHE / "spot1d" / f"{sym}.parquet"
+    if f.exists():
+        return pd.read_parquet(f)
+    _, keys = _list(f"data/spot/monthly/klines/{sym}/1d/")
+    keys = [k for k in keys if k.endswith(".zip")]
+    parts = []
+    for k in keys:
+        raw = _get(f"https://data.binance.vision/{k}")
+        if raw is None:
+            continue
+        d = _zip_csv(raw)
+        if not str(d.iloc[0, 0]).isdigit():
+            d = d.iloc[1:]
+        d = d.iloc[:, [0, 1, 2, 3, 4, 7]].astype(float)
+        d.columns = ["ts", "open", "high", "low", "close", "qvol"]
+        parts.append(d)
+    f.parent.mkdir(parents=True, exist_ok=True)
+    if not parts:
+        pd.DataFrame().to_parquet(f)
+        return None
+    df = pd.concat(parts)
+    ts = df["ts"].astype("int64")
+    ts = ts.where(ts < 1e14, ts // 1000)
+    df["date"] = pd.to_datetime(ts, unit="ms").dt.normalize()
+    df = df.drop(columns="ts").drop_duplicates("date").set_index("date").sort_index()
+    df.to_parquet(f)
+    return df
+
+
+def coinbase_btc_daily() -> pd.Series:
+    f = CACHE / "coinbase_btc_usd_1d.parquet"
+    if f.exists():
+        return pd.read_parquet(f)["close"]
+    rows = []
+    start = pd.Timestamp("2015-01-01")
+    end = pd.Timestamp.now().normalize()
+    while start < end:
+        stop = min(start + pd.Timedelta(days=299), end)
+        url = (f"https://api.exchange.coinbase.com/products/BTC-USD/candles?granularity=86400"
+               f"&start={start:%Y-%m-%dT00:00:00Z}&end={stop:%Y-%m-%dT00:00:00Z}")
+        raw = _get(url)
+        rows += json.loads(raw) if raw else []
+        start = stop + pd.Timedelta(days=1)
+        time.sleep(0.4)
+    df = pd.DataFrame(rows, columns=["t", "low", "high", "open", "close", "volume"])
+    df["date"] = pd.to_datetime(df["t"], unit="s").dt.normalize()
+    df = df.drop_duplicates("date").set_index("date").sort_index()
+    df.to_parquet(f)
+    return df["close"]
+
+
+def download_universe(workers: int = 12) -> None:
+    from concurrent.futures import ThreadPoolExecutor
+    syms = usdt_symbols()
+    print(f"{len(syms)} USDT pairs after exclusions", flush=True)
+    done = 0
+    with ThreadPoolExecutor(workers) as ex:
+        for _ in ex.map(spot_daily_symbol, syms):
+            done += 1
+            if done % 50 == 0:
+                print(f"  {done}/{len(syms)}", flush=True)
+    print("done", flush=True)
