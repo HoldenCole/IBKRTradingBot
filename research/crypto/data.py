@@ -258,3 +258,31 @@ def download_universe(workers: int = 12) -> None:
             if done % 50 == 0:
                 print(f"  {done}/{len(syms)}", flush=True)
     print("done", flush=True)
+
+
+# ---------------------------------------------------------------- C3: hourly USD-M perpetual candles
+def perp_hourly(coin: str) -> pd.DataFrame:
+    """Binance USD-M perpetual 1h candles (open time UTC) from 2020: open, high, low, close."""
+    f = CACHE / f"perp1h_{coin}.parquet"
+    if f.exists():
+        return pd.read_parquet(f)
+    sym = f"{coin}USDT"
+    parts = []
+    for m in pd.period_range("2020-01", pd.Timestamp.now().to_period("M") - 1, freq="M"):
+        raw = _get(f"{VISION}/futures/um/monthly/klines/{sym}/1h/{sym}-1h-{m}.zip")
+        if raw is None:
+            continue
+        d = _zip_csv(raw)
+        if not str(d.iloc[0, 0]).isdigit():
+            d = d.iloc[1:]
+        d = d.iloc[:, :5].astype(float)
+        d.columns = ["ts", "open", "high", "low", "close"]
+        parts.append(d)
+    df = pd.concat(parts)
+    ts = df["ts"].astype("int64")
+    ts = ts.where(ts < 1e14, ts // 1000)
+    df["time"] = pd.to_datetime(ts, unit="ms", utc=True)
+    df = df.drop(columns="ts").drop_duplicates("time").set_index("time").sort_index()
+    CACHE.mkdir(parents=True, exist_ok=True)
+    df.to_parquet(f)
+    return df
