@@ -443,21 +443,24 @@ These came from the investor and from mistakes already made. They are not sugges
 6. **Default to paper.** Live orders need `MODE=live`, the explicit risk flag and the investor's confirmation
    in the conversation. Every order goes through the guarded order path. Ask before anything destructive.
 7. **Say what a backtest cannot show.** In-sample design, survivorship bias, small samples, costs, leverage decay.
+8. **The small live account is always levered.** Every strategy tested for it is run levered, at 3x by default,
+   and judged against the 3x swing account (test 89). The default lever is a 3x fund (UPRO, TQQQ), which works
+   in a cash account and cannot lose more than the account. Margin and options were weighed in tests 89 to 94.
 
 **Reporting rules**
 
-8. **The weekly PDF carries research only**, nothing about the account (section 9).
-9. **No account size in generated files.** The order sheet ships with an empty value cell.
-10. **Name things as the investor does.** "Quadrant Balances", never "fragile", for the trend and cycle tool.
-11. **Chat answers:** lead with the outcome, short sentences, numbers in tables, no jargon without a definition.
+9. **The weekly PDF carries research only**, nothing about the account (section 9).
+10. **No account size in generated files.** The order sheet ships with an empty value cell.
+11. **Name things as the investor does.** "Quadrant Balances", never "fragile", for the trend and cycle tool.
+12. **Chat answers:** lead with the outcome, short sentences, numbers in tables, no jargon without a definition.
 
 **Repository rules**
 
-12. Develop on `claude/trading-bot-cl1-uso-spread-02qa7h`. Do not open a pull request unless asked.
-13. Do not put AI model names or identifiers in commits, code or documents.
-14. Record every new test in `TESTS.md` (one line) and `PORTFOLIOS.md` (the evidence), verdict included,
+13. Develop on `claude/trading-bot-cl1-uso-spread-02qa7h`. Do not open a pull request unless asked.
+14. Do not put AI model names or identifiers in commits, code or documents.
+15. Record every new test in `TESTS.md` (one line) and `PORTFOLIOS.md` (the evidence), verdict included,
     even when the verdict is no.
-15. Keep dependencies lean. Never commit `.env` or credentials.
+16. Keep dependencies lean. Never commit `.env` or credentials.
 
 ---
 
