@@ -10,6 +10,7 @@ import json
 import sys
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 import zipfile
 from pathlib import Path
@@ -156,7 +157,14 @@ def _list(prefix: str) -> tuple[list[str], list[str]]:
     import re
     subs, keys, marker = [], [], ""
     while True:
-        raw = _get(f"{S3}?prefix={prefix}&delimiter=/&marker={marker}")
+        raw = None
+        for _ in range(5):
+            raw = _get(f"{S3}?prefix={urllib.parse.quote(prefix)}&delimiter=/&marker={urllib.parse.quote(marker)}")
+            if raw is not None:
+                break
+            time.sleep(5)
+        if raw is None:
+            raise RuntimeError(f"listing failed: {prefix}")
         txt = raw.decode()
         subs += re.findall(r"<Prefix>([^<]+/)</Prefix>", txt)[1:] if "<CommonPrefixes>" in txt else []
         keys += re.findall(r"<Key>([^<]+)</Key>", txt)
@@ -195,7 +203,7 @@ def spot_daily_symbol(sym: str) -> pd.DataFrame | None:
     keys = [k for k in keys if k.endswith(".zip")]
     parts = []
     for k in keys:
-        raw = _get(f"https://data.binance.vision/{k}")
+        raw = _get(f"https://data.binance.vision/{urllib.parse.quote(k)}")
         if raw is None:
             continue
         d = _zip_csv(raw)
