@@ -61,12 +61,25 @@ def _fetch_week(pair: str, year: int, week: int) -> pd.DataFrame | None:
         except (urllib.error.URLError, TimeoutError, ConnectionError):
             time.sleep(2 * (attempt + 1))
             continue
-        raw = gzip.decompress(content)
-        df = pd.read_csv(io.BytesIO(raw))
+        try:
+            raw = gzip.decompress(content)
+        except (EOFError, OSError):           # truncated transfer: retry
+            time.sleep(2 * (attempt + 1))
+            continue
+        if not raw.strip():
+            return None
+        try:
+            df = pd.read_csv(io.BytesIO(raw))
+        except pd.errors.EmptyDataError:
+            return None
+        if df.empty:
+            return None
         df.columns = ["time"] + COLS
         df["time"] = pd.to_datetime(df["time"], format="%m/%d/%Y %H:%M:%S.%f", utc=True)
         return df
-    raise RuntimeError(f"{url}: failed after retries")
+    # Some source files are persistently truncated (e.g. 2025 week 2): treat as missing, say so.
+    print(f"  WARNING {url}: unreadable after retries, treated as missing", file=sys.stderr, flush=True)
+    return None
 
 
 def fetch_year(pair: str, year: int, workers: int = 6) -> pd.DataFrame:
@@ -135,7 +148,7 @@ def quality(pair: str) -> pd.DataFrame:
                     (df["bid_h"] < df[["bid_o", "bid_c"]].max(axis=1) - 1e-9)).sum()
         t = df["time"]
         ny = t.dt.tz_convert("America/New_York")
-        wk = ny.dt.dayofweek
+        wk = ny.dt.day_of_week
         weekend = ((wk == 5) | ((wk == 6) & (ny.dt.hour < 17)) | ((wk == 4) & (ny.dt.hour >= 17))).sum()
         gaps = t.diff().dt.total_seconds().div(60)
         rows.append({"pair": pair, "year": y, "bars": len(df), "first": t.iloc[0], "last": t.iloc[-1],
