@@ -215,3 +215,32 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+def holdout(flag: str):
+    """Open the hold-out once for the development passers (S6 on BTC, ETH, SOL, XRP)."""
+    if flag != HOLDOUT_FLAG:
+        raise PermissionError("hold-out is locked")
+    idx, px, fund = load()
+    wins = windows(idx, px["BTC"])["S6 daily trend (long only)"]
+    k0 = int(idx.searchsorted(DEV_END))          # a position still open on 2024-01-01 enters at the last 2023 close
+    wins = [(max(a, k0 - 1), b, d) for a, b, d in wins if b >= k0]
+    rows = []
+    for coin in ("BTC", "ETH", "SOL", "XRP"):
+        t = trade_table(wins, idx, px, fund, coin, holdout=True)
+        t = t[t.exit >= DEV_END].reset_index(drop=True)
+        hold = px[coin]["close"].loc[DEV_END:]
+        row = {"coin": coin, "trades": len(t), "mean_bp": t.net.mean() * 1e4, "win": (t.net > 0).mean(),
+               "hold_multiple": hold.iloc[-1] / hold.iloc[0]}
+        for L in [x for x in LEVERAGES if x <= CAP[coin]]:
+            a = account(t, L)
+            row[f"{L}x multiple"] = a["multiple"]; row[f"{L}x maxDD"] = a["maxDD"]; row[f"{L}x liq"] = a["liquidations"]
+        row["passes (1x CAGR > 0)"] = account(t, 1)["CAGR"] > 0
+        rows.append(row)
+        print(f"{coin}: {len(t)} trades 2024-01 to 2026-10; per trade {t.net.mean():+.2%} (win {(t.net > 0).mean():.0%}); "
+              f"holding the coin x{row['hold_multiple']:.2f}")
+        print("    " + "; ".join(f"{L}x: x{row[f'{L}x multiple']:.2f}, worst drop {row[f'{L}x maxDD']:+.0%}, "
+                                   f"{row[f'{L}x liq']} liquidations" for L in LEVERAGES if L <= CAP[coin]))
+        for r in t.itertuples():
+            print(f"      {r.entry:%Y-%m-%d} to {r.exit:%Y-%m-%d}: {r.net:+.1%} (worst move against {r.adverse:.0%})")
+    pd.DataFrame(rows).to_csv("research/crypto/levered_holdout.csv", index=False, float_format="%.4f")

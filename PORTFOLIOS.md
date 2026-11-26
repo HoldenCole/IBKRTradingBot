@@ -1617,3 +1617,38 @@ At 50 bp, the realistic US retail cost, every figure falls further: top 20 +6.1%
 **Gates** (paper sizing, top 20, 25 bp): replication Sharpe 0.94 against the required 1.0, FAIL; both halves above 0.5, pass; after publication -0.1% with Sharpe 0.01, FAIL.
 
 **Reading.** The code reproduces the paper on bitcoin, so the gap is not a bug. On Binance from 2018 the portfolio is weaker than published, because the paper's sample includes the 2015-2017 run-up. Its Sharpe has fallen by half between 2018-21 and 2022-25. Since publication it has earned about nothing at any size or risk level. It did its defensive job: drawdowns of 8% to 23% while the coins fell 53% to 68%. The higher-risk spot versions earned 21-33% a year from 2018 to early 2025 with drawdowns of 30-46%, the "inspirational" range. But that return came from the 2018-21 trends, and they have lost money since. Not adopted. Worth watching as a paper record: a trend rule can only earn when trends return, and the next crypto bull run is the test.
+
+## Crypto C3: bitcoin signals, levered, in bitcoin and the altcoins (2026-11-26, entry 103)
+
+User direction: short-term, highly levered positions; coins move together, so read the signal from bitcoin and trade an altcoin; judge by absolute return. Pre-registered in `research/crypto/PREREGISTRATION_C3.md`. Code: `research/crypto/levered.py`, tested in `tests/test_crypto_levered.py`. Results: `research/crypto/levered_dev.csv`, `levered_dev_leverage.csv` and `levered_holdout.csv`.
+
+Data: Binance USD-M perpetual hourly candles and real funding. Costs are 10 bp a side plus funding. A position is liquidated on a move of 1/L - 0.5% against its entry, using hourly highs and lows. Leverage runs up to each coin's US limit: BTC and ETH 10x, SOL and XRP 5x, DOGE 4x (Coinbase).
+
+**Development, 2020-2023, 1x, net per trade:**
+
+| signal on BTC | BTC | ETH | SOL | XRP | DOGE |
+|---|---|---|---|---|---|
+| 1-hour impulse, hold 4h | -31 bp (t -5.4) | -41 bp | -55 bp | -41 bp | -48 bp |
+| 1-hour impulse, hold 1h | -24 bp (t -8.2) | -25 bp | -32 bp | -30 bp | -28 bp |
+| 4-hour impulse, hold 24h | +17 bp (t 0.8) | +18 bp | -26 bp | -14 bp | -23 bp |
+| 4-hour breakout | +11 bp | +32 bp | +22 bp | +69 bp (t 1.0) | +69 bp |
+| 4-hour RSI(2) dip and rip | -25 bp | -30 bp | +35 bp | -10 bp | -26 bp |
+| daily trend, long only (development multiple at 1x) | x12.7 | x76.0 | x14.5 | x11.7 | x1.3 |
+
+**Hold-out, 2024-01 to 2026-10 (opened once), the daily trend, final multiple of the starting balance:**
+
+| | holding the coin | 1x | 2x | 3x | 5x | 10x |
+|---|---|---|---|---|---|---|
+| BTC | x1.82 | x2.89 (-4%) | x6.38 (-8%) | x12.15 (-12%) | x34.1 (-19%) | x200 (-37%) |
+| ETH | x0.98 | x2.13 (-31%) | x2.71 (-59%) | x2.06 (-82%) | wiped out | x1.86 (-98%, 1 liquidation) |
+| SOL | x0.94 | x1.61 (-8%) | x2.31 (-16%) | x3.02 (-24%) | x0.07 (liquidated) | |
+| XRP | x2.03 | x3.71 (-12%) | x6.51 (-25%) | liquidated | liquidated | |
+
+The maximum drawdown is in brackets.
+
+**Reading.**
+
+1. Short-term, bitcoin-led trading of the altcoins does not work. Following a sharp hourly bitcoin move loses money in every coin with high confidence: the move is already in the price, and the fees take the rest. The other short-horizon signals are noise. At any leverage these signals go to zero.
+2. The one thing that works is slow: the daily bitcoin trend, held for days to months. It passed the development gates and the sealed hold-out, beating holding the coin in all four cases.
+3. The lever belongs on bitcoin. The altcoins add their own crashes on top of bitcoin's. ETH fell 26% (14 points of it funding) through a 14-month position while bitcoin rose 77%. XRP took a 38% wick against its entry on 10 October 2025. Bitcoin's worst move against an entry in the hold-out was 8.9%, so it held up to 10x, but 10x sat 0.6% from liquidation once. 2x to 3x on bitcoin gave x6 to x12 with drawdowns of 8% to 12%.
+4. Limits. The sample holds two bull runs (2020-21, 2024-25) and one bear market, so the leveraged multiples are not forecasts. Overnight margin on the US contracts may be stricter than the intraday limits quoted. Funding cost longs 13-15% over the 14-month 2024 position, and it is charged against the margin.

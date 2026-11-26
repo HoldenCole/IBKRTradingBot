@@ -1,0 +1,127 @@
+signal,coin,L,multiple,CAGR,maxDD,liquidations,ruin
+"S1 impulse 1h, hold 4h",BTC,1,0.0125,-0.6717,-0.9879,0,True
+"S1 impulse 1h, hold 4h",BTC,2,0.0001,-0.9073,-0.9999,0,True
+"S1 impulse 1h, hold 4h",BTC,3,0.0000,-0.9777,-1.0000,0,True
+"S1 impulse 1h, hold 4h",BTC,5,0.0000,-0.9993,-1.0000,0,True
+"S1 impulse 1h, hold 4h",BTC,10,0.0000,-1.0000,-1.0000,11,True
+"S1 impulse 1h, hold 4h",ETH,1,0.0000,-0.9403,-1.0000,1,True
+"S1 impulse 1h, hold 4h",ETH,2,0.0000,-0.9874,-1.0000,1,True
+"S1 impulse 1h, hold 4h",ETH,3,0.0000,-0.9982,-1.0000,1,True
+"S1 impulse 1h, hold 4h",ETH,5,0.0000,-1.0000,-1.0000,4,True
+"S1 impulse 1h, hold 4h",ETH,10,0.0000,-1.0000,-1.0000,26,True
+"S1 impulse 1h, hold 4h",SOL,1,0.0006,-0.8958,-0.9995,0,True
+"S1 impulse 1h, hold 4h",SOL,2,0.0000,-0.9981,-1.0000,1,True
+"S1 impulse 1h, hold 4h",SOL,3,0.0000,-1.0000,-1.0000,3,True
+"S1 impulse 1h, hold 4h",SOL,5,0.0000,-1.0000,-1.0000,13,True
+"S1 impulse 1h, hold 4h",XRP,1,0.0023,-0.7856,-0.9979,0,True
+"S1 impulse 1h, hold 4h",XRP,2,0.0000,-0.9677,-1.0000,0,True
+"S1 impulse 1h, hold 4h",XRP,3,0.0000,-0.9968,-1.0000,0,True
+"S1 impulse 1h, hold 4h",XRP,5,0.0000,-1.0000,-1.0000,5,True
+"S1 impulse 1h, hold 4h",DOGE,1,0.0013,-0.8539,-0.9988,0,True
+"S1 impulse 1h, hold 4h",DOGE,2,0.0000,-0.9950,-1.0000,1,True
+"S1 impulse 1h, hold 4h",DOGE,3,0.0000,-0.9996,-1.0000,1,True
+"S2 impulse 1h, hold 1h",BTC,1,0.0099,-0.6910,-0.9902,0,True
+"S2 impulse 1h, hold 1h",BTC,2,0.0001,-0.9121,-0.9999,0,True
+"S2 impulse 1h, hold 1h",BTC,3,0.0000,-0.9772,-1.0000,0,True
+"S2 impulse 1h, hold 1h",BTC,5,0.0000,-0.9993,-1.0000,1,True
+"S2 impulse 1h, hold 1h",BTC,10,0.0000,-1.0000,-1.0000,4,True
+"S2 impulse 1h, hold 1h",ETH,1,0.0001,-0.9177,-0.9999,1,True
+"S2 impulse 1h, hold 1h",ETH,2,0.0000,-0.9721,-1.0000,1,True
+"S2 impulse 1h, hold 1h",ETH,3,0.0000,-0.9921,-1.0000,1,True
+"S2 impulse 1h, hold 1h",ETH,5,0.0000,-0.9996,-1.0000,1,True
+"S2 impulse 1h, hold 1h",ETH,10,0.0000,-1.0000,-1.0000,7,True
+"S2 impulse 1h, hold 1h",SOL,1,0.0045,-0.8067,-0.9958,0,True
+"S2 impulse 1h, hold 1h",SOL,2,0.0000,-0.9734,-1.0000,0,True
+"S2 impulse 1h, hold 1h",SOL,3,0.0000,-0.9980,-1.0000,0,True
+"S2 impulse 1h, hold 1h",SOL,5,0.0000,-1.0000,-1.0000,3,True
+"S2 impulse 1h, hold 1h",XRP,1,0.0034,-0.7646,-0.9967,0,True
+"S2 impulse 1h, hold 1h",XRP,2,0.0000,-0.9528,-1.0000,0,True
+"S2 impulse 1h, hold 1h",XRP,3,0.0000,-0.9921,-1.0000,0,True
+"S2 impulse 1h, hold 1h",XRP,5,0.0000,-0.9999,-1.0000,0,True
+"S2 impulse 1h, hold 1h",DOGE,1,0.0065,-0.7686,-0.9936,0,True
+"S2 impulse 1h, hold 1h",DOGE,2,0.0000,-0.9583,-1.0000,0,True
+"S2 impulse 1h, hold 1h",DOGE,3,0.0000,-0.9976,-1.0000,1,True
+"S3 impulse 4h, hold 24h",BTC,1,1.4364,0.0965,-0.4679,0,False
+"S3 impulse 4h, hold 24h",BTC,2,0.8874,-0.0299,-0.8369,0,False
+"S3 impulse 4h, hold 24h",BTC,3,0.2298,-0.3120,-0.9732,0,False
+"S3 impulse 4h, hold 24h",BTC,5,0.0000,-0.9427,-1.0000,2,True
+"S3 impulse 4h, hold 24h",BTC,10,0.0000,-1.0000,-1.0000,12,True
+"S3 impulse 4h, hold 24h",ETH,1,1.2154,0.0509,-0.6851,0,False
+"S3 impulse 4h, hold 24h",ETH,2,0.0022,-0.7900,-0.9996,1,True
+"S3 impulse 4h, hold 24h",ETH,3,0.0002,-0.8884,-1.0000,1,True
+"S3 impulse 4h, hold 24h",ETH,5,0.0000,-0.9988,-1.0000,5,True
+"S3 impulse 4h, hold 24h",ETH,10,0.0000,-1.0000,-1.0000,32,True
+"S3 impulse 4h, hold 24h",SOL,1,0.0679,-0.5583,-0.9731,0,True
+"S3 impulse 4h, hold 24h",SOL,2,0.0000,-0.9878,-1.0000,2,True
+"S3 impulse 4h, hold 24h",SOL,3,0.0000,-0.9995,-1.0000,4,True
+"S3 impulse 4h, hold 24h",SOL,5,0.0000,-1.0000,-1.0000,15,True
+"S3 impulse 4h, hold 24h",XRP,1,0.2098,-0.3278,-0.8651,0,False
+"S3 impulse 4h, hold 24h",XRP,2,0.0066,-0.7215,-0.9969,0,True
+"S3 impulse 4h, hold 24h",XRP,3,0.0000,-0.9652,-1.0000,1,True
+"S3 impulse 4h, hold 24h",XRP,5,0.0000,-1.0000,-1.0000,10,True
+"S3 impulse 4h, hold 24h",DOGE,1,0.0016,-0.8440,-0.9992,1,True
+"S3 impulse 4h, hold 24h",DOGE,2,0.0000,-0.9917,-1.0000,3,True
+"S3 impulse 4h, hold 24h",DOGE,3,0.0000,-0.9999,-1.0000,7,True
+S4 4-hour breakout,BTC,1,0.8287,-0.0462,-0.8660,0,False
+S4 4-hour breakout,BTC,2,0.2558,-0.2903,-0.9893,0,False
+S4 4-hour breakout,BTC,3,0.0278,-0.5941,-0.9995,0,True
+S4 4-hour breakout,BTC,5,0.0000,-0.9737,-1.0000,1,True
+S4 4-hour breakout,BTC,10,0.0000,-1.0000,-1.0000,19,True
+S4 4-hour breakout,ETH,1,1.1084,0.0262,-0.9148,0,False
+S4 4-hour breakout,ETH,2,0.0012,-0.8139,-0.9997,1,True
+S4 4-hour breakout,ETH,3,0.0000,-0.9435,-1.0000,2,True
+S4 4-hour breakout,ETH,5,0.0000,-0.9985,-1.0000,4,True
+S4 4-hour breakout,ETH,10,0.0000,-1.0000,-1.0000,30,True
+S4 4-hour breakout,SOL,1,0.2323,-0.3595,-0.9770,0,False
+S4 4-hour breakout,SOL,2,0.0000,-0.9527,-1.0000,1,True
+S4 4-hour breakout,SOL,3,0.0000,-0.9997,-1.0000,4,True
+S4 4-hour breakout,SOL,5,0.0000,-1.0000,-1.0000,18,True
+S4 4-hour breakout,XRP,1,1.6632,0.1374,-0.9017,0,False
+S4 4-hour breakout,XRP,2,0.2419,-0.3018,-0.9973,0,False
+S4 4-hour breakout,XRP,3,0.0016,-0.8051,-1.0000,0,True
+S4 4-hour breakout,XRP,5,0.0000,-1.0000,-1.0000,12,True
+S4 4-hour breakout,DOGE,1,0.0061,-0.7727,-0.9985,1,True
+S4 4-hour breakout,DOGE,2,0.0000,-0.9987,-1.0000,5,True
+S4 4-hour breakout,DOGE,3,0.0000,-1.0000,-1.0000,10,True
+S5 4-hour RSI(2) dip and rip,BTC,1,0.0616,-0.5020,-0.9405,0,True
+S5 4-hour RSI(2) dip and rip,BTC,2,0.0000,-0.9304,-1.0000,1,True
+S5 4-hour RSI(2) dip and rip,BTC,3,0.0000,-0.9917,-1.0000,2,True
+S5 4-hour RSI(2) dip and rip,BTC,5,0.0000,-1.0000,-1.0000,6,True
+S5 4-hour RSI(2) dip and rip,BTC,10,0.0000,-1.0000,-1.0000,40,True
+S5 4-hour RSI(2) dip and rip,ETH,1,0.0315,-0.5788,-0.9692,0,True
+S5 4-hour RSI(2) dip and rip,ETH,2,0.0000,-0.9852,-1.0000,2,True
+S5 4-hour RSI(2) dip and rip,ETH,3,0.0000,-0.9981,-1.0000,3,True
+S5 4-hour RSI(2) dip and rip,ETH,5,0.0000,-1.0000,-1.0000,9,True
+S5 4-hour RSI(2) dip and rip,ETH,10,0.0000,-1.0000,-1.0000,63,True
+S5 4-hour RSI(2) dip and rip,SOL,1,1.7934,0.1941,-0.8967,0,False
+S5 4-hour RSI(2) dip and rip,SOL,2,0.0000,-0.9598,-1.0000,2,True
+S5 4-hour RSI(2) dip and rip,SOL,3,0.0000,-1.0000,-1.0000,8,True
+S5 4-hour RSI(2) dip and rip,SOL,5,0.0000,-1.0000,-1.0000,23,True
+S5 4-hour RSI(2) dip and rip,XRP,1,0.0987,-0.4410,-0.9132,0,True
+S5 4-hour RSI(2) dip and rip,XRP,2,0.0000,-0.9789,-1.0000,2,True
+S5 4-hour RSI(2) dip and rip,XRP,3,0.0000,-0.9999,-1.0000,7,True
+S5 4-hour RSI(2) dip and rip,XRP,5,0.0000,-1.0000,-1.0000,25,True
+S5 4-hour RSI(2) dip and rip,DOGE,1,0.0000,-0.9757,-1.0000,2,True
+S5 4-hour RSI(2) dip and rip,DOGE,2,0.0000,-0.9998,-1.0000,6,True
+S5 4-hour RSI(2) dip and rip,DOGE,3,0.0000,-1.0000,-1.0000,10,True
+S6 daily trend (long only),BTC,1,12.7033,1.3221,-0.0637,0,False
+S6 daily trend (long only),BTC,2,53.6442,2.7432,-0.1253,0,False
+S6 daily trend (long only),BTC,3,164.3033,4.4245,-0.1847,0,False
+S6 daily trend (long only),BTC,5,945.5133,8.6887,-0.2975,0,False
+S6 daily trend (long only),BTC,10,17675.0744,24.5716,-0.5441,0,False
+S6 daily trend (long only),ETH,1,75.9996,3.2013,-0.1099,0,False
+S6 daily trend (long only),ETH,2,623.4699,7.4396,-0.2148,0,False
+S6 daily trend (long only),ETH,3,2969.7586,13.1582,-0.3148,0,False
+S6 daily trend (long only),ETH,5,26789.7387,28.3507,-0.5072,0,False
+S6 daily trend (long only),ETH,10,17123.9643,24.3045,-0.9657,2,False
+S6 daily trend (long only),SOL,1,14.4886,3.4710,-0.1907,0,False
+S6 daily trend (long only),SOL,2,49.5402,7.9025,-0.3813,0,False
+S6 daily trend (long only),SOL,3,96.3662,11.9239,-0.5720,0,False
+S6 daily trend (long only),SOL,5,20.5646,4.4401,-0.9750,1,False
+S6 daily trend (long only),XRP,1,11.7016,1.2598,-0.1269,0,False
+S6 daily trend (long only),XRP,2,43.5588,2.4935,-0.2484,0,False
+S6 daily trend (long only),XRP,3,2.1305,0.2849,-0.9850,1,False
+S6 daily trend (long only),XRP,5,0.0205,-0.7241,-0.9986,2,True
+S6 daily trend (long only),DOGE,1,1.3013,0.1590,-0.3470,0,False
+S6 daily trend (long only),DOGE,2,1.0796,0.0439,-0.5998,0,False
+S6 daily trend (long only),DOGE,3,0.0162,-0.9006,-0.9939,1,True
