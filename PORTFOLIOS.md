@@ -1498,3 +1498,25 @@ It tries two ways of combining the sectors. Sleeves give each sector a fixed nin
 | weekly dip to upper, two slots | -13.8% / -96% | -16.8% / -99% | +9.7% / -86% | -6.9% / -100% |
 
 **Reading.** Nothing passes. The best result is again the plain monthly trend rule: each sector held at 3x while it is above its 20-month average. Spread across nine sleeves it roughly matches the swing plan's return (+11.5% against +11.2%) with a deeper drawdown (-58% against -39%), and it trails holding the sectors at 3x in 2017-2026. Concentrating in two sectors at 3x makes everything worse: single sectors at 3x fall much further than the index. Dip-buying sectors on weekly or monthly bars at 3x is ruinous. At $1,000, nine sleeves also means nine $111 orders. The swing plan stays the best use of 3x for the small account.
+
+## The monthly sector trend at 2x, and paired with the swing plan (2026-11-26, entry 97)
+
+User follow-up to entry 96: try the monthly trend on sectors at 2x. The leverage was chosen after seeing entry 96, so this is a lead, not a pre-registered result. Code: `research/swing/study_bb_sectors_2x.py`; table in `research/swing/bb_sectors_2x_results.csv`. The rule holds each sector SPDR while its month-end close is above its 10, 20 or 30-month average. Every sector has a listed 2x fund (the ProShares Ultra series, ERX for energy); many are thin, so the spread is taken at 10 bp.
+
+| 2000-09 to 2026, CAGR / max drawdown | 1x | 2x | 3x |
+|---|---|---|---|
+| equal-weight sectors, held | +9.2% / -53% | +11.0% / -82% | +10.2% / -95% |
+| 10-month trend, nine sleeves | +6.6% / -17% | +9.9% / -33% | +13.2% / -47% |
+| 20-month trend, nine sleeves | +6.6% / -22% | +9.3% / -41% | +11.4% / -58% |
+| 30-month trend, nine sleeves | +7.1% / -22% | +10.0% / -40% | +12.3% / -56% |
+| 20-month trend, two slots | +7.7% / -33% | +8.9% / -60% | +7.9% / -84% |
+| swing plan | +3.3% / -14% | +7.4% / -27% | +11.2% / -39% |
+
+| half the account in the swing plan at 3x, half in the sector trend at 2x | CAGR | max drawdown | Sharpe | 2000-2006 | 2007-2016 | 2017-2026 |
+|---|---|---|---|---|---|---|
+| swing plan alone | +11.2% | -39% | 0.62 | +9.6% | +8.9% | +14.5% |
+| half and half, 10-month trend | +10.7% | -31% | 0.68 | +7.7% | +10.9% | +12.5% |
+| half and half, 20-month trend | +10.6% | -34% | 0.64 | +8.1% | +10.2% | +12.6% |
+| half and half, 30-month trend | +11.0% | -34% | 0.66 | +7.8% | +9.8% | +14.5% |
+
+**Reading.** At 2x the sector trend is steady: positive in all three eras, with drawdowns of 33-41%, and similar at every average length. At 3x the drawdowns reach 47-58%. Two slots are worse than nine sleeves at every leverage. Alone it trails the swing plan at 3x. Its returns move only partly with the swing plan (correlation about 0.45), so splitting the account between them cuts the worst drawdown from 39% to 31-34% for about half a point a year less. The catch at $1,000 is nine orders of about $55 in thin 2x funds. The idea fits a larger balance better. Lead only: the leverage and the pairing were both chosen after seeing earlier results.
