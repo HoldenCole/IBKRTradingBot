@@ -1540,3 +1540,22 @@ User direction: about 10% a year is not the purpose of the small account. It wan
 The monthly trend-up signal held 12 months fired 17 times in 76 years, and each fund return is a 12-month result at 3x: 1954 +188%, 1957 -5%, 1960 +89%, 1963 +58%, 1967 +19%, 1970 +73%, 1975 +106%, 1978 +3%, 1982 +120%, 1984 +84%, 1988 +85%, 1991 +31%, 2001 -63%, 2003 +67%, 2009 +54%, 2016 +51%, 2023 +84%.
 
 **Reading.** No design passes. The rare monthly bottom signals are exactly the "few big bets" the user describes. They win almost nine times in ten, with a median of +67% at 3x. But they come once every four to five years, and one bad one (December 2001, -63%) undoes several good ones. As an account they grow more slowly than simply holding 3x. The highest-growth design (+16.6%) is the monthly trend held until the monthly sell, which is invested 86% of the time, with drawdowns of 64% to 89%. Weekly and daily all-in bets are poor. Putting the whole account into one slot of the swing plan changes nothing (+12.1% against +12.4%). Bolting the monthly bottom bets onto the swing plan, after the fact, made it worse: +10.6% with a -75% drawdown, against +11.8% / -39%. Across entries 89 to 98, more concentration and more leverage raise the spread of outcomes, not the typical outcome. No tested design sustained much above 15-20% a year without drawdowns of 75% or more.
+
+## Trailing stops on the monthly bets (2026-11-26, entry 99)
+
+User direction: add a trailing stop to entry 98's monthly bets to prevent declines larger than 25%. Pre-registered in `research/swing/PREREGISTRATION_99.md`, after seeing entry 98. Code: `research/swing/study_trailing_stop.py`; table in `research/swing/trailing_stop_results.csv`. The position is all in at 3x. It exits when the position closes X% below its highest close since entry. After a stop it either waits for the next buy signal (R1), or re-enters at a month-end close above the 10-month average while the original holding window is still open (R2).
+
+| all in at 3x, 1950-2026 | stops | CAGR | max drawdown | worst day | 1950-86 | 1987-2006 | 2007-26 |
+|---|---|---|---|---|---|---|---|
+| 3x buy and hold | 0 | +13.2% | -98% | -61% | +14.5% | +11.6% | +12.4% |
+| A: trend-up until sell, no stop | 0 | +16.6% | -89% | -61% | +17.7% | +11.4% | +19.9% |
+| A, 30% stop, re-enter R2 | 37 | +16.2% | -69% | -22% | +16.1% | +17.3% | +15.0% |
+| A, 25% stop, R2 | 56 | +14.0% | -60% | -22% | +13.3% | +18.2% | +10.6% |
+| A, 20% stop, R2 | 83 | +14.5% | -74% | -22% | +16.0% | +12.9% | +13.1% |
+| A, 25% stop, wait for next signal (R1) | 16 | +7.9% | -51% | -20% | +12.7% | +2.7% | +4.9% |
+| B: cycle-confirm until sell, 20% stop, R1 | 16 | +5.7% | -38% | -20% | +7.5% | +4.9% | +3.6% |
+| C: trend-up 12 months, no stop | 0 | +9.5% | -76% | -12% | +15.3% | +2.0% | +7.6% |
+| C, 20% stop, R1 | 10 | +5.9% | -36% | -12% | +10.4% | +2.6% | +1.6% |
+| C, 25% stop, R2 | 7 | +9.9% | -42% | -12% | +14.6% | +6.0% | +6.0% |
+
+**Reading.** Two trials pass the gates: A with a 30% or a 20% stop and R2 re-entry. They keep most of the no-stop growth (+16.2% against +16.6%) and cut the worst drawdown from -89% to -69%. None meets the user's 25% limit; the tightest result is about -36%. A trailing stop caps each trade, not the account. At 3x, a 25% stop is an 8% pullback in the index, which ordinary bull markets produce several times. With re-entry the account is stopped out and bought back again and again (37 to 141 stops), and the small losses compound. Without re-entry it sits in cash for years after one stop and the growth disappears. A real intraday trailing-stop order, modelled from 1985, changes the numbers little, and single days still cost 17% to 22%. The stop does remove the one-day disaster: 3x buy and hold lost 61% on 19 October 1987, while the stopped designs were already out.
