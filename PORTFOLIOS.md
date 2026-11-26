@@ -1559,3 +1559,19 @@ User direction: add a trailing stop to entry 98's monthly bets to prevent declin
 | C, 25% stop, R2 | 7 | +9.9% | -42% | -12% | +14.6% | +6.0% | +6.0% |
 
 **Reading.** Two trials pass the gates: A with a 30% or a 20% stop and R2 re-entry. They keep most of the no-stop growth (+16.2% against +16.6%) and cut the worst drawdown from -89% to -69%. None meets the user's 25% limit; the tightest result is about -36%. A trailing stop caps each trade, not the account. At 3x, a 25% stop is an 8% pullback in the index, which ordinary bull markets produce several times. With re-entry the account is stopped out and bought back again and again (37 to 141 stops), and the small losses compound. Without re-entry it sits in cash for years after one stop and the growth disappears. A real intraday trailing-stop order, modelled from 1985, changes the numbers little, and single days still cost 17% to 22%. The stop does remove the one-day disaster: 3x buy and hold lost 61% on 19 October 1987, while the stopped designs were already out.
+
+## The stopped monthly bet at 2x (2026-11-26, entry 100)
+
+User follow-up: try entry 99's 30% stop version at 2x. Chosen after seeing entry 99, so this is a lead. Code: `research/swing/study_trailing_stop_2x.py`; table in `research/swing/trailing_stop_2x_results.csv`. The design goes all in when the monthly trend turns up below zero and holds until the monthly trend crosses below zero. A trailing stop applies to the position, with re-entry at a month-end close above the 10-month average. Covers 1950 to 2026.
+
+| | stops | CAGR | max drawdown | worst day | worst year | 1950-86 | 1987-2006 | 2007-26 |
+|---|---|---|---|---|---|---|---|---|
+| 1x, no stop | 0 | +10.9% | -44% | -21% | -24% | +10.7% | +10.8% | +11.1% |
+| 2x buy and hold | 0 | +13.1% | -89% | -41% | | +13.2% | +13.0% | +13.0% |
+| 2x, no stop | 0 | +14.4% | -74% | -41% | -46% | +14.3% | +12.4% | +16.5% |
+| 2x, 25% stop | 25 | +12.7% | -47% | -16% | -39% | +11.1% | +16.3% | +11.9% |
+| 2x, 30% stop | 19 | +12.5% | -50% | -16% | -31% | +12.4% | +14.3% | +10.6% |
+| 3x, 30% stop | 37 | +16.2% | -69% | -22% | -55% | +16.1% | +17.3% | +15.0% |
+| swing plan at 3x (1999 on) | | +12.4% | -39% | | -24% | | | |
+
+**Reading.** At 2x the 30% stop triggers on a 15% fall in the index, so it fires about half as often as at 3x (19 times against 37). The worst drawdown drops from -69% to -50%. But the return falls with it, to +12.5%. That is about what the swing plan makes at 3x, with a deeper drawdown and much rarer trades. Neither leverage gets the account inside a 25% loss limit.
