@@ -1689,3 +1689,20 @@ No filter improves the bitcoin trend in both halves: S&P above its 10-month aver
 Each cell is CAGR / maximum drawdown.
 
 **Reading.** The equity tools (the regime classifier, Quadrant Balances on the S&P 500, VIX, the fragile state) carry no reliable information about bitcoin's next week or month. Bitcoin's own trend carries a little: above its 10-month average, the next month averaged 7 points better, in both halves. As a manual rule, checked once a month, it beat holding with a smaller drawdown and has traded 12 times in ten years. Leverage on it does not survive the drawdowns. On 26 November 2026, bitcoin ($60,515) is below its 10-month average ($70,648). The November month-end close decides the next signal.
+
+## Crypto C5: the swing plan and the bitcoin 10-month rule in one account (2026-11-26, entry 105)
+
+Idea: the 3x swing plan holds positions on only 16% of days, and its idle cash earns nothing. The bitcoin 10-month rule (entry 104) is long 70% of the time, and its daily returns are nearly unrelated to the swing plan's (correlation 0.07). Pre-registered in `research/crypto/PREREGISTRATION_C5.md`. Code: `research/crypto/combo_account.py`; results in `research/crypto/combo_account_results.csv`. The 10-month rule was found after looking at the data, so its stand-alone numbers are flattered.
+
+| 2016-06 to 2026-11 | CAGR | max drawdown | worst year | 2016-20 | 2021-26 | $1,000 + $150/mo |
+|---|---|---|---|---|---|---|
+| V0 swing plan alone (3x) | +15% | -39% | -22% | +4% / -39% | +25% / -19% | $59.7k |
+| V1 bitcoin rule alone | +66% | -70% | -60% | +131% / -70% | +29% / -53% | $569k |
+| V2 swing + bitcoin on idle cash (rule on) | +58% | -77% | -67% | +102% / -77% | +30% / -50% | $344k |
+| V3 swing + bitcoin always on idle cash | +43% | -84% | -77% | +108% / -84% | +7% / -78% | $127k |
+| V4 half swing, half bitcoin rule | +45% | -54% | -42% | +66% / -54% | +31% / -24% | $202k |
+| holding bitcoin | +57% | -83% | -75% | +139% / -83% | +13% / -77% | $315k |
+
+The half columns show CAGR / max drawdown. $19,750 is deposited in every case.
+
+**Reading.** Putting bitcoin on the swing plan's idle cash (V2) fails its gate. Every swing entry sells bitcoin, often in the middle of a bitcoin rally, and the account ends below the rule alone in 2016-20 with a deeper drawdown. The fixed half-and-half (V4) is the better construction. In 2021-26 it earned +31% a year with a -24% maximum drawdown, against +29% / -53% for the rule alone and +25% / -19% for the swing plan alone. The long-run totals are dominated by bitcoin's 2016-17 run, so the 2021-26 column is the more realistic guide. The 10-month rule needs a forward record before any money depends on it; it has been logged forward since October 2026 (`paper/btc_rule.csv`).
