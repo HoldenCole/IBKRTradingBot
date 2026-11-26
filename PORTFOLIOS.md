@@ -1395,3 +1395,26 @@ Follow-up to entry 90: a few-day trade does not need a 30-day option. Code: `res
 Accounts start at $1,000 with $150 a month added ($29,500 deposited); the worst drop is in brackets.
 
 **Reading.** A cheaper, nearer option buys more leverage per dollar but loses value faster and pays a larger share of its price in spread. A one-week ATM call needs the fund to rise about 2% before it breaks even; the average swing trade rises 1.4%. In-the-money calls and debit spreads cut the decay but keep the spread, and none beat the fund. With the spread doubled, every weekly variant ends between $3,000 and $20,000. The live plan stays with the 3x funds.
+
+## Fading big single-stock moves (2026-11-26, entry 92)
+
+User idea: fade stocks that pop or crash on earnings, that move on little or no news, or that move too much on news (example: a put bought with a stock up 34% on the day, sold when the gain was down to 30%). Pre-registered in `research/stock_reversal/PREREGISTRATION.md` before any result. Code: `research/stock_reversal/`; all 64 trials in `research/stock_reversal/results_dev.csv`.
+
+Setup: point-in-time S&P 500 members, 2005 to 2023 (2024 on is the sealed hold-out). A move counts if it is at least 5% and at least 3 times the stock's usual daily move, measured against SPY. News is proxied by SEC 8-K filings: Item 2.02 marks earnings, timed to the minute. Trades fade the move and are measured against SPY, at 10 bp a side.
+
+| bucket | fade open to close | fade close to next open | fade close to next close | fade close to 5 days later |
+|---|---|---|---|---|
+| earnings, rise | -33 bp (t -3.7) | -14 bp (t -7.3) | -23 bp (t -4.9) | -36 bp (t -4.9) |
+| earnings, fall | -31 bp (t -2.8) | -24 bp (t -10.7) | -31 bp (t -6.1) | -31 bp (t -3.4) |
+| too much on earnings, rise | -24 bp | -12 bp (t -4.5) | -24 bp (t -3.7) | -46 bp (t -4.6) |
+| too much on earnings, fall | -18 bp | -25 bp (t -7.8) | -25 bp (t -3.6) | -27 bp |
+| other filing, rise | +44 bp (n 129) | -33 bp | -11 bp | -57 bp |
+| other filing, fall | -17 bp | -22 bp | -70 bp | -60 bp |
+| no filing, rise | +67 bp (t 1.5) | -16 bp | -12 bp | +50 bp (t 1.4) |
+| no filing, fall | +79 bp (t 2.2) | -12 bp | -18 bp | +37 bp (t 0.6) |
+
+Net per trade, large moves. A pass needed t of at least 3, positive in both eras, and the Holm test across all 64 trials. Nothing passed.
+
+**Reading.** Earnings moves keep going: fading them loses money at every horizon, often with very high confidence. That matches the post-earnings drift literature. "Too much" on earnings behaves the same. Moves with no filing are the only ones that snap back, mostly on the same day: fading the opening gap made about 0.7% to 0.8% a trade. But crisis days (2008, the March 2023 bank run) make the results too scattered to pass. Splitting after the fact, lone no-news gap-ups (at most two that day) faded from the open made +69 bp, won 63% of the time, and were positive in both eras (t 3.0, n 260, about 14 a year). That split was chosen after seeing the data, so it is a lead, not a result.
+
+**Limits.** SEC filings miss analyst calls, interviews and sector news, so "no filing" is not "no news". Yahoo has no delisted stocks: prices cover 53% of member-days in 2005 and 94% in 2023, which flatters buying falls. The hold-out was not opened. At about 14 lone events a year it holds too few trades to confirm a +0.7% edge, so a forward paper record is the realistic next test.
