@@ -1477,3 +1477,24 @@ User request: trade Bollinger bands of the actual indices over different time fr
 The live swing plan at 3x, with idle cash at zero, made +12.4% a year over 1999-2026, with a Sharpe of 0.64 and a maximum drawdown of -39%.
 
 **Reading.** Nothing passes. The only rule that beats holding 3x in both eras is monthly "above middle": hold while the index is above its 20-month average. It needs no bands at all, and it is the main book's 10-month-line idea applied to a 3x fund. It fails on the neighbour lengths, and its drawdowns run from -52% to -93%. Buying dips on the index without the swing plan's filters does worse than the swing plan. Buying weekly and monthly dips at 3x catches falling markets with leverage: drawdowns of -80% to -99%. Breakouts lose on every time frame, as in test 75b. The swing plan stays the small account's best risk-adjusted use of 3x. A correctly costed rerun of it, with no interest on idle cash, gives +12.4% a year against test 89's +14.4%.
+
+## Bollinger bands on sector ETFs, played through 3x sector funds (2026-11-26, entry 96)
+
+User follow-up to entry 95. Pre-registered in `research/swing/PREREGISTRATION_96.md`; code `research/swing/study_bb_sectors.py`; tables in `research/swing/bb_sectors_results.csv` and `bb_sectors_verdicts.csv`. The test covers the nine original sector SPDRs with the same 14 band rules, at 3x, from September 2000.
+
+It tries two ways of combining the sectors. Sleeves give each sector a fixed ninth of the account: at $1,000 that is a $111 order, so about 37 bp a side. Two slots hold at most two sectors at half the account each, ranked by %b: 12 bp a side. Listed 3x funds exist for XLK, XLF, XLV, XLU, XLI and XLY. XLB, XLP and XLE (ERX is now 2x) are model-only.
+
+| 3x account, CAGR / max drawdown | 2000-2006 | 2007-2016 | 2017-2026 | whole period |
+|---|---|---|---|---|
+| 3x equal-weight sectors, held | 0.0% / -82% | +6.3% / -95% | +21.5% / -80% | +10.2% / -95% |
+| 1x equal-weight sectors, held | +5.5% / -36% | +7.9% / -53% | +12.9% / -37% | +9.2% / -53% |
+| swing plan at 3x (test 79) | +9.6% / -15% | +8.9% / -38% | +14.5% / -39% | +11.2% / -39% |
+| monthly above middle, sleeves | +7.8% / -41% | +13.5% / -48% | +11.9% / -58% | +11.5% / -58% |
+| monthly above middle, two slots | -6.5% / -78% | +7.2% / -77% | +19.4% / -74% | +8.0% / -83% |
+| monthly breakout, sleeves | +7.1% / -19% | +6.6% / -51% | +7.5% / -49% | +7.1% / -51% |
+| daily dip to middle, monthly filter, sleeves | +3.1% / -24% | +6.9% / -30% | +8.3% / -62% | +6.5% / -62% |
+| daily dip to middle, monthly filter, two slots | +1.7% / -56% | +4.0% / -76% | +23.4% / -82% | +10.4% / -82% |
+| daily dip to middle, two slots | -0.1% / -74% | -2.7% / -89% | +19.9% / -89% | +6.0% / -92% |
+| weekly dip to upper, two slots | -13.8% / -96% | -16.8% / -99% | +9.7% / -86% | -6.9% / -100% |
+
+**Reading.** Nothing passes. The best result is again the plain monthly trend rule: each sector held at 3x while it is above its 20-month average. Spread across nine sleeves it roughly matches the swing plan's return (+11.5% against +11.2%) with a deeper drawdown (-58% against -39%), and it trails holding the sectors at 3x in 2017-2026. Concentrating in two sectors at 3x makes everything worse: single sectors at 3x fall much further than the index. Dip-buying sectors on weekly or monthly bars at 3x is ruinous. At $1,000, nine sleeves also means nine $111 orders. The swing plan stays the best use of 3x for the small account.

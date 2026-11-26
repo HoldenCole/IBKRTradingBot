@@ -1,0 +1,29 @@
+rule,account,beats_3x_bh_all_eras,neighbours,passes,corr_with_swing,CAGR_all,maxDD_all
+D dip to middle,sleeves,False,-,False,0.327,0.033,-0.755
+D dip to middle,slots,False,-,False,0.313,0.060,-0.922
+D dip to upper,sleeves,False,-,False,0.296,0.079,-0.870
+D dip to upper,slots,False,-,False,0.284,0.022,-0.984
+D breakout,sleeves,False,-,False,0.085,-0.019,-0.646
+D breakout,slots,False,-,False,0.109,0.047,-0.767
+D above middle,sleeves,False,-,False,0.084,-0.053,-0.931
+D above middle,slots,False,-,False,0.133,-0.049,-0.983
+W dip to middle,sleeves,False,-,False,0.126,0.035,-0.766
+W dip to middle,slots,False,-,False,0.183,-0.027,-0.972
+W dip to upper,sleeves,False,-,False,0.167,0.085,-0.886
+W dip to upper,slots,False,-,False,0.198,-0.069,-0.996
+W breakout,sleeves,False,-,False,0.350,0.006,-0.492
+W breakout,slots,False,-,False,0.309,-0.021,-0.893
+W above middle,sleeves,False,-,False,0.319,0.028,-0.592
+W above middle,slots,False,-,False,0.301,-0.007,-0.811
+M dip to middle,sleeves,False,-,False,0.035,0.005,-0.865
+M dip to middle,slots,False,-,False,0.055,-0.075,-0.995
+M dip to upper,sleeves,False,-,False,0.108,0.071,-0.840
+M dip to upper,slots,False,-,False,0.124,0.050,-0.992
+M breakout,sleeves,False,-,False,0.437,0.071,-0.513
+M breakout,slots,False,-,False,0.343,0.056,-0.739
+M above middle,sleeves,False,-,False,0.455,0.115,-0.578
+M above middle,slots,False,-,False,0.356,0.080,-0.834
+"D dip to middle, weekly above middle",sleeves,False,-,False,0.371,0.035,-0.600
+"D dip to middle, weekly above middle",slots,False,-,False,0.347,0.061,-0.841
+"D dip to middle, monthly above middle",sleeves,False,-,False,0.412,0.065,-0.616
+"D dip to middle, monthly above middle",slots,False,-,False,0.349,0.104,-0.815
