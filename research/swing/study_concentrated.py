@@ -4,6 +4,9 @@
 """
 from __future__ import annotations
 
+import urllib.request
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
 
@@ -11,6 +14,7 @@ from research.swing.data import load, ohlc
 from research.swing.lib import daily_features
 from research.swing.study_standalone import run
 from research.trend_cycle.study_signals import load as qb_load, states
+from src.data.yahoo import _ssl_context
 from src.portfolio import trend_cycle as tc
 
 LEV, COST, FIN, FEE = 3, 0.0009, 0.01, 0.0095
@@ -28,7 +32,13 @@ def series():
     spy = ohlc("SPY")["close"].pct_change().dropna()
     common = spy.index.intersection(r.index)
     r.loc[common] = spy.loc[common]
-    tb = pd.read_csv("research/cache/fred_TB3MS.csv", index_col=0, parse_dates=True).iloc[:, 0] / 100
+    f = Path("research/cache/fred_TB3MS.csv")
+    if not f.exists():
+        f.parent.mkdir(parents=True, exist_ok=True)
+        with urllib.request.urlopen("https://fred.stlouisfed.org/graph/fredgraph.csv?id=TB3MS", timeout=30,
+                                    context=_ssl_context()) as resp:
+            f.write_bytes(resp.read())
+    tb = pd.read_csv(f, index_col=0, parse_dates=True).iloc[:, 0] / 100
     rf = tb.reindex(close.index, method="ffill")
     irx = ohlc("^IRX")["close"] / 100
     rf.loc[irx.index.intersection(rf.index)] = irx.reindex(rf.index).dropna()
