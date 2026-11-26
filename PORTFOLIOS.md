@@ -1288,3 +1288,32 @@ The index-level result does not carry into the leveraged books: the monthly sign
 **Where this puts 20 November 2026.** Monthly intact but both readings rolling over (caution state, month 3 and 4). No multi-year sell: the monthly trend turns negative only if the S&P is near 5,480 at the January close, 6,020 at the February close or 6,680 at the April close; the monthly cycle goes negative at about 6,200 by the December close. Weekly: trend decline in week 1, cycle in week 3. The intra-year buy is not armed before the week ending 11 December (week 4), and then needs the weekly cycle to turn up.
 
 **Limits.** 13 bear markets and 19 monthly buy signals in 76 years; the modern era has three monthly buys. The 1950-86 era has no dividends or reliable bill yields before 1960. Signals were defined before looking at the forward tables, but the "week 4+" threshold comes from entry 84's stage table on the same data. Member history is survivorship-biased.
+
+
+## Intraday forex technical rules, pre-registered (2026-11-26, entry 88)
+
+User request: build the test harness from the intraday forex report and run its plan. Code: `research/fx_intraday/` (data, costs, engine, rules, stats, registry, run). Pre-registration `research/fx_intraday/PREREGISTRATION.md` was committed (206cfdc) before any backtest. Every evaluated variant is in `research/fx_intraday/trials.csv`; results in `research/fx_intraday/results/`.
+
+**Data.** Dukascopy, the report's first choice, closed its free feed (HTTP 429, now a paid AWS bucket) as of 2026-11-26. FXCM's public candle repository serves minute bid and ask candles for 2012 to 2026 week 46 with no key, so that is the source. It is one dealer's quotes: 2012-2022 have crossed quotes (ask below bid) on up to 7% of minutes, almost none from 2023, which the cost model absorbs by taking max(feed spread, base spread). The hold-out window has holes (14 Dec 2024 - 11 Jan 2025, 20-27 Jun and 11-27 Jul 2025, 1 May - 9 Aug 2026); it was never opened.
+
+**Costs.** OANDA US spread-only, 1.4 pips on EUR/USD, about 1.22 bp per round trip for time-exit trades and up to 1.5 bp with stop slippage. CME Micro EUR/USD reference (stress 1.15) gives the same verdicts.
+
+**Results, EUR/USD development sample 2012-01 to 2024-11, base cost.**
+
+| trial | trades | gross bp | net bp | t | 2012-17 net | 2018-24 net |
+|---|---|---|---|---|---|---|
+| drift A: short 08:00-14:15 Berlin | 3,267 | +2.16 | +0.94 | 1.85 | +2.06 | -0.04 |
+| drift B: long 16:00 London to 16:45 New York | 3,267 | +1.44 | +0.22 | 0.56 | +1.36 | -0.78 |
+| drift A+B | 6,534 | +1.80 | +0.58 | 1.80 | +1.71 | -0.41 |
+| best mean reversion (k 2.0, stop 2 ATR, 8 h) | 5,218 | -0.01 | -1.30 | -4.24 | -1.44 | -1.19 |
+| worst mean reversion (k 2.5, stop 2 ATR, 4 h) | 2,962 | -0.48 | -1.76 | -4.64 | | |
+| best round-number variant | 762 | +0.20 | -1.09 | -1.31 | -1.36 | -0.85 |
+| London breakout (calibration) | 3,151 | -0.16 | -1.65 | -3.89 | -1.27 | -1.99 |
+
+Drift A by year, gross bp per trade: 2012 4.6, 2013 2.0, 2014 4.0, 2015 4.8, 2016 2.1, 2017 2.0, 2018 2.4, 2019 1.7, 2020 0.7, 2021 1.3, 2022 1.2, 2023 1.0, 2024 0.05.
+
+**Gates.** No family passed. Drift A failed the cost ratio (1.77 against 2), the two-window test (negative 2018-24) and the snooping test (SPA p = 0.095 across all 20 trials; StepM keeps none; t 1.85 against 3). It did beat the random-entry null (p = 0.005), so the time-of-day pattern itself is real, not noise. Mean reversion failed every gate it could: gross is zero in all eight variants and the walk-forward record is -1.35 bp a trade (t -3.2). The round-number filter's true grid (-1.09 bp) lost to shifted grids at 27 and 37 pips (-0.55 and -0.37 bp) and had under 1,000 trades. The breakout lost to random entries (p = 0.79): the calibration reproduced the known weak result.
+
+**Reading.** This is the null the report expected, now measured on data the literature had not used (2020-2024) with retail costs. The one real effect, the dollar strengthening into the European fixes, was worth about 4-5 bp a trade in 2012-15 and has faded to nothing by 2024 — the same decay Krohn, Mueller and Whelan (2024) describe, extended five years. At 1.2-1.5 bp a round trip, retail intraday rules on EUR/USD need a gross edge that none of these ideas has had since about 2019.
+
+**What the harness is good for now.** It runs a new idea through the same gates in minutes. Any next idea must be written into the pre-registration first and counted in `trials.csv`; the hold-out stays locked until something passes. The only lever the evidence points to is execution cost (resting limit orders, or the futures path), which would be a new, separately registered test, not a re-run of these.

@@ -5,7 +5,7 @@ failed its first honest backtest, and the project became what it is now:
 
 1. **A monthly regime-rotation portfolio.** Two market dials pick one of four macro regimes each month. Each regime
    maps to a fixed book of ETFs for each of four risk tiers.
-2. **A research log.** More than 87 ideas tested against two separate 20-year eras. Every verdict is recorded.
+2. **A research log.** More than 88 ideas tested against two separate 20-year eras. Every verdict is recorded.
 3. **Quadrant Balances.** A trend and cycle tool on daily, weekly and monthly bars that flags whether the long
    equity cycle is intact, breaking or washed out.
 4. **Quadrant Weekly.** A nine-page research PDF built every Saturday, written to be passed around.
@@ -294,6 +294,7 @@ Asked for as a separate account, judged on its own. Code: `research/swing/`, log
 | Commodity trend-following on futures | Rejected as tested. Needs clean continuous futures data |
 | Biotech catalysts | No tradeable edge. Three avoidance rules kept |
 | Overnight versus intraday returns | Real, not tradeable. Kept as a free time-of-day habit |
+| Intraday forex technical rules (session drift, hourly mean reversion, round numbers, London breakout) | Rejected (test 88). Pre-registered harness in `research/fx_intraday/`; the one real effect, the pre-fix dollar drift, decayed to zero by 2024 |
 
 Recurring lessons:
 
