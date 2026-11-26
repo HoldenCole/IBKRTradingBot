@@ -1356,3 +1356,26 @@ User plan: fund a separate IBKR account with $1,000 to test strategies, aiming f
 **Lumpiness.** The account holds a position in about two-thirds of months and is flat otherwise. At $10,000, a calendar month cleared $50 in 42% (1x) to 47% (3x) of months; at $25,000, $200 in 33% to 44%. A milestone should be read as a 12-month average, never as a monthly target.
 
 **Reading.** At $1,000 the strategy is a measurement exercise: it will make single-digit dollars in an average month and can lose $90 to $270 in a bad one. The milestones are reached by balance far more than by strategy choice; contributions dominate leverage. The paper record so far (two trades from 17 to 23 November) is too short to say anything.
+
+## Options on the 3x funds instead of the funds (2026-11-26, entry 90)
+
+Question: would options on UPRO or TQQQ do better than holding the fund for the test-79 swing trades? Code: `research/swing/study_options_3x.py`. Model only, no historical option chains: Black-Scholes at 30 days to expiry on the actual fund price paths, implied vol of 3 x 0.90 x VIX (UPRO) or VXN (TQQQ) with skew, a half-spread of 1% (TQQQ) or 2.5% (UPRO) and $0.65 a contract. 295 trades from 2011, model IV at entry 53% (UPRO) and 60% (TQQQ).
+
+| per trade, return on money at risk | mean | median | win rate | 2011-16 | 2017-26 |
+|---|---|---|---|---|---|
+| 3x fund | +1.4% | +2.4% | 70% | +0.9% | +1.7% |
+| long ATM call | -7.2% | -1.3% | 49% | -25.0% | +4.1% |
+| long 0.90 ITM call | -6.9% | -0.8% | 48% | -14.8% | -1.9% |
+| call debit spread 1.00/1.05 | -31.4% | -24.8% | 32% | -69.9% | -6.8% |
+| call debit spread 1.00/1.10 | -22.3% | -18.7% | 40% | -55.4% | -1.1% |
+
+| account, $1,000 start + $150 a month, 2011-2026 ($29,500 deposited) | end balance | worst drop |
+|---|---|---|
+| 3x fund, half the account per slot | $86,654 | -27% |
+| long ATM call, 10% a trade | $30,116 | -31% |
+| long ATM call, 25% a trade | $67,559 | -72% |
+| long ITM call, 10% a trade | $16,692 | -19% |
+| call debit spread 1.00/1.10, 10% a trade | $19,828 | -40% |
+| call debit spread 1.00/1.10, 25% a trade | $30,691 | -86% |
+
+**Reading.** The swing edge is 1-2% over three to five days. A 30-day option on a 3x fund costs 50-60% implied vol, so the time decay and spread consume the edge, and the strikes are rarely far enough in the money to act like the fund. Per contract at risk: UPRO ATM about $152, TQQQ ATM about $49, so the small account can trade them, but nothing in the model says it should. Put credit spreads are left out: they need a margin account, and the model is unreliable for them at extreme volatility. The live plan stays with the 3x funds themselves.
