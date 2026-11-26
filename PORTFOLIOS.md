@@ -1317,3 +1317,42 @@ Drift A by year, gross bp per trade: 2012 4.6, 2013 2.0, 2014 4.0, 2015 4.8, 201
 **Reading.** This is the null the report expected, now measured on data the literature had not used (2020-2024) with retail costs. The one real effect, the dollar strengthening into the European fixes, was worth about 4-5 bp a trade in 2012-15 and has faded to nothing by 2024 — the same decay Krohn, Mueller and Whelan (2024) describe, extended five years. At 1.2-1.5 bp a round trip, retail intraday rules on EUR/USD need a gross edge that none of these ideas has had since about 2019.
 
 **What the harness is good for now.** It runs a new idea through the same gates in minutes. Any next idea must be written into the pre-registration first and counted in `trials.csv`; the hold-out stays locked until something passes. The only lever the evidence points to is execution cost (resting limit orders, or the futures path), which would be a new, separately registered test, not a re-run of these.
+
+
+## The swing accounts at a $1,000 balance (2026-11-26, entry 89)
+
+User plan: fund a separate IBKR account with $1,000 to test strategies, aiming for $50, then $100, then $200 a month in gains. IBKR still applies the $25,000 pattern-day-trader rule to this user (FINRA removed it on 4 June 2026, but brokers may keep it until 20 October 2027). Both swing designs enter at a close and exit at a later close, so they never make a day trade. Code: `research/swing/study_small_account.py`; table in `research/swing/small_account_results.csv`.
+
+**Costs at this size.** IBKR Pro charges a $0.35 minimum per order. On two $500 slots that is 7 bp per side, plus 1-2 bp of spread and fees: 8-9 bp per side, against the 5 bp assumed in tests 79 and 82. At $5,000 it falls to about 3.4 bp.
+
+| design, 1999-2026 | CAGR | max drawdown | average month on $1,000 | worst month on $1,000 | 12-month return, 1-in-20 worst |
+|---|---|---|---|---|---|
+| test 79, 1x, entry at the close | +5.9% | -14% | +$5 | -$88 | -5.0% |
+| test 79, 2x | +10.2% | -27% | +$9 | -$178 | -10.3% |
+| test 79, 3x | +14.4% | -38% | +$12 | -$270 | -17.0% |
+| test 79, 1x, entry at next open | +4.5% | -13% | +$4 | -$85 | -4.8% |
+| test 79, 3x, entry at next open | +10.2% | -42% | +$9 | -$265 | -17.4% |
+| test 82, 1x | +7.6% | -14% | +$6 | -$75 | -3.9% |
+| SPY buy and hold | +8.3% | -55% | +$8 | -$165 | -22.4% |
+
+**What each milestone needs.** Expected monthly gain is balance x CAGR / 12.
+
+| design | $50 a month | $100 a month | $200 a month |
+|---|---|---|---|
+| test 79, 1x | $10,250 | $20,500 | $41,000 |
+| test 79, 2x | $5,870 | $11,740 | $23,480 |
+| test 79, 3x | $4,150 | $8,310 | $16,620 |
+| test 82, 1x | $7,940 | $15,880 | $31,750 |
+
+**How long from $1,000, by monthly contribution** (years to $50 / $100 / $200 a month, at the historical CAGR).
+
+| design | nothing added | +$100 a month | +$250 a month | +$500 a month |
+|---|---|---|---|---|
+| test 79, 1x | 41 / never / never | 6.3 / 11.4 / 18.5 | 2.9 / 5.7 / 10.1 | 1.6 / 3.1 / 5.8 |
+| test 79, 2x | 19 / 26 / 33 | 3.4 / 6.3 / 10.5 | 1.6 / 3.2 / 5.8 | 0.8 / 1.8 / 3.3 |
+| test 79, 3x | 11 / 16 / 21 | 2.2 / 4.4 / 7.4 | 1.1 / 2.2 / 4.1 | 0.6 / 1.2 / 2.3 |
+| test 82, 1x | 29 / 38 / 48 | 4.8 / 8.8 / 14.3 | 2.2 / 4.3 / 7.8 | 1.2 / 2.4 / 4.5 |
+
+**Lumpiness.** The account holds a position in about two-thirds of months and is flat otherwise. At $10,000, a calendar month cleared $50 in 42% (1x) to 47% (3x) of months; at $25,000, $200 in 33% to 44%. A milestone should be read as a 12-month average, never as a monthly target.
+
+**Reading.** At $1,000 the strategy is a measurement exercise: it will make single-digit dollars in an average month and can lose $90 to $270 in a bad one. The milestones are reached by balance far more than by strategy choice; contributions dominate leverage. The paper record so far (two trades from 17 to 23 November) is too short to say anything.

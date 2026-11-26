@@ -5,7 +5,7 @@ failed its first honest backtest, and the project became what it is now:
 
 1. **A monthly regime-rotation portfolio.** Two market dials pick one of four macro regimes each month. Each regime
    maps to a fixed book of ETFs for each of four risk tiers.
-2. **A research log.** More than 88 ideas tested against two separate 20-year eras. Every verdict is recorded.
+2. **A research log.** More than 89 ideas tested against two separate 20-year eras. Every verdict is recorded.
 3. **Quadrant Balances.** A trend and cycle tool on daily, weekly and monthly bars that flags whether the long
    equity cycle is intact, breaking or washed out.
 4. **Quadrant Weekly.** A nine-page research PDF built every Saturday, written to be passed around.
