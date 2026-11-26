@@ -1,0 +1,29 @@
+index,rule,beats_3x_bh_both_eras,neighbours_pass,passes,corr_with_swing
+S&P 500,D dip to middle,False,-,False,0.344
+S&P 500,D dip to upper,False,-,False,0.304
+S&P 500,D breakout,False,-,False,0.047
+S&P 500,D above middle,False,-,False,0.053
+S&P 500,W dip to middle,False,-,False,0.104
+S&P 500,W dip to upper,False,-,False,0.195
+S&P 500,W breakout,False,-,False,0.278
+S&P 500,W above middle,False,-,False,0.316
+S&P 500,M dip to middle,False,-,False,0.034
+S&P 500,M dip to upper,False,-,False,0.072
+S&P 500,M breakout,False,-,False,0.430
+S&P 500,M above middle,True,3/4,False,0.461
+S&P 500,"D dip to middle, weekly above middle",False,-,False,0.308
+S&P 500,"D dip to middle, monthly above middle",False,-,False,0.436
+Nasdaq-100,D dip to middle,False,-,False,0.368
+Nasdaq-100,D dip to upper,False,-,False,0.322
+Nasdaq-100,D breakout,False,-,False,0.043
+Nasdaq-100,D above middle,False,-,False,0.041
+Nasdaq-100,W dip to middle,False,-,False,0.093
+Nasdaq-100,W dip to upper,False,-,False,0.142
+Nasdaq-100,W breakout,False,-,False,0.318
+Nasdaq-100,W above middle,False,-,False,0.323
+Nasdaq-100,M dip to middle,False,-,False,0.034
+Nasdaq-100,M dip to upper,False,-,False,0.128
+Nasdaq-100,M breakout,False,-,False,0.419
+Nasdaq-100,M above middle,True,2/4,False,0.464
+Nasdaq-100,"D dip to middle, weekly above middle",False,-,False,0.406
+Nasdaq-100,"D dip to middle, monthly above middle",False,-,False,0.463

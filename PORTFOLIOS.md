@@ -1456,3 +1456,24 @@ User: a 70% win rate is good, so lever it. Code: `research/stock_reversal/levera
 | swing account at 3x (test 89) | +14.4% | -38% | | | |
 
 **Reading.** The win rate hides the shape. With the 6% stop a win averages +2.9% and a loss -6.3%, and gaps through the stop reach -22%. The edge is +0.26% a trade overall but only +0.03% in 2015-2023. Leverage multiplies wins and losses alike, so growth tops out near 3x and then the drawdowns compound into ruin. At its best this stays well behind the 3x swing account. Shorting also needs a margin account of at least $2,000, and Reg T caps overnight leverage at 2x.
+
+## Bollinger bands on the indices, played through 3x funds (2026-11-26, entry 95)
+
+User request: trade Bollinger bands of the actual indices over different time frames, using the levered ETFs. Pre-registered in `research/swing/PREREGISTRATION_95.md`; code `research/swing/study_bb_index.py`; tables in `research/swing/bb_index_results.csv` and `bb_index_verdicts.csv`. Signals use the S&P 500 and Nasdaq-100 closes on daily, weekly and monthly bars, with bands of 20 bars and 2 standard deviations. Positions are long or flat in a 3x fund, priced as three times the index total return less financing and fees. That model matches UPRO and TQQQ with a daily correlation of 0.998 and 0.999. Costs are 9 bp a side, and idle cash earns nothing.
+
+| 3x, CAGR / max drawdown | S&P 500 1988-2006 | S&P 500 2007-2026 | Nasdaq-100 1988-2006 | Nasdaq-100 2007-2026 |
+|---|---|---|---|---|
+| 3x buy and hold | +15.0% / -93% | +12.9% / -96% | +2.6% / -100% | +24.2% / -95% |
+| 1x buy and hold | +11.9% / -48% | +10.5% / -55% | +13.9% / -83% | +15.4% / -53% |
+| daily dip to middle | +16.0% / -76% | +5.7% / -74% | +1.2% / -93% | +0.4% / -87% |
+| daily dip to middle, monthly above middle | +17.8% / -33% | +6.5% / -72% | +9.4% / -66% | +4.0% / -60% |
+| daily breakout | -5.3% / -78% | -4.2% / -67% | +5.4% / -94% | +1.1% / -62% |
+| weekly dip to middle | -0.5% / -81% | +0.5% / -91% | -14.7% / -99% | +4.2% / -81% |
+| weekly above middle | +3.4% / -85% | +13.0% / -62% | +17.7% / -94% | +20.9% / -65% |
+| monthly dip to middle | -5.7% / -84% | -3.7% / -91% | -7.3% / -98% | +0.8% / -80% |
+| monthly breakout | +13.6% / -57% | +1.4% / -82% | +12.2% / -93% | +12.6% / -77% |
+| monthly above middle | +19.8% / -52% | +15.0% / -76% | +18.1% / -93% | +27.0% / -70% |
+
+The live swing plan at 3x, with idle cash at zero, made +12.4% a year over 1999-2026, with a Sharpe of 0.64 and a maximum drawdown of -39%.
+
+**Reading.** Nothing passes. The only rule that beats holding 3x in both eras is monthly "above middle": hold while the index is above its 20-month average. It needs no bands at all, and it is the main book's 10-month-line idea applied to a 3x fund. It fails on the neighbour lengths, and its drawdowns run from -52% to -93%. Buying dips on the index without the swing plan's filters does worse than the swing plan. Buying weekly and monthly dips at 3x catches falling markets with leverage: drawdowns of -80% to -99%. Breakouts lose on every time frame, as in test 75b. The swing plan stays the small account's best risk-adjusted use of 3x. A correctly costed rerun of it, with no interest on idle cash, gives +12.4% a year against test 89's +14.4%.
