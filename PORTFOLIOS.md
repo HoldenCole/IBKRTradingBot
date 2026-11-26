@@ -1520,3 +1520,23 @@ User follow-up to entry 96: try the monthly trend on sectors at 2x. The leverage
 | half and half, 30-month trend | +11.0% | -34% | 0.66 | +7.8% | +9.8% | +14.5% |
 
 **Reading.** At 2x the sector trend is steady: positive in all three eras, with drawdowns of 33-41%, and similar at every average length. At 3x the drawdowns reach 47-58%. Two slots are worse than nine sleeves at every leverage. Alone it trails the swing plan at 3x. Its returns move only partly with the swing plan (correlation about 0.45), so splitting the account between them cuts the worst drawdown from 39% to 31-34% for about half a point a year less. The catch at $1,000 is nine orders of about $55 in thin 2x funds. The idea fits a larger balance better. Lead only: the leverage and the pairing were both chosen after seeing earlier results.
+
+## Few, large, all-in bets in a 3x S&P 500 fund (2026-11-26, entry 98)
+
+User direction: about 10% a year is not the purpose of the small account. It wants a small number of high-risk trades with large exposure. Pre-registered in `research/swing/PREREGISTRATION_98.md`. Code: `research/swing/study_concentrated.py`. Tables: `research/swing/concentrated_results.csv`, and every trade in `concentrated_trades.csv`. Each design puts the whole account into a 3x S&P 500 fund on a signal and holds cash, earning nothing, otherwise. Covers 1950 to 2026.
+
+| all in at 3x | trades a year | time invested | CAGR | max drawdown | 1950-86 | 1987-2006 | 2007-26 | 3-year multiple, 10th / median / 90th percentile |
+|---|---|---|---|---|---|---|---|---|
+| 3x buy and hold | 0 | 100% | +13.2% | -98% | +14.5% | +11.9% | +12.3% | 0.47 / 1.65 / 3.66 |
+| monthly trend turns up, hold 12 months | 0.23 | 23% | +9.5% | -76% | +15.3% | +2.0% | +7.6% | 0.95 / 1.30 / 2.06 |
+| monthly trend turns up, hold until the monthly sell | 0.21 | 86% | +16.6% | -89% | +17.7% | +11.7% | +19.9% | 0.86 / 1.56 / 3.34 |
+| monthly cycle back above zero, 12 months | 0.29 | 30% | +10.3% | -76% | +12.4% | +7.2% | +9.8% | 0.99 / 1.32 / 2.02 |
+| monthly cycle back above zero, until the sell | 0.21 | 81% | +14.1% | -80% | +11.8% | +15.1% | +17.4% | 0.76 / 1.41 / 3.32 |
+| weekly mature-decline turn, 13 weeks | 0.46 | 11% | +5.6% | -63% | +4.0% | +7.9% | +6.2% | 0.89 / 1.19 / 1.61 |
+| deep daily dip, 1% below the lower band | 1.4 | 2% | +0.9% | -75% | +0.6% | -0.1% | +2.3% | 0.82 / 1.06 / 1.28 |
+| swing plan, one slot all in (1999 on) | 9.9 | 14% | +12.1% | -39% | | +16.0% (1999-06) | +10.6% | 1.01 / 1.41 / 1.84 |
+| swing plan, two slots (live, 1999 on) | 16 | 11% | +12.4% | -39% | | +14.5% (1999-06) | +11.7% | 1.04 / 1.35 / 1.75 |
+
+The monthly trend-up signal held 12 months fired 17 times in 76 years, and each fund return is a 12-month result at 3x: 1954 +188%, 1957 -5%, 1960 +89%, 1963 +58%, 1967 +19%, 1970 +73%, 1975 +106%, 1978 +3%, 1982 +120%, 1984 +84%, 1988 +85%, 1991 +31%, 2001 -63%, 2003 +67%, 2009 +54%, 2016 +51%, 2023 +84%.
+
+**Reading.** No design passes. The rare monthly bottom signals are exactly the "few big bets" the user describes. They win almost nine times in ten, with a median of +67% at 3x. But they come once every four to five years, and one bad one (December 2001, -63%) undoes several good ones. As an account they grow more slowly than simply holding 3x. The highest-growth design (+16.6%) is the monthly trend held until the monthly sell, which is invested 86% of the time, with drawdowns of 64% to 89%. Weekly and daily all-in bets are poor. Putting the whole account into one slot of the swing plan changes nothing (+12.1% against +12.4%). Bolting the monthly bottom bets onto the swing plan, after the fact, made it worse: +10.6% with a -75% drawdown, against +11.8% / -39%. Across entries 89 to 98, more concentration and more leverage raise the spread of outcomes, not the typical outcome. No tested design sustained much above 15-20% a year without drawdowns of 75% or more.
