@@ -37,3 +37,9 @@ A candidate passes if its mean return per dollar is above zero with a t-statisti
 clustered by event), positive in each calendar year present (2024, 2025, 2026), and positive in at least three of
 the five largest categories in the sample. Passing means worth a paper record, not a live account: the sample
 is one exchange and three years, and fills at the last trade price are optimistic for thin markets.
+
+## Amendment 1 (2026-11-26, before any price was compared with an outcome)
+
+The public API's rate limit makes the planned sample take about five hours. Changed before any result: up to
+15 markets per series (not 40), at most 400 listed markets read per series and endpoint, and the 1-hour
+horizon (reported only) dropped. The gate, the trades and the 24-hour horizon are unchanged.

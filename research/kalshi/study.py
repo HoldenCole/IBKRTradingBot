@@ -84,8 +84,8 @@ def sample_series() -> pd.DataFrame:
 
 
 def markets_for(series: str) -> list[dict]:
-    ms = paged("/markets", "markets", {"series_ticker": series, "status": "settled", "limit": 200}, cap=600)
-    ms += paged("/historical/markets", "markets", {"series_ticker": series, "limit": 200}, cap=600)
+    ms = paged("/markets", "markets", {"series_ticker": series, "status": "settled", "limit": 200}, cap=400)
+    ms += paged("/historical/markets", "markets", {"series_ticker": series, "limit": 200}, cap=400)
     seen, out = set(), []
     for m in ms:
         t = m.get("ticker")
@@ -123,13 +123,13 @@ def fetch():
         if r.series in done:
             continue
         ms = markets_for(r.series)
-        if len(ms) > 40:
-            ms = [ms[j] for j in rng.permutation(len(ms))[:40]]
+        if len(ms) > 15:
+            ms = [ms[j] for j in rng.permutation(len(ms))[:15]]
         for m in ms:
             p24 = last_trade_before(m["ticker"], m["close"] - pd.Timedelta(hours=24))
             if p24 is None:
                 continue
-            p1 = last_trade_before(m["ticker"], m["close"] - pd.Timedelta(hours=1))
+            p1 = None                                   # dropped by amendment 1 (rate limits), before any result
             rows.append({**m, "series": r.series, "category": r.category, "p24": p24, "p1": p1})
         done.add(r.series)
         if i % 10 == 0:
@@ -179,7 +179,7 @@ def analyse():
     rows = []
     for name, lo, hi, side in (("K1 favourite 90-99c", 0.90, 1.00, "fav"), ("K2 favourite 75-90c", 0.75, 0.90, "fav"),
                                ("K3 long shot 1-10c", 0.01, 0.10, "long")):
-        for col in ("p24", "p1"):
+        for col in ("p24",):
             for wf in (True, False):
                 d = returns(df, col, lo, hi, side, wf)
                 if d.empty:
