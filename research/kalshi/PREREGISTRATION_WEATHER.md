@@ -58,3 +58,11 @@ Hold-out: mean return per dollar above zero with one-sided p below 0.05. Passing
 same rule; real money only after that and the investor's approval.
 
 Also reported: the model's own calibration (predicted probability against outcome frequency), and the market's.
+
+## Amendment 1 (2026-11-27, before any market price was compared with a model probability)
+
+Kalshi's public API sustains only about two requests a second, which made the planned fetch take most of a day.
+Changed before any result: (1) only decision T0 (08:00 local on the day, which also pays out soonest) is tested;
+T1 is dropped; (2) the development sample starts 2023-01-01 (it now runs 2023-01-01 to 2025-06-30). The error
+model, trade rule, gates and hold-out are unchanged. "Each half of the development sample" now means
+2023-01-01 to the middle date and the middle date to 2025-06-30.

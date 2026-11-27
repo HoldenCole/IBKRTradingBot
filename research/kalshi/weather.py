@@ -33,6 +33,7 @@ CITIES = {  # series: (name, lat, lon, local tz, local standard-time zone)
     "KXHIGHDEN": ("Denver", 39.8466, -104.6562, "America/Denver", "Etc/GMT+7"),
 }
 HOLDOUT = pd.Timestamp("2025-07-01")
+DEV_START = pd.Timestamp("2023-01-01")
 MONTHS = {m: i for i, m in enumerate(["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"], 1)}
 
 
@@ -91,11 +92,11 @@ def fetch_trades(series: str):
     have = set(done["ticker"]) if len(done) else set()
     m = markets(series)
     rows = done.to_dict("records") if len(done) else []
-    todo = m[~m.ticker.isin(have)]
+    todo = m[~m.ticker.isin(have) & (m.date >= DEV_START)]   # amendment 1: 2023 on, same-day decision only
     print(f"{series}: {len(m)} markets, {len(todo)} to fetch", flush=True)
     for i, r in enumerate(todo.itertuples()):
         t1, t0 = decision_times(series, r.date)
-        p1, s1 = last_trade(r.ticker, t1)
+        p1, s1 = None, None                                     # amendment 1: the day-before decision is dropped
         p0, s0 = last_trade(r.ticker, t0)
         rows.append({"ticker": r.ticker, "p_t1": p1, "ts_t1": s1, "p_t0": p0, "ts_t0": s0})
         if i % 500 == 499:
@@ -170,7 +171,7 @@ def build(series: str, holdout: bool = False) -> pd.DataFrame:
     days = m.groupby("date")["actual"].first().sort_index().to_frame()
     days = days.join(fc, how="left")
     out = []
-    for col, lead, pcol, tcol in (("f2", "T1 day before 14:00 ET", "p_t1", "ts_t1"), ("f1", "T0 same day 08:00", "p_t0", "ts_t0")):
+    for col, lead, pcol, tcol in (("f1", "T0 same day 08:00", "p_t0", "ts_t0"),):
         res = (days["actual"] - days[col])
         mu = res.rolling(45, min_periods=45).mean().shift(1)
         sd = res.rolling(45, min_periods=45).std().shift(1).clip(lower=1.5)
@@ -184,6 +185,7 @@ def build(series: str, holdout: bool = False) -> pd.DataFrame:
         out.append(x[["ticker", "date", "strike_type", "floor", "cap", "result", "actual", "lead", "model_p", "price", "fresh"]])
     df = pd.concat(out)
     df["city"] = CITIES[series][0]
+    df = df[df.date >= DEV_START]
     if not holdout:
         df = df[df.date < HOLDOUT]
     return df
