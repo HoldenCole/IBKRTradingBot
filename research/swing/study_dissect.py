@@ -53,13 +53,14 @@ def exit_rule(df, kind="SMA5"):
 
 # ------------------------------------------------------------------ engine (same order of events as study_standalone.run)
 def engine(data, feats, universe=("SPY", "QQQ"), slots=2, entry="UNION", rsi_max=10, exit_="SMA5", max_hold=10,
-           gate="full", lev_fn=None, random_p=None, seed=0):
-    days = feats.index[feats.index >= START]
+           gate="full", lev_fn=None, random_p=None, seed=0, ret_from=None, start=START):
+    """ret_from maps a signal symbol to the symbol whose returns are held (e.g. SMH -> SOXL); default itself."""
+    days = feats.index[feats.index >= start]
     n = len(days)
     rng = np.random.default_rng(seed)
     cc, on, E, X, P = {}, {}, {}, {}, {}
     for s in universe:
-        df = data[s].reindex(days)
+        df = data[(ret_from or {}).get(s, s)].reindex(days)
         cc[s] = df["close"].pct_change().fillna(0.0).values
         on[s] = (df["open"] / df["close"].shift(1) - 1).fillna(0.0).values
         e, r2 = entry_rule(data[s], entry, rsi_max)

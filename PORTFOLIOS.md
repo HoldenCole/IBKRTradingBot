@@ -1991,3 +1991,51 @@ The frozen rules on 21 instruments, 1x, one position at a time, 5 bp a side. Pas
 | I5 enter only at RSI(2) < 5 | +9.0% | -36% | +12.0% / -27% | +5.3% / -36% | +10.6% / -24% | no |
 
 **Reading.** No candidate passes. I4 adds 0.3% a year overall but loses in 2007-2016, when bills paid almost nothing and each switch cost 9 bp; it only helps when bill yields are well above the switching cost. Cutting leverage in high-VIX entries (I3) hurts because those are the best trades. The plan sits near a local optimum: every piece removed in part 1 makes it worse on return, drawdown or both. Post-hoc and not a result: the high-VIX trades suggest sizing up, not down, in panics, but there are only 20 of them. No change to the plan; any change is the investor's decision.
+
+## The swing rules through real 3x sector funds, and inverse funds (2026-11-27, entry 116)
+
+User direction: check 3x funds like SOXL, and inverse funds. Pre-registered in `research/swing/PREREGISTRATION_116.md`. Code: `research/swing/study_levered_funds.py`; output in `research/swing/levered_funds_output.txt` and the three `levered_funds_*.csv` files. Returns below are the actual funds' daily closes (Yahoo, dividend-adjusted), 9 bp a side, idle cash at zero.
+
+### A. Which funds are usable
+
+22 of 27 pass (5+ years, at least $5 million a day). Too thin: WANT (consumer discretionary, $0.8M), DUSL (industrials), RETL (retail), EDZ (EM bear) and DRV (real estate bear). SOXL trades about $10 billion a day, SOXS $3 billion. Each fund tracks 3x its 1x ETF with a daily correlation of 0.91-1.00.
+
+### B1. Long: the swing rules on the 1x ETF, held through the real 3x fund (one position, the whole account)
+
+| fund (signal on) | since | trades | mean per trade | t | CAGR | max drawdown | with regime gate: CAGR / max DD |
+|---|---|---|---|---|---|---|---|
+| SOXL (SMH) | 2011 | 153 | +2.4% | 3.1 | +19.7% | -72% | +17.2% / -54% |
+| TECL (XLK) | 2009 | 159 | +1.4% | 2.7 | +11.6% | -40% | +8.8% / -40% |
+| TQQQ (QQQ) | 2010 | 166 | +1.3% | 2.6 | +11.6% | -56% | +11.0% / -36% |
+| FAS (XLF) | 2009 | 172 | +1.2% | 2.3 | +9.8% | -54% | +7.9% / -45% |
+| UPRO (SPY) | 2010 | 170 | +0.9% | 1.7 | +6.2% | -70% | +10.1% / -43% |
+| LABU (XBI) | 2016 | 106 | +2.0% | 1.8 | +13.5% | -65% | +12.3% / -63% |
+| EDC (EEM) | 2009 | 172 | +0.7% | 1.1 | +3.0% | -74% | +7.0% / -54% |
+| CURE, UTSL, DRN, NAIL, DPST | | | -0.6% to +0.6% | below 1.3 | -11% to +4% | -59% to -92% | |
+| ERX, NUGT, GUSH, YINN | | | -0.7% to -0.2% | negative | -24% to -6% | -84% to -99% | |
+
+The technique carries through the real funds where entry 115 said it would: semis, tech, Nasdaq, financials. It loses money in energy, gold miners, oil producers and China, which trend rather than snap back. Every fund's buy-and-hold made more over 2010-2026 than its swing version, because this was one of the strongest bull markets on record; the swing version's case is the smaller drawdowns and being in cash most of the time.
+
+### B2. The live plan with a wider universe (synthetic 3x, 1999-2026)
+
+| universe | CAGR | max drawdown | 1999-2006 | 2007-2016 | 2017-2026 |
+|---|---|---|---|---|---|
+| SPY, QQQ (live plan) | +12.4% | -39% | +14.5% / -31% | +8.9% / -38% | +14.5% / -39% |
+| SPY, QQQ, SMH, XLK, EEM | +15.7% | -46% | +14.4% / -29% | +16.6% / -38% | +15.8% / -46% |
+
+XLY was dropped before the run because its 3x fund fails part A, and XLP has no 3x fund. **Fails the gate**: slightly lower return in 1999-2006 and a deeper drawdown in 2017-2026. Through the actual funds over 2011-2026 the wide version made +12.4% against +10.4%, with a -48% drawdown against -39%. More return for more risk, not a free improvement, and the extra funds were chosen with the same data.
+
+### C. Short: the mirror rule through inverse funds
+
+Mirror rule on the 1x ETF: RSI(2) above 90 and (above the upper band or below the 200-day average); cover at the first close below the 5-day average or after 10 days. 1x short of the underlying, 5 bp a side.
+
+| bear fund (underlying) | version | trades | mean | t | 1999-2012 | 2013-2026 | through the fund, per trade | passes |
+|---|---|---|---|---|---|---|---|---|
+| SOXS (SMH) | no gate | 231 | +45 bp | 2.1 | +76 bp | +14 bp | +0.60% (139) | yes |
+| SOXS (SMH) | own downtrend | 110 | +92 bp | 3.0 | +110 bp | +33 bp | +1.15% (41) | yes |
+| YANG (FXI) | own downtrend | 112 | +55 bp | 2.1 | +141 bp | +14 bp | +0.47% (100) | yes |
+| FAZ (XLF) | own downtrend | 101 | +76 bp | 1.9 | +136 bp | -6 bp | +1.19% (65) | no |
+| ERY (XLE) | own downtrend | 116 | +44 bp | 1.5 | +85 bp | +9 bp | +0.74% (84) | no |
+| TECS, LABD, DUST, DRIP | both | | -45 to +6 bp | below 0.2 | | | negative | no |
+
+**Reading.** 3 of 16 pass, against about 0.4 expected by chance. Every short that works was much stronger before 2013 and is barely positive since, so it is a weak, fading edge. Shorting rips in rising markets fights the drift that makes the long side work. No change to the plan; any change is the investor's decision.

@@ -1,0 +1,97 @@
+=== Part A. Inventory ===
+fund underlying side      since  median $ vol 6m ($M)  years  gap vs 3x underlying (%/yr)  corr  usable
+UPRO        SPY bull 2009-06-25                 301.9   17.4                         -5.1 0.998    True
+TQQQ        QQQ bull 2010-02-11                4471.7   16.8                         -5.6 0.999    True
+SOXL        SMH bull 2010-03-11               10106.1   16.7                         -9.9 0.983    True
+SOXS        SMH bear 2010-03-11                2990.5   16.7                          5.0 0.983    True
+TECL        XLK bull 2008-12-30                 142.9   17.9                         -5.2 0.995    True
+TECS        XLK bear 2008-12-30                  28.1   17.9                          1.7 0.995    True
+ FAS        XLF bull 2008-11-19                  65.8   18.0                         -6.5 0.989    True
+ FAZ        XLF bear 2008-11-19                  25.0   18.0                         -0.5 0.990    True
+ ERX        XLE bull 2008-11-19                  29.1   18.0                        -17.0 0.981    True
+ ERY        XLE bear 2008-11-19                  60.2   18.0                         13.8 0.982    True
+ EDC        EEM bull 2008-12-30                   5.6   17.9                         -6.1 0.997    True
+ EDZ        EEM bear 2008-12-30                   3.3   17.9                          2.6 0.998   False
+WANT        XLY bull 2018-11-29                   0.8    8.0                         -9.3 0.997   False
+DUSL        XLI bull 2017-05-03                   1.0    9.6                         -7.7 0.988   False
+CURE        XLV bull 2011-06-15                   8.4   15.5                         -6.1 0.978    True
+UTSL        XLU bull 2017-05-03                   5.7    9.6                         -7.7 0.992    True
+ DRN        IYR bull 2009-07-16                  12.3   17.4                         -4.3 0.987    True
+ DRV        IYR bear 2009-07-16                   2.5   17.4                          0.4 0.993   False
+NAIL        XHB bull 2015-08-19                  48.2   11.3                          0.5 0.914    True
+LABU        XBI bull 2015-05-28                  98.3   11.5                         -8.3 0.998    True
+LABD        XBI bear 2015-05-28                 132.7   11.5                          3.2 0.998    True
+DPST        KRE bull 2015-08-20                  29.0   11.3                         -7.8 0.979    True
+RETL        XRT bull 2010-07-14                   3.2   16.4                         -5.3 0.940   False
+NUGT        GDX bull 2010-12-08                  92.7   16.0                        -21.0 0.976    True
+DUST        GDX bear 2010-12-08                  40.3   16.0                         12.4 0.978    True
+GUSH        XOP bull 2015-05-29                  25.2   11.5                        -28.7 0.968    True
+DRIP        XOP bear 2015-05-29                  32.5   11.5                         22.1 0.962    True
+YINN        FXI bull 2009-12-03                  37.1   17.0                         -2.6 0.976    True
+YANG        FXI bear 2009-12-03                  21.6   17.0                         -2.0 0.976    True
+
+=== Part B1. Long swing rules through each real bull fund (one position, whole account, 9 bp a side) ===
+fund signal on gate from  trades  mean per trade  win     t   CAGR  maxDD  fund buy-hold CAGR
+UPRO       SPY none 2010     170            0.90 0.72  1.68   6.17 -69.53               26.52
+UPRO       SPY full 2010     153            1.20 0.73  2.80  10.11 -42.90               26.52
+TQQQ       QQQ none 2010     166            1.30 0.67  2.55  11.60 -55.63               36.28
+TQQQ       QQQ full 2010     147            1.30 0.67  2.75  10.97 -36.41               36.28
+SOXL       SMH none 2011     153            2.39 0.66  3.06  19.72 -72.17               27.48
+SOXL       SMH full 2011     136            2.19 0.65  3.13  17.21 -53.51               27.48
+TECL       XLK none 2009     159            1.41 0.73  2.72  11.62 -40.07               34.75
+TECL       XLK full 2009     145            1.23 0.73  2.22   8.83 -40.07               34.75
+ FAS       XLF none 2009     172            1.17 0.70  2.32   9.77 -54.32               18.38
+ FAS       XLF full 2009     156            1.07 0.72  2.03   7.85 -44.51               18.38
+ ERX       XLE none 2009     167           -0.31 0.63 -0.41  -9.44 -93.76               -5.79
+ ERX       XLE full 2009     151            0.14 0.64  0.23  -1.48 -75.02               -5.79
+ EDC       EEM none 2009     172            0.69 0.65  1.11   3.01 -73.94               -7.61
+ EDC       EEM full 2009     158            0.97 0.65  1.80   6.96 -53.63               -7.61
+CURE       XLV none 2012     148            0.46 0.64  1.19   3.59 -65.17               27.18
+CURE       XLV full 2012     134            0.46 0.63  1.21   3.36 -56.10               27.18
+UTSL       XLU none 2018      76            0.01 0.64  0.01  -2.70 -59.05                8.60
+UTSL       XLU full 2018      61            0.14 0.62  0.18  -0.33 -45.43                8.60
+ DRN       IYR none 2010     153           -0.59 0.62 -0.78 -11.40 -92.46                4.54
+ DRN       IYR full 2010     136            0.22 0.65  0.44   0.25 -59.22                4.54
+NAIL       XHB none 2016      96            0.44 0.66  0.34  -9.79 -87.46                4.15
+NAIL       XHB full 2016      86            0.59 0.64  0.64   1.58 -61.42                4.15
+LABU       XBI none 2016     106            2.02 0.66  1.82  13.49 -65.25               -7.69
+LABU       XBI full 2016      95            1.87 0.64  1.76  12.33 -63.34               -7.69
+DPST       KRE none 2016     107            0.02 0.59  0.02  -9.22 -86.96              -12.86
+DPST       KRE full 2016     101            0.42 0.59  0.39  -3.70 -76.50              -12.86
+NUGT       GDX none 2011     115           -0.72 0.62 -0.70 -10.10 -92.20              -33.28
+NUGT       GDX full 2011     101           -0.99 0.62 -0.93 -10.37 -91.98              -33.28
+GUSH       XOP none 2016     101           -0.36 0.61 -0.24 -24.20 -98.89              -31.87
+GUSH       XOP full 2016      88           -0.27 0.62 -0.16 -22.43 -98.51              -31.87
+YINN       FXI none 2010     157           -0.17 0.62 -0.24  -5.74 -84.40              -20.10
+YINN       FXI full 2010     143            0.15 0.64  0.22  -1.68 -68.27              -20.10
+
+=== Part B2. The live plan with a wider universe (synthetic 3x, eras A/B/C, idle cash 0) ===
+    (XLY dropped: its 3x fund WANT fails the liquidity test in part A; XLP has no 3x fund)
+baseline SPY, QQQ                      A +14.5%  -31% 0.70  B  +8.9%  -38% 0.52  C +14.5%  -39% 0.70  all +12.4%  -39% 0.64    16 tr/yr
+wide SPY, QQQ, SMH, XLK, EEM           A +14.4%  -29% 0.60  B +16.6%  -38% 0.72  C +15.8%  -46% 0.63  all +15.7%  -46% 0.65    23 tr/yr
+B2 verdict: no
+
+   same two universes through the ACTUAL funds (UPRO, TQQQ, SOXL, TECL, EDC), 2011-2026, descriptive:
+   baseline, actual funds     CAGR +10.4% maxDD  -39% | 2011-18  +2.8%  -38% | 2019-26 +18.7%  -22% | 19 tr/yr
+   wide, actual funds         CAGR +12.4% maxDD  -48% | 2011-18  +6.9%  -40% | 2019-26 +18.3%  -42% | 27 tr/yr
+
+=== Part C. Mirror short (RSI(2) > 90), underlying at 1x short, 5 bp a side ===
+bear fund underlying       version  trades  mean bp  win     t  1st half bp  2nd half bp  passes  via fund: trades  via fund: mean %
+     SOXS        SMH       no gate     231    45.15 0.64  2.11        75.59        13.92    True               139              0.60
+     SOXS        SMH own downtrend     110    91.80 0.68  2.97       110.09        32.71    True                41              1.15
+     TECS        XLK       no gate     222    -5.11 0.57 -0.30       -18.08         8.83   False               144             -0.19
+     TECS        XLK own downtrend      80   -20.00 0.60 -0.49       -17.38       -26.48   False                34             -1.08
+      FAZ        XLF       no gate     216    17.32 0.57  0.82        68.57       -32.98   False               145             -0.15
+      FAZ        XLF own downtrend     101    75.58 0.63  1.88       136.22        -6.22   False                65              1.19
+      ERY        XLE       no gate     242    21.60 0.62  1.18        55.35       -13.87   False               157              0.18
+      ERY        XLE own downtrend     116    44.22 0.66  1.49        85.16         8.56   False                84              0.74
+     LABD        XBI       no gate     164   -28.78 0.55 -1.06       -12.35       -36.40   False                93             -0.87
+     LABD        XBI own downtrend      72    -1.06 0.60 -0.03        32.67       -15.89   False                48             -0.63
+     DUST        GDX       no gate     185     5.64 0.63  0.17        89.30       -31.61   False               149             -0.61
+     DUST        GDX own downtrend     111   -37.36 0.61 -0.76         5.08       -51.67   False                98             -1.05
+     DRIP        XOP       no gate     171   -13.11 0.60 -0.38        63.70       -55.71   False                89             -1.71
+     DRIP        XOP own downtrend      90   -45.36 0.58 -0.81        63.70       -99.88   False                51             -2.74
+     YANG        FXI       no gate     204     2.90 0.65  0.11        41.33       -20.40   False               161             -0.36
+     YANG        FXI own downtrend     112    55.02 0.69  2.07       140.60        14.48    True               100              0.47
+
+passers: ['SOXS', 'YANG']
