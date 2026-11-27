@@ -48,7 +48,8 @@ Binance's trading API (451) and Bybit (403) are blocked here; neither is usable 
 5. **The swing plan and the bitcoin rule in one account (C5). Done, entry 105: bitcoin on the swing plan's idle cash
    fails; a fixed half-and-half split was the best 2021-26 combination (+31% a year, -24% max drawdown).**
 6. **Kalshi favourite-longshot bias (entry 106). Done: no edge after fees in a thin 2026 sample.**
-7. Only a design that passes goes to paper trading, then to a small live account with the safety controls listed
+7. **Kalshi weather, forecast model vs prices (entry 108). Done: the market is better calibrated than a free forecast model; no edge.**
+8. Only a design that passes goes to paper trading, then to a small live account with the safety controls listed
    in the survey (kill switch, position limits, reconciliation, exchange-resident stops).
 
 ## Standing rules carried over

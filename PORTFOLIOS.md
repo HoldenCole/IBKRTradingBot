@@ -1759,3 +1759,26 @@ In 2016-20 every length lost to holding on return (+84% to +130% against +139%).
 | FTSE 100 | 1986-01 | -1.6% / -87% | +0.6% / -90% | -3.5% / -99% |
 
 **Reading.** The bitcoin 10-month rule does not survive. It fails on six of nine other coins and on its neighbouring averages, and it disappears when checked on a different day of the month. The strong 2021-26 result belonged to one exact setting and one exact date: a lucky draw, not an edge. The half-and-half account built on it (entry 105) is therefore not confirmed. The 30% stop does what a stop should, cutting the worst drawdown relative to holding 3x on five of six indices. But in absolute terms it earns little outside the Nasdaq-100, with drawdowns of 61% to 95%. The one fully tested strategy for the small account remains the 3x swing plan (test 79, +12% a year, -39% maximum drawdown). The bitcoin paper log keeps running as a forward record, but nothing should depend on it.
+
+## Kalshi daily high temperature: forecast model against market prices (2026-11-27, entry 108)
+
+User direction: weather first, in markets that pay out soon and are liquid. Pre-registered in `research/kalshi/PREREGISTRATION_WEATHER.md`. Two amendments were made before any price was compared with the model: the same-day decision only, and a development sample of January 2024 to June 2025 covering bands with a 2-98% model probability. Code: `research/kalshi/weather.py`; development trades in `research/kalshi/weather_dev_trades_T0.csv`.
+
+Markets: next-day settlement on the NWS climate report, in the six most liquid cities (each over 39,000 contracts a day). The model takes the Open-Meteo forecast as it stood about 24 hours before each hour, corrected by the city's last 45 forecast errors. The trade buys YES or NO at 08:00 local when the model beats the fill, plus the taker fee, by at least 5 cents. A market counts only if it traded in the prior 3 hours.
+
+| model probability | markets | model | market price | outcome |
+|---|---|---|---|---|
+| 0-10% | 2,742 | 5.6% | 11.7c | 7.6% |
+| 10-20% | 3,182 | 15.2% | 20.5c | 16.3% |
+| 20-30% | 2,718 | 24.4% | 28.3c | 27.0% |
+| 30-40% | 988 | 33.9% | 32.0c | 31.1% |
+| 40-50% | 391 | 44.5% | 28.6c | 25.8% |
+| 50-60% | 158 | 54.6% | 21.1c | 17.7% |
+| 60-70% | 111 | 64.6% | 25.2c | 19.8% |
+| 70-80% | 70 | 75.2% | 34.1c | 31.4% |
+| 80-90% | 43 | 84.2% | 39.6c | 44.2% |
+| 90-100% | 38 | 93.8% | 49.8c | 65.8% |
+
+Trades: 3,208 (1,388 YES, 1,820 NO). Mean return per dollar -11.7% (t -2.7); first half +5.7%, second half -20.1%; -15.4% at 2 cents of slippage. By city: Austin -1.4% (1,212 trades), Chicago -11.3% (1,245), Denver -39.9% (455), Los Angeles -14.5% (249), Miami +4.8% (23), New York -8.0% (24). Gates 2-5 fail; the hold-out was not fetched or opened.
+
+**Reading.** The market prices are close to the outcome frequencies; the free forecast model is not. Whenever the model thought the day's band was likely (above 40%), the market disagreed, and the market was right. The model's forecast for a grid point near the station, with a simple error correction, is less informed than what the traders already use (station-specific statistical forecasts and the National Blend of Models). An edge here would need a better forecast than the market's, not a free one. Post-hoc and not a result: buying NO when the model disagreed made +3.7% per dollar on 1,820 trades, while buying YES lost 32%, which is the same miscalibration seen from the other side.
