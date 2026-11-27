@@ -1857,3 +1857,24 @@ Every signal had to be right at least 53.5% of the time on Binance bitcoin in bo
 | H3 hourly: fade hourly RSI | 54.8 / 55.4% | 261 | 52.1% | +3.9% (0.6) | +26.7 / -8.2 / -0.4% |
 
 **Reading.** Seven of the eight signals pass on bitcoin's own price; none passes at Kalshi's. Bitcoin's short-term reversal is real, but the contract is built so that much of it does not pay. The strike is the average of the 60 seconds before the open, so a last-minute overshoot is already half undone in the strike. The stochastic fade, which keys on the last minute, falls from 55% right on Binance to 48% on Kalshi. And the price one or two minutes into the window has already moved toward the reversal, so the bettor pays for it. The hourly contracts behave the same way. Across entries 109 to 111, the Kalshi bitcoin contracts are efficiently priced, for fair value and for every technical view tested. Stopping here for this market.
+
+## Selling Kalshi bitcoin contracts early: profit targets and stops (2026-11-27, entry 112)
+
+User point: entries 110-111 held every contract to settlement. A contract can be sold at any time, like an option, so a profit target only needs the price to move the right way. Pre-registered in `research/kalshi/PREREGISTRATION_BTC_EXITS.md`. Code: `research/kalshi/btc_exits.py`; all 42 rows in `research/kalshi/btc_exits_results.csv`.
+
+The test reused the actual Kalshi entries of the six 15-minute signals: 24,290 bets, March to November 2026. Each minute, the held side's value comes from entry 109's fair-value model, which tracked Kalshi's prices to within 1-2 cents. A sale fills at that value minus 1 cent, minus the taker fee on the sale. Profit targets were +5, +10 and +15 cents, each with no stop or with a -10 cent stop.
+
+| signal | hold to settlement | +5c target | +10c target | +15c target | +10c target, -10c stop |
+|---|---|---|---|---|---|
+| Bollinger fade | -0.2% (54% win) | -8.8% (71%) | -7.4% (74%) | -7.2% (69%) | -12.2% (49%) |
+| breakout fade | -0.3% (54%) | -8.8% (71%) | -7.5% (74%) | -6.5% (70%) | -12.8% (49%) |
+| stretched-move fade | -2.0% (53%) | -9.0% (71%) | -8.4% (73%) | -8.0% (69%) | -14.7% (49%) |
+| stochastic fade | -5.1% (48%) | -11.2% (68%) | -10.3% (70%) | -10.1% (65%) | -14.3% (47%) |
+| runs-of-three fade | -2.7% (53%) | -10.3% (70%) | -8.8% (73%) | -8.2% (68%) | -13.2% (48%) |
+| Bollinger and RSI agree | +2.3% (51%) | -3.9% (67%) | -1.7% (72%) | -2.5% (67%) | -13.8% (43%) |
+
+Each cell is the return per dollar, with the win rate in brackets.
+
+Exit-price check: at 400 random early exits, the actual Kalshi trade was on average 0.96 cents better than the model's value for the held side. That is too little to change any result; the gain is at most about 2 points per dollar.
+
+**Reading.** Early exits do what targets always do. They raise the win rate (to 65-74%) by taking small gains, and they leave the rare full losses in place. Each early sale also pays a second taker fee (about 2 cents near 50c) and the spread. For a contract that is fairly priced at every minute, which entry 109 showed this one is, selling early does not change the expected value; it only adds those costs. Stops cut losers at -10c but also cut the winners that would have recovered, and they are worse still. None of the 36 combinations passes. This closes the Kalshi bitcoin line for this account: fair value, eight technical views and early exits have all been tested (entries 109-112).

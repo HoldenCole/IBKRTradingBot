@@ -52,7 +52,8 @@ Binance's trading API (451) and Bybit (403) are blocked here; neither is usable 
 8. **Kalshi 15-minute bitcoin up/down (entry 109). Done: priced to within 1-2c of fair value; the 2c fee is larger than any gap; no taker edge.**
 9. **Bitcoin TA through Kalshi 15-minute up/down (entry 110). Done: a real 15-minute reversal (Bollinger fade right 57% for six years), but at Kalshi prices it wins 53.6% at a 54c cost, trending negative through 2026.**
 10. **Kalshi bitcoin, round 2 (entry 111). Done: breakout fade, three hourly rules and five more 15-minute rules; 7 of 8 work on bitcoin's own price, 0 of 8 at Kalshi's prices. Kalshi bitcoin binaries closed as a research line.**
-11. Only a design that passes goes to paper trading, then to a small live account with the safety controls listed
+11. **Early exits on Kalshi bitcoin contracts (entry 112). Done: profit targets raise the win rate to ~70% but every combination loses 2-15% per dollar (second fee and spread on exit).**
+12. Only a design that passes goes to paper trading, then to a small live account with the safety controls listed
    in the survey (kill switch, position limits, reconciliation, exchange-resident stops).
 
 ## Standing rules carried over
