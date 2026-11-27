@@ -31,7 +31,7 @@ _last = [0.0]
 def get(path: str, params: dict | None = None) -> dict:
     url = f"{API}{path}" + ("?" + urllib.parse.urlencode(params) if params else "")
     for attempt in range(8):
-        wait = 0.35 - (time.time() - _last[0])
+        wait = 0.12 - (time.time() - _last[0])
         if wait > 0:
             time.sleep(wait)
         _last[0] = time.time()
