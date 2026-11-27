@@ -1,0 +1,122 @@
+=== Universe ===
+usable: 46 (29 bull, 17 bear)
+bull: UPRO TQQQ UDOW URTY TECL SOXL FAS ERX LABU NUGT JNUG GUSH DRN CURE NAIL DPST RETL DUSL UTSL DFEN WEBL HIBL EDC YINN KORU TMF BULZ GDXU OILU
+bear: TECS SOXS FAZ ERY LABD DUST JDST DRIP DRV HIBS EDZ YANG TMV FNGD BERZ GDXD OILD
+not used: SPXL (duplicate); SPXS (broad US bear (rule)); SPXU (broad US bear (rule)); SQQQ (broad US bear (rule)); SDOW (broad US bear (rule)); SRTY (broad US bear (rule)); TNA (duplicate); TZA (broad US bear (rule)); UMDD (16.8 yrs, $0.2M); SMDD (broad US bear (rule)); MIDU (duplicate); WANT (8.0 yrs, $0.8M); TPOR (9.6 yrs, $0.5M); PILL (9.0 yrs, $0.9M); WEBS (7.1 yrs, $0.8M); MEXX (9.6 yrs, $0.3M); EURL (12.8 yrs, $0.6M); TYD (17.6 yrs, $0.5M); TYO (17.6 yrs, $0.2M); TTT (duplicate); FNGU (1.8 yrs, $97.8M); NRGU (1.8 yrs, $2.9M); NRGD (1.8 yrs, $0.4M); BNKU (1.8 yrs, $0.3M); BNKD (1.8 yrs, $0.0M); CARU (2.4 yrs, $0.0M); WTIU (3.8 yrs, $0.5M); WTID (3.8 yrs, $0.3M); SHNY (0.0 yrs, $4.4M); DULL (3.8 yrs, $0.3M)
+
+=== Test 1. Mean reversion (M), all trades pooled, per trade net of 9 bp a side ===
+bull: 3194 trades in 29 funds, mean +0.61%, win 66%, t 1.52 | 2010-17 +0.98% (1116) | 2018-26 +0.42% (2078) | passes: False
+bear: 1300 trades in 17 funds, mean -0.42%, win 57%, t -1.50 | 2010-17 -0.05% (493) | 2018-26 -0.65% (807) | passes: False
+
+per fund (sorted by volatility):
+      size  mean     vol     t  side
+fund                                
+JNUG    79 -1.18  123.87 -0.64  bull
+JDST    63 -1.99  122.85 -1.36  bear
+GDXU    34  1.02  116.40  0.40  bull
+GDXD    28 -5.14  115.61 -2.01  bear
+GUSH    88 -1.23  106.43 -0.71  bull
+DUST   100 -0.67  100.46 -0.66  bear
+NUGT    99 -1.16  100.46 -0.91  bull
+LABD    60 -1.32   99.62 -1.07  bear
+LABU    88  2.02   99.24  1.61  bull
+DRIP    62 -2.47   98.95 -1.55  bear
+HIBS    28  0.26   98.41  0.17  bear
+SOXS    81  1.30   97.01  1.57  bear
+BERZ    24 -0.01   96.88 -0.01  bear
+SOXL   137  2.72   95.20  3.35  bull
+HIBL    64  3.52   94.79  3.49  bull
+BULZ    45  2.14   94.60  2.05  bull
+DPST    94 -1.03   93.52 -0.70  bull
+FNGD    46 -2.22   91.82 -1.24  bear
+NAIL    80  0.06   90.77  0.04  bull
+DFEN    72  2.20   87.32  0.75  bull
+KORU   109  0.26   84.47  0.26  bull
+WEBL    64  2.23   83.15  2.43  bull
+OILU    33  1.91   81.58  1.32  bull
+YANG   104 -0.48   80.65 -0.47  bear
+OILD    24 -1.46   78.53 -0.87  bear
+YINN   134  0.04   77.40  0.05  bull
+FAZ    102 -0.64   76.49 -1.12  bear
+ERX    151 -0.48   74.86 -0.57  bull
+FAS    161  0.88   74.38  1.29  bull
+ERY    120 -0.12   72.85 -0.18  bear
+EDC    151  0.65   69.18  0.93  bull
+EDZ    109  0.80   69.17  1.18  bear
+RETL   131  0.65   68.86  1.12  bull
+TECS    93  0.20   68.46  0.43  bear
+TECL   155  1.16   68.21  2.38  bull
+URTY   150  0.40   67.72  0.51  bull
+DRV    116  0.25   62.79  0.47  bear
+DRN    150 -0.05   62.59 -0.07  bull
+TQQQ   164  1.51   62.25  2.91  bull
+DUSL    83  0.14   62.14  0.13  bull
+UTSL    71 -0.67   59.18 -0.65  bull
+UPRO   168  0.81   51.84  1.54  bull
+UDOW   162  0.10   49.34  0.18  bull
+CURE   140  0.96   49.27  2.41  bull
+TMV    140  0.25   44.97  0.52  bear
+TMF    137  0.59   44.70  1.69  bull
+
+=== Test 2. Is mean reversion better on the most volatile funds? (bull funds) ===
+third  funds vol range %  trades  mean %    t  2010-17 %  2018-26 %
+  low     10       45-68    1380    0.59 1.56       1.03       0.29
+  mid      9       69-87    1006    0.65 1.34       0.92       0.48
+ high     10      91-124     808    0.62 0.99       0.96       0.52
+supported: False
+
+=== Tests 3-5. Equal-weight portfolios of every usable bull fund, 2010-2026 ===
+buy and hold           CAGR +18.9% maxDD  -79% | 2010-17 +26.4%  -51% | 2018-26 +12.5%  -79% | worst year  -52%
+T trend (10-month)     CAGR +13.7% maxDD  -47% | 2010-17 +20.4%  -34% | 2018-26  +8.1%  -47% | worst year  -20%
+L LEAPS 25%            CAGR +16.1% maxDD  -38% | 2010-17 +24.9%  -33% | 2018-26  +8.8%  -38% | worst year  -10%
+L LEAPS 50%            CAGR +29.9% maxDD  -58% | 2010-17 +48.4%  -54% | 2018-26 +15.2%  -58% | worst year  -20%
+M mean reversion       CAGR  +4.2% maxDD  -68% | 2010-17  +9.8%  -34% | 2018-26  -0.5%  -68% | worst year  -51%
+L 50%, 1-year vol (check) CAGR +22.8% maxDD  -59% | 2010-17 +37.7%  -47% | 2018-26 +10.8%  -59% | worst year  -28%
+
+test 3, T beats buy-and-hold on CAGR and drawdown in both halves: False
+test 4, L LEAPS 25% beats T on CAGR in both halves: True
+test 4, L LEAPS 50% beats T on CAGR in both halves: True
+
+per bull fund, from one year after its start:
+fund  since  B&H CAGR  B&H maxDD  T CAGR  T maxDD  L50 CAGR  L50 maxDD  M CAGR
+SOXL   2011      27.0      -90.5    25.8    -89.0      46.3      -94.1    21.2
+BULZ   2022      29.8      -72.3    23.6    -59.8      13.5      -80.2    21.8
+UPRO   2010      29.9      -76.8    22.5    -40.1      35.9      -80.8     5.3
+TQQQ   2011      34.9      -81.7    20.1    -69.9      28.3      -84.4    14.0
+TECL   2009      33.5      -78.0    17.0    -75.1      25.2      -88.3     9.3
+CURE   2012      27.9      -69.2    13.3    -62.2      26.8      -96.1     8.5
+ FAS   2009      18.5      -86.0    12.7    -63.2      11.7      -87.4     3.5
+RETL   2011      11.5      -92.0    12.3    -80.5       2.4      -98.3     3.7
+KORU   2014      -9.8      -95.8    12.1    -80.9       4.9      -95.4    -2.4
+UDOW   2011      21.8      -80.3     9.0    -68.5       8.3      -97.6    -2.6
+HIBL   2020      21.9      -81.6     8.1    -74.5     -13.3      -95.8    39.6
+UTSL   2018       7.9      -79.5     8.1    -59.7       1.9      -88.2    -9.2
+GDXU   2021      -9.3      -92.4     5.1    -78.0       0.4      -92.2     0.5
+ ERX   2009      -7.0      -99.5     3.9    -75.2      -3.2      -95.4   -10.9
+ TMF   2010      -4.0      -94.1     3.6    -60.8       2.3      -95.2     4.3
+URTY   2011       7.1      -88.1     1.4    -66.9     -11.0      -96.3    -2.1
+JNUG   2014     -32.1      -99.8     1.4    -95.4      -6.6      -99.0   -19.7
+WEBL   2020     -16.8      -94.4     1.0    -58.5     -20.0      -89.9    23.0
+DPST   2016     -14.4      -97.7    -0.2    -68.0     -17.1      -96.5   -22.1
+GUSH   2016     -35.4      -99.9    -1.0    -80.2     -15.0      -94.9   -30.3
+ EDC   2009      -7.7      -92.5    -2.1    -72.6     -15.0      -98.9     1.9
+DFEN   2018       4.8      -91.4    -2.5    -83.2     -21.5      -97.5    -1.3
+ DRN   2010       6.5      -86.3    -2.6    -77.0     -14.0      -98.8    -7.0
+YINN   2010     -20.6      -98.9    -5.7    -89.7     -14.6      -98.4    -4.3
+DUSL   2018      13.7      -85.2    -6.3    -72.3     -28.8      -97.7    -5.7
+LABU   2016      -9.2      -99.0    -8.8    -91.2     -12.6      -96.7    10.8
+NUGT   2011     -34.0     -100.0   -10.0    -94.3     -20.7      -99.4   -12.7
+NAIL   2016       3.1      -93.8   -20.4    -97.2     -16.1      -98.1   -12.9
+OILU   2022     -11.3      -76.9   -23.8    -69.9     -43.8      -91.8    13.5
+
+funds where T beat buy-and-hold on CAGR: 14 of 29; on drawdown: 28 of 29; T CAGR > 0: 18
+
+check: funds with listed LEAPS only (14), LEAPS at a 6.5% half-spread:
+   buy and hold                     CAGR +19.5% maxDD  -77% | 2010-17 +26.8%  -54% | 2018-26 +13.2%  -77%
+   T trend                          CAGR +16.7% maxDD  -50% | 2010-17 +23.1%  -30% | 2018-26 +11.3%  -50%
+   L 25%, 6.5% spread               CAGR +15.7% maxDD  -37% | 2010-17 +22.5%  -30% | 2018-26 +10.0%  -37%
+   L 25%, 6.5% spread, 1-year vol   CAGR +12.8% maxDD  -37% | 2010-17 +18.0%  -27% | 2018-26  +8.3%  -37%
+   L 50%, 6.5% spread               CAGR +29.8% maxDD  -58% | 2010-17 +45.6%  -51% | 2018-26 +17.2%  -58%
+   L 50%, 6.5% spread, 1-year vol   CAGR +23.8% maxDD  -57% | 2010-17 +35.2%  -47% | 2018-26 +14.3%  -57%
+
+reference, live plan via actual UPRO/TQQQ: CAGR +9.9% maxDD -39% | 2010-17 +6.3% -38% | 2018-26 +13.1% -39%

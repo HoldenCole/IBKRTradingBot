@@ -1,0 +1,32 @@
+fund  price  expiry (days)  strike   bid   ask  half-spread %  open interest  market IV  model IV 60d  model IV 1y  contract cost $  longest expiry (days)                             note
+UPRO 122.57          419.0  121.00  0.00  0.00            NaN            0.0      0.000         0.666        0.493              0.0                    NaN                              NaN
+TQQQ  48.85          419.0   49.00 13.05 14.70          5.946          723.0      0.680         1.022        0.763           1470.0                    NaN                              NaN
+UDOW  60.58            NaN     NaN   NaN   NaN            NaN            NaN        NaN         0.574        0.462              NaN                  201.0 no LEAPS (nothing 9+ months out)
+URTY  61.23            NaN     NaN   NaN   NaN            NaN            NaN        NaN         0.692        0.624              NaN                  174.0 no LEAPS (nothing 9+ months out)
+TECL 111.35          419.0  111.00  0.00  0.00            NaN           58.0      0.000         1.335        1.030              0.0                    NaN                              NaN
+SOXL  36.57          419.0   37.00 17.50 20.00          6.667          447.0      1.302         2.355        1.798           2000.0                    NaN                              NaN
+ FAS 166.36          419.0  165.91 38.30 42.20          4.845           72.0      0.571         0.581        0.507           4220.0                    NaN                              NaN
+ ERX  98.94            NaN     NaN   NaN   NaN            NaN            NaN        NaN         0.555        0.521              NaN                  230.0 no LEAPS (nothing 9+ months out)
+LABU 242.93          419.0  245.00 91.00 95.00          2.151            5.0      0.938         1.212        1.021           9500.0                    NaN                              NaN
+NUGT 112.55          419.0  115.00 34.00 41.00          9.333            4.0      0.820         1.132        1.155           4100.0                    NaN                              NaN
+JNUG  95.61          384.0   95.00 31.00 38.00         10.145            0.0      0.906         1.263        1.294           3800.0                    NaN                              NaN
+GUSH  35.38          419.0   35.00  7.00 11.50         24.324           57.0      0.612         0.683        0.666           1150.0                    NaN                              NaN
+ DRN  10.09            NaN     NaN   NaN   NaN            NaN            NaN        NaN         0.533        0.484              NaN                  174.0 no LEAPS (nothing 9+ months out)
+CURE 162.94            NaN     NaN   NaN   NaN            NaN            NaN        NaN         0.644        0.554              NaN                  174.0 no LEAPS (nothing 9+ months out)
+NAIL  37.78          419.0   38.00 11.80 14.60         10.606            0.0      0.848         1.105        1.010           1460.0                    NaN                              NaN
+DPST 110.17          419.0  110.00 29.50 33.50          6.349           16.0      0.681         0.569        0.661           3350.0                    NaN                              NaN
+RETL   9.02            NaN     NaN   NaN   NaN            NaN            NaN        NaN         0.832        0.689              NaN                  201.0 no LEAPS (nothing 9+ months out)
+DUSL  69.17            NaN     NaN   NaN   NaN            NaN            NaN        NaN         0.726        0.638              NaN                  201.0 no LEAPS (nothing 9+ months out)
+UTSL  38.57            NaN     NaN   NaN   NaN            NaN            NaN        NaN         0.495        0.520              NaN                  174.0 no LEAPS (nothing 9+ months out)
+DFEN  47.03            NaN     NaN   NaN   NaN            NaN            NaN        NaN         0.800        0.816              NaN                  230.0 no LEAPS (nothing 9+ months out)
+WEBL  18.67            NaN     NaN   NaN   NaN            NaN            NaN        NaN         0.967        0.764              NaN                  174.0 no LEAPS (nothing 9+ months out)
+HIBL  55.38            NaN     NaN   NaN   NaN            NaN            NaN        NaN         1.520        1.100              NaN                  174.0 no LEAPS (nothing 9+ months out)
+ EDC  46.34            NaN     NaN   NaN   NaN            NaN            NaN        NaN         1.056        0.940              NaN                  230.0 no LEAPS (nothing 9+ months out)
+YINN  19.96          419.0   20.00  5.10  5.55          4.225            0.0      0.636         0.649        0.636            555.0                    NaN                              NaN
+KORU   6.01          419.0    6.00  2.30  3.60         22.034          295.0      1.229         2.051        2.069            360.0                    NaN                              NaN
+ TMF  29.32          419.0   30.00  4.20  4.60          4.545         1281.0      0.391         0.369        0.319            460.0                    NaN                              NaN
+BULZ  18.80            NaN     NaN   NaN   NaN            NaN            NaN        NaN         1.512        1.129              NaN                    0.0 no LEAPS (nothing 9+ months out)
+GDXU  59.82            NaN     NaN   NaN   NaN            NaN            NaN        NaN         1.740        1.798              NaN                    0.0 no LEAPS (nothing 9+ months out)
+OILU  43.13            NaN     NaN   NaN   NaN            NaN            NaN        NaN         0.840        0.789              NaN                    0.0 no LEAPS (nothing 9+ months out)
+
+with two-sided quotes: 12 funds; median market IV / model IV (60d) 0.77, / model IV (1y) 0.90; median half-spread 6.5%

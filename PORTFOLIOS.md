@@ -2039,3 +2039,67 @@ Mirror rule on the 1x ETF: RSI(2) above 90 and (above the upper band or below th
 | TECS, LABD, DUST, DRIP | both | | -45 to +6 bp | below 0.2 | | | negative | no |
 
 **Reading.** 3 of 16 pass, against about 0.4 expected by chance. Every short that works was much stronger before 2013 and is barely positive since, so it is a weak, fading edge. Shorting rips in rising markets fights the drift that makes the long side work. No change to the plan; any change is the investor's decision.
+
+## The whole 3x family: mean reversion, trend, and trend through LEAPS (2026-11-27, entry 117)
+
+User direction: there are many more 3x funds than entry 116 checked; look at them all. The user's hypothesis: trend following through LEAPS, or mean reversion on the most volatile names, is likely best. Pre-registered in `research/swing/PREREGISTRATION_117.md`. Code: `research/swing/study_3x_family.py` and `research/swing/leaps_calibration.py`; output in `research/swing/family_3x_output.txt` and `leaps_calibration_output.txt`.
+
+**Universe.** 76 US-listed 3x tickers. 46 usable (3+ years, at least $1 million a day, one fund per underlying): 29 bull and 17 bear. The broad US bear funds are excluded by the standing rule. Too thin or too new: UMDD, WANT, TPOR, PILL, WEBS, MEXX, EURL, TYD, TYO, the relaunched FNGU, NRGU/NRGD, BNKU/BNKD, CARU, WTIU/WTID, SHNY, DULL. Only funds alive today could be downloaded, which flatters buy-and-hold and trend.
+
+**Strategies.**
+- M (mean reversion): the live plan's dip rules on the fund's own prices.
+- T (trend): hold the fund in months after a month-end close above its 10-month average, otherwise cash.
+- L (LEAPS): while T is on, 12-month at-the-money calls with 25% or 50% of the account, renewed every 6 months; modelled with Black-Scholes. Costs are 9 bp a side on funds; idle cash earns nothing.
+
+### Mean reversion on volatile names: not supported
+
+| | trades | mean per trade | t | 2010-17 | 2018-26 |
+|---|---|---|---|---|---|
+| bull funds, pooled | 3,194 | +0.61% | 1.5 | +0.98% | +0.42% |
+| bear funds, pooled | 1,300 | -0.42% | -1.5 | -0.05% | -0.65% |
+| bull, lowest-volatility third (45-68% a year) | 1,380 | +0.59% | 1.6 | +1.03% | +0.29% |
+| bull, middle third (69-87%) | 1,006 | +0.65% | 1.3 | +0.92% | +0.48% |
+| bull, highest-volatility third (91-124%) | 808 | +0.62% | 1.0 | +0.96% | +0.52% |
+
+Volatility makes no difference. The sector does: the dip rules work on semis, tech, internet and Nasdaq funds (HIBL +3.5% a trade, t 3.5; SOXL +2.7%, t 3.4; WEBL +2.2%; TQQQ +1.5%, t 2.9; TECL +1.2%; CURE +1.0%). They lose on gold miners, oil producers and regional banks, which are among the most volatile funds. This matches entries 115 and 116: the technique needs an asset that drifts up and gets bought on dips.
+
+### Trend and LEAPS: equal-weight portfolios of all 29 bull funds, 2010-2026
+
+| strategy | CAGR | max drawdown | 2010-17 | 2018-26 | worst year |
+|---|---|---|---|---|---|
+| buy and hold | +18.9% | -79% | +26.4% / -51% | +12.5% / -79% | -52% |
+| T trend | +13.7% | -47% | +20.4% / -34% | +8.1% / -47% | -20% |
+| L LEAPS, 25% of the account | +16.1% | -38% | +24.9% / -33% | +8.8% / -38% | -10% |
+| L LEAPS, 50% of the account | +29.9% | -58% | +48.4% / -54% | +15.2% / -58% | -20% |
+| M mean reversion | +4.2% | -68% | +9.8% / -34% | -0.5% / -68% | -51% |
+| live plan via real UPRO/TQQQ (reference) | +9.9% | -39% | +6.3% / -38% | +13.1% / -39% | |
+
+- **Test 3 fails.** Trend cut the drawdown in 28 of 29 funds and in the portfolio (-47% against -79%), but in this bull market it gave up return; it beat buy-and-hold's return in only 14 of 29 funds.
+- **Test 4 passes for both LEAPS versions.** A bug was fixed before this table: the model's $0.05 minimum spread had been applied to split-adjusted prices.
+
+### Checks added after the results: today's real LEAPS quotes
+
+| | |
+|---|---|
+| bull funds with 1-year calls listed | 14 of 29 (none on UDOW, URTY, ERX, DRN, CURE, RETL, DUSL, UTSL, DFEN, WEBL, HIBL, EDC, BULZ, GDXU, OILU) |
+| median half-spread on the at-the-money call | 6.5% (the model used 3%) |
+| real implied vol against the model | 0.77x its 60-day figure, 0.90x its 1-year figure |
+| cost of one contract | $360 (KORU) to $9,500 (LABU); TQQQ $1,470, SOXL $2,000 |
+
+Rerun on those 14 funds at a 6.5% half-spread:
+
+| strategy | CAGR | max drawdown | 2010-17 | 2018-26 |
+|---|---|---|---|---|
+| buy and hold | +19.5% | -77% | +26.8% | +13.2% |
+| T trend | +16.7% | -50% | +23.1% | +11.3% |
+| L 50% | +29.8% | -58% | +45.6% | +17.2% |
+| L 50%, priced with 1-year vol | +23.8% | -57% | +35.2% | +14.3% |
+| L 25%, priced with 1-year vol | +12.8% | -37% | +18.0% | +8.3% |
+
+**Reading.** The LEAPS trend is the strongest result in the project on paper, and it survives the real spread. Four reasons it is not a plan:
+1. It is a model. Pricing with 1-year volatility instead of 60-day takes a quarter of the return away, and the 60-day version sells calls at inflated prices after drops, when short-term volatility spikes. No historical option chains were used.
+2. It is a diversification result. A single fund run this way fell 80% to 99%, and SOXL, UPRO, TQQQ, TECL and CURE carried it.
+3. It cannot be built at this account size. Holding 14 positions at 50% of the account needs roughly $40,000 of premium; one SOXL contract alone is twice the account.
+4. Only today's surviving funds are in it, through one of the strongest bull markets on record.
+
+Holding the fund itself under the trend rule is buildable now and halves the drawdowns, but costs return. No change to the plan; any change is the investor's decision.
