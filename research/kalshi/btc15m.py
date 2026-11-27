@@ -63,7 +63,9 @@ def windows() -> pd.DataFrame:
     w["open"] = pd.to_datetime(w["open"], utc=True)
     w["close"] = pd.to_datetime(w["close"], utc=True)
     w = w[w.result.isin(["yes", "no"]) & w.strike.notna() & w.final.notna()].copy()
-    w["final"] = w.final.astype(float)
+    w["final"] = pd.to_numeric(w.final.astype(str).str.replace(",", "", regex=False), errors="coerce")
+    w["strike"] = pd.to_numeric(w.strike.astype(str).str.replace(",", "", regex=False), errors="coerce")
+    w = w.dropna(subset=["final", "strike"])
     return w.sort_values("close").reset_index(drop=True)
 
 
