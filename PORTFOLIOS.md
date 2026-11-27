@@ -1782,3 +1782,28 @@ Markets: next-day settlement on the NWS climate report, in the six most liquid c
 Trades: 3,208 (1,388 YES, 1,820 NO). Mean return per dollar -11.7% (t -2.7); first half +5.7%, second half -20.1%; -15.4% at 2 cents of slippage. By city: Austin -1.4% (1,212 trades), Chicago -11.3% (1,245), Denver -39.9% (455), Los Angeles -14.5% (249), Miami +4.8% (23), New York -8.0% (24). Gates 2-5 fail; the hold-out was not fetched or opened.
 
 **Reading.** The market prices are close to the outcome frequencies; the free forecast model is not. Whenever the model thought the day's band was likely (above 40%), the market disagreed, and the market was right. The model's forecast for a grid point near the station, with a simple error correction, is less informed than what the traders already use (station-specific statistical forecasts and the National Blend of Models). An edge here would need a better forecast than the market's, not a free one. Post-hoc and not a result: buying NO when the model disagreed made +3.7% per dollar on 1,820 trades, while buying YES lost 32%, which is the same miscalibration seen from the other side.
+
+## Kalshi 15-minute bitcoin up/down (2026-11-27, entry 109)
+
+User direction: bitcoin up/down binary contracts, short term only. Pre-registered in `research/kalshi/PREREGISTRATION_BTC15M.md`. Code: `research/kalshi/btc15m.py`. Results: `research/kalshi/btc15m_dev_trades.csv` and `btc15m_dev_calibration.csv`.
+
+The contract: KXBTC15M pays $1 if the CF Benchmarks bitcoin index, averaged over the last minute of a 15-minute window, is at or above its average over the minute before the window opened. It is the most liquid market on Kalshi (median 3.9 million contracts a window in November 2026). Up won 49.7% of 32,908 windows. The taker fee is 2 cents a contract near 50c.
+
+The test: at 1, 5 and 10 minutes into each of 2,000 random windows from March to August 2026, the fair probability of "up" is computed from the Binance price against the window's strike, corrected by the measured basis (-5.5 bp) and scaled by the last hour's volatility and the minutes left. It is compared with Kalshi's last trade price, required to be within the previous 60 seconds.
+
+| fair value (model) | checkpoints | fair | market price | outcome |
+|---|---|---|---|---|
+| 0-10% | 454 | 3.5% | 5.1c | 3.5% |
+| 10-20% | 339 | 15.2% | 14.1c | 15.3% |
+| 20-30% | 448 | 25.4% | 24.2c | 25.2% |
+| 30-40% | 711 | 35.4% | 34.1c | 32.1% |
+| 40-50% | 1,045 | 45.2% | 45.0c | 48.3% |
+| 50-60% | 1,068 | 54.6% | 54.9c | 54.5% |
+| 60-70% | 698 | 64.6% | 65.9c | 64.0% |
+| 70-80% | 389 | 74.6% | 75.9c | 73.8% |
+| 80-90% | 352 | 84.6% | 85.5c | 85.2% |
+| 90-100% | 490 | 96.2% | 94.6c | 96.5% |
+
+Trades taken by the rule (at least 3 cents of edge after fee and slippage): 1,723, half YES and half NO. The mean return per dollar was -8.3% (t -1.6) with a 37% win rate: March-May -7.3%, June-August -9.0%, and -11.7% at 2 cents of slippage. By checkpoint: minute 1 -13.4%, minute 5 -0.5%, minute 10 -11.7%. All gates except the trade count fail; the hold-out was not opened.
+
+**Reading.** This market is efficient. Both the fair-value model and the market price match the outcome rates to within a cent or two in every bucket. That leaves nothing for a taker who pays 2 cents of fee plus the spread. The gaps the rule found were noise, and trading them lost money. The one angle this test cannot reach is quoting as a maker, which pays no fee in this series and earns the spread instead. That needs order-book history or a live paper quoter, and it competes directly with the fast bots that keep the prices this accurate.

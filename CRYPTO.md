@@ -49,7 +49,8 @@ Binance's trading API (451) and Bybit (403) are blocked here; neither is usable 
    fails; a fixed half-and-half split was the best 2021-26 combination (+31% a year, -24% max drawdown).**
 6. **Kalshi favourite-longshot bias (entry 106). Done: no edge after fees in a thin 2026 sample.**
 7. **Kalshi weather, forecast model vs prices (entry 108). Done: the market is better calibrated than a free forecast model; no edge.**
-8. Only a design that passes goes to paper trading, then to a small live account with the safety controls listed
+8. **Kalshi 15-minute bitcoin up/down (entry 109). Done: priced to within 1-2c of fair value; the 2c fee is larger than any gap; no taker edge.**
+9. Only a design that passes goes to paper trading, then to a small live account with the safety controls listed
    in the survey (kill switch, position limits, reconciliation, exchange-resident stops).
 
 ## Standing rules carried over
