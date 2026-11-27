@@ -34,6 +34,7 @@ CITIES = {  # series: (name, lat, lon, local tz, local standard-time zone)
 }
 HOLDOUT = pd.Timestamp("2025-07-01")
 DEV_START = pd.Timestamp("2024-01-01")
+HOLDOUT_OPEN = False                                            # set True only after the development gates pass
 MONTHS = {m: i for i, m in enumerate(["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"], 1)}
 
 
@@ -107,7 +108,8 @@ def fetch_trades(series: str):
     # amendment 2: development window 2024-01-01 on, and only bands with a model probability of 2-98%
     p = model_probs(series, m)
     m = m.assign(model_p=p)
-    todo = m[~m.ticker.isin(have) & (m.date >= DEV_START) & m.model_p.between(0.02, 0.98)]
+    end = HOLDOUT if not HOLDOUT_OPEN else pd.Timestamp("2100-01-01")
+    todo = m[~m.ticker.isin(have) & (m.date >= DEV_START) & (m.date < end) & m.model_p.between(0.02, 0.98)]
     print(f"{series}: {len(m)} markets, {len(todo)} to fetch", flush=True)
     for i, r in enumerate(todo.itertuples()):
         t1, t0 = decision_times(series, r.date)
@@ -180,13 +182,20 @@ def band_prob(row, m: float, s: float) -> float:
     return cdf(row.cap + 0.5) - cdf(row.floor - 0.5)
 
 
+def residual_stats(res: pd.Series) -> tuple[pd.Series, pd.Series]:
+    """Mean and spread of the previous 45 available residuals (days with a forecast), known before each day."""
+    r = res.dropna()
+    mu = r.rolling(45, min_periods=45).mean().shift(1)
+    sd = r.rolling(45, min_periods=45).std().shift(1).clip(lower=1.5)
+    idx = res.index
+    return mu.reindex(idx, method="ffill").where(res.index > r.index[0]), sd.reindex(idx, method="ffill")
+
+
 def model_probs(series: str, m: pd.DataFrame) -> pd.Series:
     """Same-day (T0) model probability for every market, from forecasts and past outcomes only."""
     fc = forecasts(series)
     days = m.groupby("date")["actual"].first().sort_index().to_frame().join(fc, how="left")
-    res = days["actual"] - days["f1"]
-    mu = res.rolling(45, min_periods=45).mean().shift(1)
-    sd = res.rolling(45, min_periods=45).std().shift(1).clip(lower=1.5)
+    mu, sd = residual_stats(days["actual"] - days["f1"])
     md = days[["f1"]].assign(mu=mu, sd=sd)
     x = m.join(md, on="date")
     return pd.Series([band_prob(r, r.f1 + r.mu, r.sd) if pd.notna(r.mu) and pd.notna(r.f1) else np.nan
@@ -200,9 +209,7 @@ def build(series: str, holdout: bool = False) -> pd.DataFrame:
     days = days.join(fc, how="left")
     out = []
     for col, lead, pcol, tcol in (("f1", "T0 same day 08:00", "p_t0", "ts_t0"),):
-        res = (days["actual"] - days[col])
-        mu = res.rolling(45, min_periods=45).mean().shift(1)
-        sd = res.rolling(45, min_periods=45).std().shift(1).clip(lower=1.5)
+        mu, sd = residual_stats(days["actual"] - days[col])
         md = days[[col]].assign(mu=mu, sd=sd).dropna()
         x = m.merge(md, left_on="date", right_index=True)
         x["lead"] = lead
