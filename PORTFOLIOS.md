@@ -1837,3 +1837,23 @@ The hurdle: bought near 50c with the 2c fee and 1c of slippage, the contract cos
 The average cost was 54.2c, against a 53.6% win rate.
 
 **Reading.** Bitcoin reverts over 15 minutes. Every rule that follows the move is wrong more often than right, and fading a 15-minute Bollinger extreme was right 55.5-58.4% of the time in every year from 2020 to 2026. But Kalshi's contract does not pay that rate. Its strike is the average of the minute before the window, and its price one minute in already reflects where bitcoin is. The fade won only 53.6% there, at about the price it cost, and its result fell from +8% to -6% a dollar as the market grew through 2026. On spot or perpetual futures the same signal averages about 0 basis points a bet. The snap-backs are frequent but small (median +3 to +5 bp), and the misses are large. That is why a binary was the right vehicle for this view, and why, now that the market prices it, no vehicle is left. Lead, not tested: fading 20-bar breakouts, which were wrong 56-58% of the time when followed.
+
+## Bitcoin technical signals through Kalshi, round 2 (2026-11-27, entry 111)
+
+User direction: try fading breakouts and the hourly contracts, then other technical options; do not give up. Pre-registered in `research/kalshi/PREREGISTRATION_BTC_TA2.md`. Code: `research/kalshi/btc_ta2.py`. Results: `research/kalshi/btc_ta2_scores.csv` and `btc_ta2_check_*.csv`.
+
+Every signal had to be right at least 53.5% of the time on Binance bitcoin in both 2020-22 and 2023-25. A passer then had to make money at Kalshi's actual prices from March to November 2026, with a t of at least 2, and also in September-November alone.
+
+| signal | Binance right 2020-22 / 2023-25 | Kalshi bets | Kalshi won | return per dollar (t) | Mar-May / Jun-Aug / Sep-Nov |
+|---|---|---|---|---|---|
+| B1 fade a 20-bar 15-minute breakout | 57.5 / 56.4% | 5,209 | 53.7% | -0.3% (-0.2) | +3.9 / -2.1 / -2.5% |
+| C1 fade a stretched 15-minute move | 54.9 / 57.0% | 1,201 | 52.9% | -2.0% (-0.7) | +5.3 / -2.0 / -8.7% |
+| C2 fade a stochastic extreme | 55.8 / 54.6% | 8,751 | 48.0% | -5.1% (-4.5) | -3.8 / -6.5 / -4.9% |
+| C3 fade three windows in a row | 57.1 / 56.1% | 5,718 | 52.5% | -2.7% (-2.0) | -0.3 / -3.9 / -4.0% |
+| C4 fade a last-minute shock | 57.6 / 56.6% | too few bets on Binance | | | |
+| C5 Bollinger and RSI agree, fade | 55.3 / 58.1% | 383 | 50.7% | +2.3% (0.3) | +15.6 / -11.5 / +5.2% |
+| H1 hourly: fade hourly Bollinger | 56.6 / 54.5% | 820 | 51.6% | -3.4% (-1.1) | -0.6 / -12.2 / +3.8% |
+| H2 hourly: fade 15-minute Bollinger | 58.4 / 59.3% | 699 | 54.9% | -0.1% (-0.0) | -2.6 / +3.2 / -1.2% |
+| H3 hourly: fade hourly RSI | 54.8 / 55.4% | 261 | 52.1% | +3.9% (0.6) | +26.7 / -8.2 / -0.4% |
+
+**Reading.** Seven of the eight signals pass on bitcoin's own price; none passes at Kalshi's. Bitcoin's short-term reversal is real, but the contract is built so that much of it does not pay. The strike is the average of the 60 seconds before the open, so a last-minute overshoot is already half undone in the strike. The stochastic fade, which keys on the last minute, falls from 55% right on Binance to 48% on Kalshi. And the price one or two minutes into the window has already moved toward the reversal, so the bettor pays for it. The hourly contracts behave the same way. Across entries 109 to 111, the Kalshi bitcoin contracts are efficiently priced, for fair value and for every technical view tested. Stopping here for this market.
