@@ -119,4 +119,11 @@ check: funds with listed LEAPS only (14), LEAPS at a 6.5% half-spread:
    L 50%, 6.5% spread               CAGR +29.8% maxDD  -58% | 2010-17 +45.6%  -51% | 2018-26 +17.2%  -58%
    L 50%, 6.5% spread, 1-year vol   CAGR +23.8% maxDD  -57% | 2010-17 +35.2%  -47% | 2018-26 +14.3%  -57%
 
+correction, flat implied vol across strikes (entry 118):
+   L 25%, all 29 funds                              CAGR  +7.7% maxDD  -33% | 2010-17 +13.4%  -22% | 2018-26  +2.7%  -33%
+   L 50%, all 29 funds                              CAGR +12.8% maxDD  -52% | 2010-17 +24.7%  -38% | 2018-26  +3.2%  -52%
+   L 50%, 14 LEAPS funds, 6.5% spread               CAGR +10.9% maxDD  -49% | 2010-17 +19.7%  -39% | 2018-26  +3.5%  -49%
+   L 50%, 14 LEAPS funds, 6.5% spread, 1-year vol   CAGR  +3.2% maxDD  -69% | 2010-17  +9.3%  -41% | 2018-26  -2.0%  -69%
+   L 25%, 14 LEAPS funds, 6.5% spread, 1-year vol   CAGR  +2.6% maxDD  -45% | 2010-17  +5.4%  -23% | 2018-26  +0.2%  -45%
+
 reference, live plan via actual UPRO/TQQQ: CAGR +9.9% maxDD -39% | 2010-17 +6.3% -38% | 2018-26 +13.1% -39%

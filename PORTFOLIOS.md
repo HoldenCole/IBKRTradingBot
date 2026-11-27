@@ -2103,3 +2103,62 @@ Rerun on those 14 funds at a 6.5% half-spread:
 4. Only today's surviving funds are in it, through one of the strongest bull markets on record.
 
 Holding the fund itself under the trend rule is buildable now and halves the drawdowns, but costs return. No change to the plan; any change is the investor's decision.
+
+**CORRECTION to entry 117 (found in entry 118).** The LEAPS model priced calls with the entry 77 skew, which was built for index options: lower implied vol for out-of-the-money calls, much higher for in-the-money ones. Live quotes on TQQQ and SOXL (entry 118, check 1) show call vol on 3x funds is flat across strikes. With the skew, calls bought at the money and sold after the fund had run up were valued at inflated prices, so the LEAPS figures above are overstated. With one implied vol at every strike:
+
+| | CAGR | max drawdown | 2010-17 | 2018-26 |
+|---|---|---|---|---|
+| L 25%, all 29 funds | +7.7% | -33% | +13.4% | +2.7% |
+| L 50%, all 29 funds | +12.8% | -52% | +24.7% | +3.2% |
+| L 50%, 14 LEAPS funds, 6.5% spread | +10.9% | -49% | +19.7% | +3.5% |
+| L 50%, 14 LEAPS funds, 6.5% spread, 1-year vol | +3.2% | -69% | +9.3% | -2.0% |
+| T trend, all 29 funds (unchanged) | +13.7% | -47% | +20.4% | +8.1% |
+
+Test 4 now **fails**: LEAPS no longer beat holding the funds under the trend rule in 2018-2026. The LEAPS pass in entry 117 is withdrawn.
+
+## Trend-following LEAPS on SOXL and TQQQ only (2026-11-27, entry 118)
+
+User direction: try LEAPS on just SOXL and TQQQ. Pre-registered in `research/swing/PREREGISTRATION_118.md`, with a warning: both were chosen after entry 117 showed them among its best results, so everything here leans optimistic. Code: `research/swing/study_leaps_soxl_tqqq.py`; output in `research/swing/leaps_soxl_tqqq_output.txt`.
+
+**Check 1, today's 12-month call quotes (about 14 months to expiry) against the model:**
+
+| | strike vs price | ask | market implied vol | model with the old skew | model, flat vol |
+|---|---|---|---|---|---|
+| TQQQ ($48.85) | 100% | $14.70 | 68% | $17.24 | $17.31 |
+| | 130% | $10.00 | 65% | $6.21 | $12.86 |
+| | 148% | $7.65 | 65% | $1.58 | $10.80 |
+| SOXL ($36.57) | 101% | $20.00 | 130% | $25.80 | $26.12 |
+| | 131% | $18.55 | 134% | $14.35 | $24.39 |
+| | 150% | $17.05 | 133% | $6.84 | $23.45 |
+
+The skew was wrong: real call vol is flat. The flat model with 1-year vol overprices today, because the last year's realized vol, especially SOXL's 164%, is above what the market charges. So the truth likely lies between the 60-day and 1-year rows below.
+
+**Two-fund portfolio, 2011-2026, flat vol (the corrected model):**
+
+| | CAGR | max drawdown | 2011-17 | 2018-26 | worst year |
+|---|---|---|---|---|---|
+| buy and hold | +32.3% | -86% | +43.2% | +28.0% | -82% |
+| trend held in the funds | +24.8% | -77% | +32.3% | +21.8% | -30% |
+| live swing plan (real UPRO/TQQQ) | +10.2% | -39% | +6.6% | +13.1% | -28% |
+| LEAPS 25%, ATM (60-day / 1-year vol) | +14.2% / +8.9% | -47% / -46% | +19.2% / +13.4% | +11.9% / +6.4% | -21% / -16% |
+| LEAPS 50%, ATM | +22.1% / +11.2% | -72% / -74% | +34.4% / +22.8% | +15.6% / +3.8% | -34% / -32% |
+| LEAPS 100%, ATM | +17.6% / -3.7% | -94% / -98% | | | -65% / -64% |
+| LEAPS 50%, 20% OTM | +24.7% / +9.4% | -77% / -77% | | | |
+
+With the pre-registered skew the same grid showed up to +81% a year; that was the mispricing, not the strategy.
+
+**Each purchase (50% ATM, 1-year flat vol):** TQQQ 31 buys, 52% won, median +2%, best +279%, worst -72%. SOXL 28 buys, 50% won, median +11%, best +863% (Dec 2025 to Jun 2026, when SMH rose 82% and SOXL 535%), worst -90%. The result rests on a few huge semis runs.
+
+**Check 2, a real small account** ($1,000 plus $150 a month from 2011, whole contracts only, 1-year flat vol, 50% in calls; $29,350 contributed):
+
+| | ended | worst fall |
+|---|---|---|
+| LEAPS, ATM | $107,770 | -66% |
+| LEAPS, 20% OTM | $100,338 | -73% |
+| trend held in the funds | $466,963 | -76% |
+| buy and hold | $1,025,725 | -86% |
+| live swing plan | $100,156 | -36% |
+
+In 40% of the months the trend said buy, the account could not afford one contract. Today one contract costs $765-$1,470 on TQQQ and $1,705-$2,000 on SOXL.
+
+**Reading.** Priced correctly, the calls do worse than simply holding SOXL and TQQQ while their trend is up: the premium, the 6.5% spreads and the 6-month rolls eat the leverage. Calls do cap the loss on each purchase, but with half the account in them the worst fall was still -66% to -74%. Holding the two funds under the trend rule made more in every version tested, though with a -77% worst drop. That is the hindsight result of two funds picked after they won, through a historic semis boom. No change to the plan; any change is the investor's decision.

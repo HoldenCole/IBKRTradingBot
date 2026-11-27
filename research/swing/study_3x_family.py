@@ -66,8 +66,9 @@ def t_sleeve(c):
     return r.where(on, 0.0) - sw * SIDE
 
 
-def l_sleeve(c, raw, share, rf, iv_win=60, hs_pct=0.03):
+def l_sleeve(c, raw, share, rf, iv_win=60, hs_pct=0.03, otm=0.0, log=None, skew=True):
     """Month-end LEAPS: 12-month ATM calls with `share` of equity while T is on; sell when off or after 6 months."""
+    sk = iv_at if skew else (lambda a, S, K: a)          # entry 118: real 3x-fund call vol is flat across strikes
     lr = np.log(c).diff()
     iv = (lr.rolling(iv_win).std() * np.sqrt(252) * 1.1).values
     # Yahoo closes are split-adjusted, so the pre-registered $0.05 / $0.65 floors cannot be applied in real dollars
@@ -83,18 +84,22 @@ def l_sleeve(c, raw, share, rf, iv_win=60, hs_pct=0.03):
         val = 0.0
         if n:
             days = max((exp_i - idx[i]).days, 0)
-            val = n * bs(S[i], K, days / 365, max(iv_at(iv[i], S[i], K), 0.05) if np.isfinite(iv[i]) else 0.5, rr[i], True)
+            val = n * bs(S[i], K, days / 365, max(sk(iv[i], S[i], K), 0.05) if np.isfinite(iv[i]) else 0.5, rr[i], True)
         if idx[i] in month_end and np.isfinite(iv[i]):
             on = bool(sig_now.get(idx[i].to_period("M"), False))
             if n and (not on or (idx[i] - bought).days >= 180):
                 px = val / n
                 hs = hs_pct * px
-                cash += n * max(px - hs, 0.0); n = 0.0; val = 0.0
+                cash += n * max(px - hs, 0.0)
+                if log is not None:
+                    log.append({"bought": bought, "sold": idx[i], "buy": buy_px, "sell": max(px - hs, 0.0),
+                                "ret": max(px - hs, 0.0) / buy_px - 1})
+                n = 0.0; val = 0.0
             if on and not n:
                 total = cash
-                K = S[i]; exp_i = idx[i] + pd.Timedelta(days=365); bought = idx[i]
-                px = bs(S[i], K, 1.0, max(iv[i], 0.05), rr[i], True)
-                ask = px * (1 + hs_pct)
+                K = S[i] * (1 + otm); exp_i = idx[i] + pd.Timedelta(days=365); bought = idx[i]
+                px = bs(S[i], K, 1.0, max(sk(iv[i], S[i], K), 0.05), rr[i], True)
+                ask = px * (1 + hs_pct); buy_px = ask
                 n = share * total / ask; cash -= n * ask
                 val = n * px
         eq[i] = cash + val
@@ -242,6 +247,19 @@ def main():
     for k, a in chk.items():
         p = perf(a); h = halves(a)
         print(f"   {k:32s} CAGR {p['CAGR']:+6.1%} maxDD {p['maxDD']:+5.0%} | 2010-17 {h[0]['CAGR']:+6.1%} {h[0]['maxDD']:+5.0%}"
+              f" | 2018-26 {h[1]['CAGR']:+6.1%} {h[1]['maxDD']:+5.0%}")
+
+    # CORRECTION (entry 118): the entry 77 skew does not fit calls on 3x funds (live quotes are flat across strikes);
+    # the same portfolios with one implied vol at every strike
+    print("\ncorrection, flat implied vol across strikes (entry 118):")
+    corr = {}
+    for lab, kw, grp in (("L 25%, all 29 funds", dict(share=0.25), bulls), ("L 50%, all 29 funds", dict(share=0.50), bulls),
+                         ("L 50%, 14 LEAPS funds, 6.5% spread", dict(share=0.50, hs_pct=0.065), have),
+                         ("L 50%, 14 LEAPS funds, 6.5% spread, 1-year vol", dict(share=0.50, hs_pct=0.065, iv_win=252), have),
+                         ("L 25%, 14 LEAPS funds, 6.5% spread, 1-year vol", dict(share=0.25, hs_pct=0.065, iv_win=252), have)):
+        a = portfolio({s: l_sleeve(funds[s]["close"].dropna(), None, rf=rf, skew=False, **kw) for s in grp}, elig)
+        p = perf(a); h = halves(a)
+        print(f"   {lab:48s} CAGR {p['CAGR']:+6.1%} maxDD {p['maxDD']:+5.0%} | 2010-17 {h[0]['CAGR']:+6.1%} {h[0]['maxDD']:+5.0%}"
               f" | 2018-26 {h[1]['CAGR']:+6.1%} {h[1]['maxDD']:+5.0%}")
 
     # live plan reference through actual UPRO/TQQQ

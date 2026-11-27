@@ -1,0 +1,86 @@
+sleeves eligible from: TQQQ 2011-02-10, SOXL 2011-03-10
+
+=== Two-fund portfolio (equal weight, monthly reset), 2011-2026 ===
+buy and hold                                 CAGR +32.3% maxDD  -86% | 2011-17 +43.2%  -55% | 2018-26 +28.0%  -86% | worst yr  -82% best yr  +220%
+T trend held in the funds                    CAGR +24.8% maxDD  -77% | 2011-17 +32.3%  -49% | 2018-26 +21.8%  -77% | worst yr  -30% best yr  +132%
+live swing plan (real UPRO/TQQQ)             CAGR +10.2% maxDD  -39% | 2011-17  +6.6%  -38% | 2018-26 +13.1%  -39% | worst yr  -28% best yr   +50%
+
+pre-registered model (entry 77 skew) first, then the corrected flat-vol model
+
+--- skew as pre-registered (overstated; see check 1) ---
+LEAPS  25%, ATM, 60-day vol                  CAGR +24.4% maxDD  -63% | 2011-17 +35.2%  -53% | 2018-26 +19.1%  -63% | worst yr  -25% best yr  +142%
+LEAPS  50%, ATM, 60-day vol                  CAGR +36.1% maxDD  -86% | 2011-17 +63.3%  -77% | 2018-26 +21.7%  -86% | worst yr  -42% best yr  +344%
+LEAPS 100%, ATM, 60-day vol                  CAGR  +nan% maxDD -100% | 2011-17 +79.2%  -97% | 2018-26  +nan% -100% | worst yr -100% best yr +1006%
+LEAPS  25%, 20% OTM, 60-day vol              CAGR +52.8% maxDD  -77% | 2011-17 +80.0%  -69% | 2018-26 +40.2%  -77% | worst yr  -39% best yr  +395%
+LEAPS  50%, 20% OTM, 60-day vol              CAGR +81.0% maxDD  -94% | 2011-17 +142.6%  -87% | 2018-26 +52.6%  -94% | worst yr  -52% best yr +1120%
+LEAPS 100%, 20% OTM, 60-day vol              CAGR +38.6% maxDD -100% | 2011-17 +76.1% -100% | 2018-26 +18.6%  -87% | worst yr  -66% best yr +1128%
+
+LEAPS  25%, ATM, 1-year vol                  CAGR +22.0% maxDD  -59% | 2011-17 +30.2%  -51% | 2018-26 +18.2%  -59% | worst yr  -22% best yr  +124%
+LEAPS  50%, ATM, 1-year vol                  CAGR +30.8% maxDD  -84% | 2011-17 +52.5%  -76% | 2018-26 +19.1%  -84% | worst yr  -45% best yr  +304%
+LEAPS 100%, ATM, 1-year vol                  CAGR -100.0% maxDD -100% | 2011-17 +56.0%  -96% | 2018-26 -100.0% -100% | worst yr -100% best yr  +882%
+LEAPS  25%, 20% OTM, 1-year vol              CAGR +46.4% maxDD  -71% | 2011-17 +65.6%  -61% | 2018-26 +38.0%  -71% | worst yr  -25% best yr  +310%
+LEAPS  50%, 20% OTM, 1-year vol              CAGR +67.8% maxDD  -91% | 2011-17 +113.7%  -85% | 2018-26 +46.1%  -91% | worst yr  -49% best yr  +867%
+LEAPS 100%, 20% OTM, 1-year vol              CAGR +31.9% maxDD -100% | 2011-17 +53.0% -100% | 2018-26 +20.7%  -92% | worst yr  -84% best yr  +942%
+
+--- CORRECTED: flat implied vol across strikes ---
+LEAPS  25%, ATM, 60-day vol, flat            CAGR +14.2% maxDD  -47% | 2011-17 +19.2%  -41% | 2018-26 +11.9%  -47% | worst yr  -21% best yr   +82%
+LEAPS  50%, ATM, 60-day vol, flat            CAGR +22.1% maxDD  -72% | 2011-17 +34.4%  -63% | 2018-26 +15.6%  -72% | worst yr  -34% best yr  +189%
+LEAPS 100%, ATM, 60-day vol, flat            CAGR +17.6% maxDD  -94% | 2011-17 +49.1%  -86% | 2018-26  -0.8%  -94% | worst yr  -65% best yr  +488%
+LEAPS  25%, 20% OTM, 60-day vol, flat        CAGR +16.0% maxDD  -53% | 2011-17 +21.4%  -48% | 2018-26 +13.6%  -53% | worst yr  -29% best yr   +92%
+LEAPS  50%, 20% OTM, 60-day vol, flat        CAGR +24.7% maxDD  -77% | 2011-17 +37.8%  -69% | 2018-26 +18.0%  -77% | worst yr  -43% best yr  +214%
+LEAPS 100%, 20% OTM, 60-day vol, flat        CAGR +18.2% maxDD  -95% | 2011-17 +51.1%  -89% | 2018-26  -0.9%  -95% | worst yr  -73% best yr  +581%
+
+LEAPS  25%, ATM, 1-year vol, flat            CAGR  +8.9% maxDD  -46% | 2011-17 +13.4%  -38% | 2018-26  +6.4%  -46% | worst yr  -16% best yr   +68%
+LEAPS  50%, ATM, 1-year vol, flat            CAGR +11.2% maxDD  -74% | 2011-17 +22.8%  -61% | 2018-26  +3.8%  -74% | worst yr  -32% best yr  +156%
+LEAPS 100%, ATM, 1-year vol, flat            CAGR  -3.7% maxDD  -98% | 2011-17 +26.9%  -87% | 2018-26 -22.9%  -98% | worst yr  -64% best yr  +396%
+LEAPS  25%, 20% OTM, 1-year vol, flat        CAGR  +8.5% maxDD  -49% | 2011-17 +12.7%  -43% | 2018-26  +6.1%  -49% | worst yr  -19% best yr   +71%
+LEAPS  50%, 20% OTM, 1-year vol, flat        CAGR  +9.4% maxDD  -77% | 2011-17 +20.8%  -66% | 2018-26  +2.2%  -77% | worst yr  -36% best yr  +161%
+LEAPS 100%, 20% OTM, 1-year vol, flat        CAGR  -9.6% maxDD  -99% | 2011-17 +19.1%  -92% | 2018-26 -27.9%  -99% | worst yr  -71% best yr  +414%
+
+=== Year by year (%) ===
+      buy and hold  T trend in the funds  live swing plan  LEAPS  50%, ATM, 1-year vol, flat  LEAPS  50%, 20% OTM, 1-year vol, flat
+2010           0.0                   0.0              NaN                                0.0                                    0.0
+2011         -41.0                 -21.0            -28.0                              -32.0                                  -36.0
+2012          27.0                 -12.0             35.0                              -28.0                                  -32.0
+2013         151.0                 117.0             18.0                              144.0                                  155.0
+2014          78.0                  78.0              7.0                               94.0                                  102.0
+2015          -1.0                  -5.0              6.0                              -26.0                                  -31.0
+2016          60.0                  20.0             -2.0                               -4.0                                   -8.0
+2017         132.0                 132.0             20.0                              156.0                                  161.0
+2018         -29.0                 -25.0            -23.0                              -21.0                                  -11.0
+2019         184.0                  35.0             -1.0                                3.0                                   -2.0
+2020          94.0                   5.0             10.0                               17.0                                   20.0
+2021         104.0                 104.0             34.0                               21.0                                   10.0
+2022         -82.0                 -30.0              0.0                              -29.0                                  -30.0
+2023         220.0                  42.0             10.0                               -6.0                                  -12.0
+2024          20.0                  42.0             50.0                               28.0                                   26.0
+2025          48.0                  27.0             12.0                               -9.0                                  -13.0
+2026           8.0                  49.0             43.0                               56.0                                   56.0
+
+=== Each LEAPS purchase, 50% ATM, 1-year vol, flat ===
+TQQQ: 31 purchases, won 52%, mean +16%, median +2%, best +279%, worst -72%; months in calls 147 of 190
+   biggest: 2017-07-31 to 2018-01-31 +279%; 2017-01-31 to 2017-07-31 +140%; 2013-07-31 to 2014-01-31 +139%
+SOXL: 28 purchases, won 50%, mean +48%, median +11%, best +863%, worst -90%; months in calls 126 of 189
+   biggest: 2025-12-31 to 2026-06-30 +863%; 2023-11-30 to 2024-05-31 +178%; 2020-06-30 to 2020-12-31 +169%
+
+=== Check 1. Today's quotes vs the model (12-month calls) ===
+TQQQ at $48.85, expiry in 419 days; model ATM vol 1-year 76%, 60-day 102%
+   strike   49.00 (100%): bid  13.05 ask  14.70 market IV  68% | model ask, skew  17.24, flat  17.31 | one contract $1,470
+   strike   53.50 (110%): bid  12.25 ask  12.95 market IV  69% | model ask, skew  13.56, flat  15.75 | one contract $1,295
+   strike   58.50 (120%): bid   9.80 ask  11.75 market IV  67% | model ask, skew   9.69, flat  14.22 | one contract $1,175
+   strike   63.50 (130%): bid   8.25 ask  10.00 market IV  65% | model ask, skew   6.21, flat  12.86 | one contract $1,000
+   strike   72.50 (148%): bid   6.90 ask   7.65 market IV  65% | model ask, skew   1.58, flat  10.80 | one contract $765
+SOXL at $36.57, expiry in 419 days; model ATM vol 1-year 180%, 60-day 236%
+   strike   37.00 (101%): bid  17.50 ask  20.00 market IV 130% | model ask, skew  25.80, flat  26.12 | one contract $2,000
+   strike   40.00 (109%): bid  16.35 ask  18.40 market IV 125% | model ask, skew  22.87, flat  25.61 | one contract $1,840
+   strike   44.00 (120%): bid  16.10 ask  20.00 market IV 137% | model ask, skew  18.70, flat  24.98 | one contract $2,000
+   strike   48.00 (131%): bid  15.30 ask  18.55 market IV 134% | model ask, skew  14.35, flat  24.39 | one contract $1,855
+   strike   55.00 (150%): bid  14.10 ask  17.05 market IV 133% | model ask, skew   6.84, flat  23.45 | one contract $1,705
+
+=== Check 2. $1,000 + $150 a month, whole contracts, 1-year flat vol, 50% of the account in calls ===
+   ATM: trend-on purchase chances 85, could not afford one contract 34 (40%), bought 51; contributed $29,350, ended $107,770; worst fall -66%
+   20% OTM: trend-on purchase chances 81, could not afford one contract 29 (36%), bought 52; contributed $29,350, ended $100,338; worst fall -73%
+   same $1,000 + $150 a month (fractional shares) into the comparisons, from the same start:
+      buy and hold                 ended $1,025,725; worst fall -86%
+      T trend held in the funds    ended $466,963; worst fall -76%
+      live swing plan              ended $100,156; worst fall -36%
