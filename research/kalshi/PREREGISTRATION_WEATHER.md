@@ -66,3 +66,12 @@ Changed before any result: (1) only decision T0 (08:00 local on the day, which a
 T1 is dropped; (2) the development sample starts 2023-01-01 (it now runs 2023-01-01 to 2025-06-30). The error
 model, trade rule, gates and hold-out are unchanged. "Each half of the development sample" now means
 2023-01-01 to the middle date and the middle date to 2025-06-30.
+
+## Amendment 2 (2026-11-27, before any market price was compared with a model probability)
+
+Two data facts found while fetching: on older days only the winning market carries the settlement value (the
+day's actual high now comes from it), and trades before Kalshi's archive cutoff (2026-09-27) are served by a
+separate historical endpoint (now used). Re-fetching at the API's rate would take about seven hours, so, before
+any price was compared with the model: (1) the development sample is 2024-01-01 to 2025-06-30; (2) only markets
+whose model probability is between 2% and 98% are tested (decided from forecasts and past outcomes only; the far
+tails are where the normal error model is least reliable). Everything else is unchanged.

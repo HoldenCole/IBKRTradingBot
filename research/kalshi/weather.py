@@ -33,7 +33,7 @@ CITIES = {  # series: (name, lat, lon, local tz, local standard-time zone)
     "KXHIGHDEN": ("Denver", 39.8466, -104.6562, "America/Denver", "Etc/GMT+7"),
 }
 HOLDOUT = pd.Timestamp("2025-07-01")
-DEV_START = pd.Timestamp("2023-01-01")
+DEV_START = pd.Timestamp("2024-01-01")
 MONTHS = {m: i for i, m in enumerate(["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"], 1)}
 
 
@@ -57,10 +57,10 @@ def markets(series: str) -> pd.DataFrame:
         seen.add(m["ticker"])
         d = target_date(m["event_ticker"])
         ev = m.get("expiration_value")
-        if d is None or ev in (None, ""):
+        if d is None:
             continue
-        nums = re.findall(r"-?\d+(?:\.\d+)?", str(ev))
-        ev = float(nums[0]) if len(nums) == 1 else np.nan      # a range like "70° to 71°" is resolved per day below
+        nums = re.findall(r"-?\d+(?:\.\d+)?", str(ev or ""))
+        ev = float(nums[0]) if len(nums) == 1 else np.nan      # only the winning market carries it on older days
         rows.append({"ticker": m["ticker"], "event": m["event_ticker"], "date": d, "strike_type": m.get("strike_type"),
                      "floor": m.get("floor_strike"), "cap": m.get("cap_strike"), "result": m["result"],
                      "actual": float(ev), "volume": float(m.get("volume_fp") or m.get("volume") or 0)})
@@ -83,8 +83,12 @@ def decision_times(series: str, d: pd.Timestamp) -> tuple[pd.Timestamp, pd.Times
     return t1, t0
 
 
-def last_trade(ticker: str, t: pd.Timestamp):
-    d = get("/markets/trades", {"ticker": ticker, "max_ts": int(t.timestamp()), "limit": 1})
+ARCHIVE_CUTOFF = pd.Timestamp("2026-09-27")
+
+
+def last_trade(ticker: str, t: pd.Timestamp, archived: bool = False):
+    path = "/historical/trades" if archived else "/markets/trades"
+    d = get(path, {"ticker": ticker, "max_ts": int(t.timestamp()), "limit": 1})
     tr = (d.get("trades") or [])
     if not tr:
         return None, None
@@ -100,12 +104,15 @@ def fetch_trades(series: str):
     have = set(done["ticker"]) if len(done) else set()
     m = markets(series)
     rows = done.to_dict("records") if len(done) else []
-    todo = m[~m.ticker.isin(have) & (m.date >= DEV_START)]   # amendment 1: 2023 on, same-day decision only
+    # amendment 2: development window 2024-01-01 on, and only bands with a model probability of 2-98%
+    p = model_probs(series, m)
+    m = m.assign(model_p=p)
+    todo = m[~m.ticker.isin(have) & (m.date >= DEV_START) & m.model_p.between(0.02, 0.98)]
     print(f"{series}: {len(m)} markets, {len(todo)} to fetch", flush=True)
     for i, r in enumerate(todo.itertuples()):
         t1, t0 = decision_times(series, r.date)
         p1, s1 = None, None                                     # amendment 1: the day-before decision is dropped
-        p0, s0 = last_trade(r.ticker, t0)
+        p0, s0 = last_trade(r.ticker, t0, archived=r.date < ARCHIVE_CUTOFF - pd.Timedelta(days=1))
         rows.append({"ticker": r.ticker, "p_t1": p1, "ts_t1": s1, "p_t0": p0, "ts_t0": s0})
         if i % 500 == 499:
             pd.DataFrame(rows).to_parquet(f)
@@ -173,6 +180,19 @@ def band_prob(row, m: float, s: float) -> float:
     return cdf(row.cap + 0.5) - cdf(row.floor - 0.5)
 
 
+def model_probs(series: str, m: pd.DataFrame) -> pd.Series:
+    """Same-day (T0) model probability for every market, from forecasts and past outcomes only."""
+    fc = forecasts(series)
+    days = m.groupby("date")["actual"].first().sort_index().to_frame().join(fc, how="left")
+    res = days["actual"] - days["f1"]
+    mu = res.rolling(45, min_periods=45).mean().shift(1)
+    sd = res.rolling(45, min_periods=45).std().shift(1).clip(lower=1.5)
+    md = days[["f1"]].assign(mu=mu, sd=sd)
+    x = m.join(md, on="date")
+    return pd.Series([band_prob(r, r.f1 + r.mu, r.sd) if pd.notna(r.mu) and pd.notna(r.f1) else np.nan
+                      for r in x.itertuples()], index=m.index)
+
+
 def build(series: str, holdout: bool = False) -> pd.DataFrame:
     m = markets(series).merge(pd.read_parquet(CACHE / f"trades_{series}.parquet"), on="ticker", how="inner")
     fc = forecasts(series)
@@ -187,6 +207,7 @@ def build(series: str, holdout: bool = False) -> pd.DataFrame:
         x = m.merge(md, left_on="date", right_index=True)
         x["lead"] = lead
         x["model_p"] = [band_prob(r, r[col] + r.mu, r.sd) for _, r in x.iterrows()]
+        x = x[x.model_p.between(0.02, 0.98)]                     # amendment 2
         x["price"] = x[pcol]
         dec = x["date"].map(lambda d: decision_times(series, d)[0 if pcol == "p_t1" else 1])
         x["fresh"] = (dec - pd.to_datetime(x[tcol], utc=True)) <= pd.Timedelta(hours=3)
