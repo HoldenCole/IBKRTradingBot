@@ -1,0 +1,126 @@
+cells: era CAGR / maxDD / Sharpe; eras A 1999-06..2006, B 2007-2016, C 2017-2026; idle cash earns 0
+
+=== Part 1. One piece at a time, at 3x ===
+baseline (live plan)                   A +14.5%  -31% 0.70  B  +8.9%  -38% 0.52  C +14.5%  -39% 0.70  all +12.4%  -39% 0.64    16 tr/yr
+baseline at 1x (same trades)           A  +4.7%  -11% 0.64  B  +2.6%  -14% 0.41  C  +4.4%  -14% 0.61  all  +3.8%  -14% 0.55    16 tr/yr
+SPY buy and hold, 1x                   A  +2.7%  -48% 0.24  B  +6.9%  -55% 0.42  C +14.3%  -34% 0.82  all  +8.3%  -55% 0.51
+SPY buy and hold, 3x daily reset       A -10.6%  -93% 0.07  B  +2.6%  -96% 0.36  C +24.5%  -76% 0.68  all  +5.9%  -98% 0.39
+no regime gate                         A +22.3%  -42% 0.77  B +11.8%  -53% 0.52  C +10.3%  -59% 0.46  all +14.0%  -59% 0.57    20 tr/yr
+regime gate, no fragile veto           A +16.2%  -31% 0.74  B  +7.3%  -38% 0.44  C +15.0%  -34% 0.71  all +12.4%  -38% 0.63    17 tr/yr
+entry RSI(2)<10 alone                  A +12.9%  -31% 0.61  B  +9.0%  -39% 0.51  C +14.0%  -43% 0.66  all +11.9%  -43% 0.59    17 tr/yr
+entry RSI(2) + Bollinger leg only      A  +7.4%  -28% 0.49  B  +6.1%  -31% 0.43  C +13.7%  -24% 0.80  all  +9.1%  -31% 0.58     7 tr/yr
+entry RSI(2) + trend leg only          A  +8.6%  -31% 0.50  B  +6.6%  -38% 0.44  C +11.1%  -37% 0.62  all  +8.8%  -38% 0.52    15 tr/yr
+exit after a fixed 3 days              A  +6.7%  -38% 0.41  B  +4.8%  -41% 0.33  C +10.2%  -47% 0.56  all  +7.2%  -47% 0.44    19 tr/yr
+SPY only (one full slot)               A  +9.0%  -21% 0.59  B  +7.1%  -40% 0.44  C +13.0%  -43% 0.68  all  +9.7%  -43% 0.56     8 tr/yr
+QQQ only (one full slot)               A +17.7%  -43% 0.62  B +10.1%  -37% 0.53  C +14.9%  -35% 0.63  all +13.9%  -43% 0.59     8 tr/yr
+one slot (SPY or QQQ)                  A +16.0%  -30% 0.66  B  +9.0%  -38% 0.48  C +12.4%  -39% 0.57  all +12.1%  -39% 0.56    10 tr/yr
+
+=== Part 2. Where the return comes from (baseline trades, 1x unless stated) ===
+time in the market: 15% of days; average exposure 11% of the account
+trades 440, mean +66 bp gross, win 74%, median hold 3 days
+
+by holding day:
+    open trades  mean bp  share of total
+1           440    16.72            0.24
+2           389     3.96            0.05
+3           292    13.93            0.14
+4           181    18.53            0.11
+5           109    47.91            0.17
+6            70    58.40            0.14
+7            41    16.56            0.02
+8            25   132.66            0.11
+9            11   -23.58           -0.01
+10            8    87.94            0.02
+
+log return while held: total +2.817; overnight (close to open) +2.403 (85%); intraday (open to close) +0.414 (15%)
+   SPY every day, same period: total +2.187, overnight +2.093, intraday +0.094
+   QQQ every day, same period: total +2.695, overnight +3.423, intraday -0.728
+
+by rsi bucket:
+            trades  mean bp   win     t
+rsi bucket                             
+<2              19   263.27  0.95  3.24
+2-5            109    56.23  0.74  2.76
+5-10           312    57.50  0.73  6.14
+
+by vix bucket:
+            trades  mean bp   win     t
+vix bucket                             
+<15            108    38.39  0.75  3.09
+15-20          159    29.06  0.66  2.48
+20-30          153    98.91  0.79  4.91
+>30             20   258.63  0.95  6.98
+
+ungated signals by regime at entry:
+                         trades  mean bp   win  worst     t
+state                                                      
+G/R, fragile (removed)       20    -1.77  0.65 -14.02 -0.02
+G/R, not fragile (kept)     435    67.69  0.74  -8.02  7.56
+quadrant D (removed)         38    37.28  0.74 -18.22  0.40
+quadrant S (removed)         51   115.84  0.73  -9.01  2.31
+
+3x daily reset vs 3 x the 1x trade return (before costs and financing): mean gap -12.8 bp, median -2.0 bp, worst -568 bp, best +129 bp
+   financing and fund fees per 3x trade, average: 13.7 bp; round-trip cost 18 bp
+
+random-entry control (added, descriptive): random entry days at the signal's frequency (7.7% of days), same gate, exits and 3x: CAGR median +4.1%, 95th pct +7.7%, best +9.9%; plan +12.4%
+
+=== Part 3. Same rules elsewhere (1x, one position, 5 bp a side) ===
+    instrument   version  trades  mean bp  win     t  1st half bp  2nd half bp transfers
+SPY (built on)   no gate     281    43.15 0.73  2.93        52.40        33.83         -
+SPY (built on) own trend     236    45.78 0.74  4.09        48.69        43.45         -
+QQQ (built on)   no gate     270    74.82 0.70  4.60        96.00        55.45         -
+QQQ (built on) own trend     224    57.75 0.68  3.63        71.89        46.94         -
+           IWM   no gate     257    11.31 0.71  0.56        16.28         6.67     False
+           IWM own trend     214    23.62 0.72  1.27        14.11        31.81     False
+           DIA   no gate     275     6.85 0.68  0.45        10.18         3.77     False
+           DIA own trend     244    20.48 0.70  1.77        23.50        18.09     False
+           XLE   no gate     261    20.63 0.66  0.87        48.55        -5.43     False
+           XLE own trend     211    47.74 0.71  2.51        62.82        31.63      True
+           XLF   no gate     264    30.20 0.68  1.66        21.52        37.77     False
+           XLF own trend     213    40.48 0.69  2.66        29.77        48.01      True
+           XLK   no gate     246    64.98 0.72  4.15        65.68        64.33      True
+           XLK own trend     210    49.98 0.72  3.31        39.32        58.30      True
+           XLV   no gate     282    20.78 0.70  1.56        19.16        22.45     False
+           XLV own trend     240    19.48 0.69  1.43        17.16        21.61     False
+           XLY   no gate     292    54.63 0.74  3.32        44.73        63.02      True
+           XLY own trend     249    56.27 0.75  4.46        51.76        59.85      True
+           XLP   no gate     263    27.37 0.69  2.63        31.66        23.42      True
+           XLP own trend     223    22.22 0.70  2.32        27.37        18.18      True
+           XLU   no gate     241    21.11 0.70  1.10        30.79        11.03     False
+           XLU own trend     193    18.52 0.69  1.45        30.62         7.26     False
+           XLI   no gate     281    15.86 0.70  0.84        10.28        21.09     False
+           XLI own trend     234    32.17 0.71  2.62        25.96        37.32      True
+           XLB   no gate     265    -5.16 0.64 -0.28         5.55       -14.72     False
+           XLB own trend     221     0.29 0.66  0.02        -5.84         5.36     False
+           SMH   no gate     238    97.77 0.69  4.34        85.11       107.77      True
+           SMH own trend     186    82.15 0.68  3.89        54.90        97.49      True
+           EFA   no gate     230    20.68 0.70  1.29        57.28        -4.62     False
+           EFA own trend     183    17.42 0.70  1.27        38.52         3.09     False
+           EEM   no gate     225    49.44 0.68  2.59        99.59        17.23      True
+           EEM own trend     174    48.64 0.70  2.68        61.29        39.50      True
+        ^GDAXI   no gate     275    18.64 0.65  1.01        29.22         8.44     False
+        ^GDAXI own trend     210     8.62 0.65  0.49        -3.49        18.62     False
+         ^FTSE   no gate     263    28.28 0.68  2.32        61.48        -1.33     False
+         ^FTSE own trend     206    22.64 0.67  2.21        54.21        -0.44     False
+         ^N225   no gate     258    27.02 0.68  1.46         1.83        47.27     False
+         ^N225 own trend     194    28.84 0.69  1.57       -29.11        62.29     False
+           GLD   no gate     198    15.00 0.68  0.96        26.74         7.37     False
+           GLD own trend     154    27.45 0.70  1.58        37.79        18.83     False
+           TLT   no gate     211    11.35 0.60  1.17        10.10        12.33     False
+           TLT own trend     156    13.15 0.63  1.18         8.30        18.39     False
+           DBC   no gate     180   -38.91 0.54 -1.75       -27.18       -44.49     False
+           DBC own trend     123   -21.46 0.57 -0.99       -27.84       -17.78     False
+           BTC   no gate     132    51.10 0.70  0.82        87.38        23.53     False
+           BTC own trend     107   115.33 0.73  1.97       116.69       114.38     False
+
+transfer (either version passes): 8 of 21: ['EEM', 'SMH', 'XLE', 'XLF', 'XLI', 'XLK', 'XLP', 'XLY']
+
+=== Part 4. Candidate improvements, each alone, at 3x ===
+baseline                               A +14.5%  -31% 0.70  B  +8.9%  -38% 0.52  C +14.5%  -39% 0.70  all +12.4%  -39% 0.64    16 tr/yr
+I1 add IWM                             A +15.6%  -31% 0.71  B  +9.5%  -43% 0.50  C  +8.7%  -48% 0.46  all +10.8%  -48% 0.54    19 tr/yr
+I2 exit at first up close              A  +8.2%  -28% 0.51  B  +3.0%  -32% 0.26  C +12.5%  -23% 0.78  all  +7.8%  -32% 0.52    19 tr/yr
+I3 2x when VIX > 30 at entry           A +14.5%  -31% 0.70  B  +8.2%  -38% 0.49  C +12.7%  -39% 0.65  all +11.5%  -39% 0.61    16 tr/yr
+I4 idle cash in T-bill ETF             A +16.3%  -31% 0.76  B  +8.0%  -38% 0.47  C +15.0%  -39% 0.72  all +12.7%  -39% 0.65    16 tr/yr
+I5 RSI(2) < 5                          A +12.0%  -27% 0.71  B  +5.3%  -36% 0.38  C +10.6%  -24% 0.64  all  +9.0%  -36% 0.57     9 tr/yr
+
+verdicts: {'I1 add IWM': 'no', 'I2 exit at first up close': 'no', 'I3 2x when VIX > 30 at entry': 'no', 'I4 idle cash in T-bill ETF': 'lead only', 'I5 RSI(2) < 5': 'no'}

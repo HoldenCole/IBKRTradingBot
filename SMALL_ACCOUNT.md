@@ -76,3 +76,7 @@ independent data (entry 107). The bitcoin 10-month rule failed on other coins, n
 check dates, so it, and the half-and-half account built on it, are not confirmed. The 30% stop monthly bet beats
 holding 3x on five of six new indices, but earns little outside the Nasdaq-100 with drawdowns of 61-95%.
 The 3x swing plan remains the only fully tested strategy for this account.
+
+## Update 2026-11-27 (entry 115): why the swing plan works
+
+The edge is buying sharp dips in US large-cap growth funds and selling once the bounce finishes. It is real timing (random entries make about a third as much), it is out of the market 85% of the time, which is why 3x survives, and its pay rises with fear (VIX above 30: +2.6% a trade at 1x). The same rules transfer to 8 of 21 other instruments, mainly semis, tech, discretionary and emerging markets, and fail on commodities, bonds, gold, small caps and most foreign indices. None of five candidate changes improved it in every era; a T-bill fund for idle cash is a lead once yields are high. See PORTFOLIOS.md entry 115.

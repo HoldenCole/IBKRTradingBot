@@ -1912,3 +1912,82 @@ With one bet a day at most, the gate on Binance bitcoin was 55% right in both 20
 | bet against the previous 24 hours | 1,065 | 51.3% | 1,096 | 54.0% | 51.7% |
 
 **Reading.** None passes on bitcoin's own price, so the Kalshi check was not run. The snap-back of entries 110-111 belongs to the 15-minute and hourly scale. Over a day, bitcoin's extremes tend to continue: fading a daily RSI extreme was wrong about 58% of the time. That is consistent with the daily trend findings of entries 102-104. Post-hoc and not a result: following a daily RSI extreme would have been right 57.8% and 58.9% of the time, but only 90 times in each three-year period, too few to rely on.
+
+## Why the 3x swing plan works, where else it works, and what could improve it (2026-11-27, entry 115)
+
+User direction: piece out what works in the 3x swing plan, why it works, whether the technique applies elsewhere, and what could make it better. Pre-registered in `research/swing/PREREGISTRATION_115.md`. Code: `research/swing/study_dissect.py`; full output in `research/swing/dissect_output.txt`; transfer table in `research/swing/dissect_transfer.csv`. All account figures are at 3x with 9 bp a side and idle cash earning nothing, 1999-06 to 2026-11. The baseline reproduces test 79: +12.4% a year, maximum drawdown -39%.
+
+### Part 1. What each piece contributes
+
+| change (one at a time) | CAGR | max drawdown | 1999-2006 | 2007-2016 | 2017-2026 |
+|---|---|---|---|---|---|
+| baseline (live plan) | +12.4% | -39% | +14.5% | +8.9% | +14.5% |
+| same trades at 1x | +3.8% | -14% | +4.7% | +2.6% | +4.4% |
+| SPY buy and hold, 3x daily reset | +5.9% | -98% | -10.6% | +2.6% | +24.5% |
+| no regime gate | +14.0% | -59% | +22.3% | +11.8% | +10.3% |
+| gate without the fragile veto | +12.4% | -38% | +16.2% | +7.3% | +15.0% |
+| entry RSI(2) < 10 alone | +11.9% | -43% | +12.9% | +9.0% | +14.0% |
+| RSI(2) with the Bollinger leg only | +9.1% | -31% | +7.4% | +6.1% | +13.7% |
+| RSI(2) with the trend leg only | +8.8% | -38% | +8.6% | +6.6% | +11.1% |
+| exit after a fixed 3 days | +7.2% | -47% | +6.7% | +4.8% | +10.2% |
+| SPY only, one full slot | +9.7% | -43% | +9.0% | +7.1% | +13.0% |
+| QQQ only, one full slot | +13.9% | -43% | +17.7% | +10.1% | +14.9% |
+| one slot, SPY or QQQ | +12.1% | -39% | +16.0% | +9.0% | +12.4% |
+
+### Part 2. Why it works
+
+- **The timing is real.** Random entry days at the same frequency (7.7% of days), with the same gate, exits and 3x, give a median of +4.1% a year over 200 draws; the best draw is +9.9%. The plan's +12.4% is outside that range.
+- **It is out of the market most of the time.** Positions are open on 15% of days (average exposure 11% of the account); the median hold is 3 days. Over such short holds the daily reset costs little: 3x the daily returns compounds to 13 bp less than three times the trade's return on average (median 2 bp). Financing and fund fees add 14 bp and trading 18 bp a round trip, against 198 bp of gross 3x edge (3 x 66 bp). Holding 3x SPY through every day lost 98% at the worst.
+- **The deeper the stress, the bigger the bounce.**
+
+| VIX at entry | trades | mean 1x return | won |
+|---|---|---|---|
+| below 15 | 108 | +38 bp | 75% |
+| 15-20 | 159 | +29 bp | 66% |
+| 20-30 | 153 | +99 bp | 79% |
+| above 30 | 20 | +259 bp | 95% |
+
+  By RSI(2) at entry: below 2, +263 bp (19 trades); 2-5, +56 bp; 5-10, +58 bp. The plan is paid for buying when others are forced or frightened sellers, and the pay rises with the fear.
+- **The exit lets the bounce finish.** Day 1 delivers 24% of the profit; days 5 to 8 deliver 42%. Selling after a fixed 3 days drops the plan to +7.2%; selling at the first up close (I2 below) to +7.8%.
+- **The regime gate is drawdown control, not return.** Without it the plan makes +14.0% but falls 59%. The signals it removes in Stagflation months were good (+116 bp, 51 trades); those in Deflation months were weaker (+37 bp, worst -18%). The fragile veto removed 20 signals that averaged -2 bp and changes little either way.
+- **QQQ is the engine; SPY smooths it.** QQQ alone makes more (+13.9%) but falls further in 1999-2006.
+- Overnight moves carry 85% of the held return. That is not special to the plan: SPY's whole return over the period came overnight, and QQQ lost money intraday. The bounce usually arrives at the next open.
+
+### Part 3. Does the technique transfer?
+
+The frozen rules on 21 instruments, 1x, one position at a time, 5 bp a side. Pass: mean above zero with t >= 2 and positive in both halves (1999-2012 and 2013-2026; bitcoin 2015-2020 and 2021-2026), in either version.
+
+| instrument | no gate, mean | t | own trend gate, mean | t | transfers |
+|---|---|---|---|---|---|
+| SPY (built on) | +43 bp | 2.9 | +46 bp | 4.1 | - |
+| QQQ (built on) | +75 bp | 4.6 | +58 bp | 3.6 | - |
+| SMH | +98 bp | 4.3 | +82 bp | 3.9 | yes |
+| XLK | +65 bp | 4.2 | +50 bp | 3.3 | yes |
+| XLY | +55 bp | 3.3 | +56 bp | 4.5 | yes |
+| EEM | +49 bp | 2.6 | +49 bp | 2.7 | yes |
+| XLE | +21 bp | 0.9 | +48 bp | 2.5 | yes (trend gate) |
+| XLF | +30 bp | 1.7 | +40 bp | 2.7 | yes (trend gate) |
+| XLI | +16 bp | 0.8 | +32 bp | 2.6 | yes (trend gate) |
+| XLP | +27 bp | 2.6 | +22 bp | 2.3 | yes |
+| BTC | +51 bp | 0.8 | +115 bp | 2.0 | no (t 1.97) |
+| FTSE 100 | +28 bp | 2.3 | +23 bp | 2.2 | no (negative since 2013) |
+| IWM | +11 bp | 0.6 | +24 bp | 1.3 | no |
+| DIA | +7 bp | 0.5 | +20 bp | 1.8 | no |
+| XLV, XLU, EFA, Nikkei, GLD, TLT, DAX | +9 to +29 bp | 0.5 to 1.6 | | | no |
+| XLB | -5 bp | -0.3 | 0 bp | 0.0 | no |
+| DBC | -39 bp | -1.8 | -21 bp | -1.0 | no |
+
+8 of 21 transfer. The pattern: it works on US large-cap growth and consumer funds with a strong long-run uptrend and heavy dip-buying (semis, tech, discretionary), and on cyclical sectors only when their own trend is up. It fails on commodities (which trend rather than snap back), on bonds and gold (weak), on small caps, and on most foreign developed indices. Bitcoin with its own trend gate is close (+115 bp a trade, t 1.97) but noisy. DIA's failure is a caution: a near neighbour of SPY shows almost nothing, so part of SPY's result may be specific to it.
+
+### Part 4. Candidate improvements
+
+| candidate (each alone) | CAGR | max drawdown | 1999-2006 | 2007-2016 | 2017-2026 | verdict |
+|---|---|---|---|---|---|---|
+| baseline | +12.4% | -39% | +14.5% / -31% | +8.9% / -38% | +14.5% / -39% | |
+| I1 add IWM (3x Russell 2000) | +10.8% | -48% | +15.6% / -31% | +9.5% / -43% | +8.7% / -48% | no |
+| I2 sell at the first up close | +7.8% | -32% | +8.2% / -28% | +3.0% / -32% | +12.5% / -23% | no |
+| I3 2x instead of 3x when VIX > 30 | +11.5% | -39% | +14.5% / -31% | +8.2% / -38% | +12.7% / -39% | no |
+| I4 idle cash in a T-bill ETF | +12.7% | -39% | +16.3% / -31% | +8.0% / -38% | +15.0% / -39% | lead only |
+| I5 enter only at RSI(2) < 5 | +9.0% | -36% | +12.0% / -27% | +5.3% / -36% | +10.6% / -24% | no |
+
+**Reading.** No candidate passes. I4 adds 0.3% a year overall but loses in 2007-2016, when bills paid almost nothing and each switch cost 9 bp; it only helps when bill yields are well above the switching cost. Cutting leverage in high-VIX entries (I3) hurts because those are the best trades. The plan sits near a local optimum: every piece removed in part 1 makes it worse on return, drawdown or both. Post-hoc and not a result: the high-VIX trades suggest sizing up, not down, in panics, but there are only 20 of them. No change to the plan; any change is the investor's decision.
