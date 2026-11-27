@@ -135,6 +135,7 @@ def forecasts(series: str) -> pd.DataFrame:
         parts.append(g)
         time.sleep(1)
     df = pd.concat(parts)
+    CACHE.mkdir(parents=True, exist_ok=True)
     df.to_parquet(f)
     return df
 
