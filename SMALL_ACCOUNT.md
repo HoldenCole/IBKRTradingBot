@@ -68,3 +68,11 @@ inside about three years needs roughly 25% a year, held steadily.
 - Leads parked, not adopted: the lone no-news gap-up fade (92), the 2x monthly sector trend (97, 100), and the
   Quadrant Balances monthly bottom as an alert for a rare large bet (98), which is not armed now.
 - Raising the monthly contribution is the most reliable lever on the milestones.
+
+## Update 2026-11-27 (entries 101-107)
+
+Crypto and prediction markets were tested (entries 101-106), and the resulting leads were then tested on
+independent data (entry 107). The bitcoin 10-month rule failed on other coins, neighbouring averages and other
+check dates, so it, and the half-and-half account built on it, are not confirmed. The 30% stop monthly bet beats
+holding 3x on five of six new indices, but earns little outside the Nasdaq-100 with drawdowns of 61-95%.
+The 3x swing plan remains the only fully tested strategy for this account.

@@ -1720,3 +1720,42 @@ The sample: 480 series drawn at random across 16 categories. Kept were settled b
 | long shot at 1-10c | 165 | 2.6c | 2.4% | -46% | -11% | -1.4 |
 
 **Reading.** No trade passes. The prices were roughly fair: contracts at 95-99c won 96% of the time, and none of the 86 contracts under 5c won. The long-shot side loses heavily mainly because of the fee: the minimum 1-cent fee on a 2-3 cent contract is 40-50% of the stake. Buying favourites earns about nothing; with no fee, as a maker, it is +0.3% a contract. The sample is small and covers one year, so this rules out a large, easy edge but not a small or category-specific one. Not worth building a bot on this evidence.
+
+## The leads tested on independent data (2026-11-27, entry 107)
+
+User question: why have the leads not been fully tested? They were found on, or designed after looking at, the same data that flatters them. Pre-registered in `research/crypto/PREREGISTRATION_107.md`, rules frozen. Code: `research/crypto/independent_tests.py`; table in `research/crypto/independent_tests.csv`.
+
+**A. The bitcoin 10-month rule, on other coins (Binance spot): rule vs holding, CAGR / max drawdown.**
+
+| coin | from | rule | holding | beats on both |
+|---|---|---|---|---|
+| ETH | 2018-05 | +8.1% / -76% | +17.5% / -86% | no |
+| SOL | 2021-05 | +48.5% / -79% | +23.1% / -96% | yes |
+| XRP | 2019-02 | -4.1% / -76% | +19.7% / -83% | no |
+| DOGE | 2020-04 | +69.9% / -89% | +69.2% / -92% | yes |
+| BNB | 2018-08 | +56.2% / -68% | +65.6% / -76% | no |
+| ADA | 2019-01 | +30.3% / -84% | +23.1% / -95% | yes |
+| LINK | 2019-10 | +14.5% / -79% | +23.2% / -90% | no |
+| AVAX | 2021-06 | -16.5% / -90% | -4.8% / -96% | no |
+| LTC | 2018-09 | -11.3% / -93% | -1.0% / -89% | no |
+
+**On bitcoin with neighbouring averages, 2021-26: rule vs holding (+13% / -77%).**
+
+| average | 6 months | 8 | 9 | 10 (the lead) | 11 | 12 |
+|---|---|---|---|---|---|---|
+| rule | +20% / -52% | +3% / -72% | +14% / -58% | +29% / -53% | +25% / -53% | +23% / -53% |
+
+In 2016-20 every length lost to holding on return (+84% to +130% against +139%). Checked on the 10th of the month, the rule made +55% a year against +57% for holding; on the 20th, +57% against +57%.
+
+**B. The 30% stop monthly bet, at 3x, on indices it never saw (price return).**
+
+| index | from | 30% stop | no stop | 3x held |
+|---|---|---|---|---|
+| Nasdaq-100 | 1987-10 | +16.2% / -81% (49 stops) | +11.8% / -100% | +10.8% / -100% |
+| Russell 2000 | 1989-09 | +2.2% / -88% | +1.1% / -94% | -0.9% / -99% |
+| Dow | 1994-01 | +3.9% / -61% | +3.2% / -81% | +5.9% / -98% |
+| Nikkei 225 | 1986-01 | -3.9% / -95% | -7.4% / -100% | -13.1% / -100% |
+| DAX | 1989-12 | +5.7% / -80% | +2.4% / -99% | -1.4% / -99% |
+| FTSE 100 | 1986-01 | -1.6% / -87% | +0.6% / -90% | -3.5% / -99% |
+
+**Reading.** The bitcoin 10-month rule does not survive. It fails on six of nine other coins and on its neighbouring averages, and it disappears when checked on a different day of the month. The strong 2021-26 result belonged to one exact setting and one exact date: a lucky draw, not an edge. The half-and-half account built on it (entry 105) is therefore not confirmed. The 30% stop does what a stop should, cutting the worst drawdown relative to holding 3x on five of six indices. But in absolute terms it earns little outside the Nasdaq-100, with drawdowns of 61% to 95%. The one fully tested strategy for the small account remains the 3x swing plan (test 79, +12% a year, -39% maximum drawdown). The bitcoin paper log keeps running as a forward record, but nothing should depend on it.
