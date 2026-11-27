@@ -59,10 +59,18 @@ def markets(series: str) -> pd.DataFrame:
         ev = m.get("expiration_value")
         if d is None or ev in (None, ""):
             continue
+        nums = re.findall(r"-?\d+(?:\.\d+)?", str(ev))
+        ev = float(nums[0]) if len(nums) == 1 else np.nan      # a range like "70° to 71°" is resolved per day below
         rows.append({"ticker": m["ticker"], "event": m["event_ticker"], "date": d, "strike_type": m.get("strike_type"),
                      "floor": m.get("floor_strike"), "cap": m.get("cap_strike"), "result": m["result"],
                      "actual": float(ev), "volume": float(m.get("volume_fp") or m.get("volume") or 0)})
     df = pd.DataFrame(rows)
+    # one actual high per day: an exact value from any market that day, else the middle of the winning band
+    exact = df.groupby("event")["actual"].transform(lambda s: s.dropna().iloc[0] if s.notna().any() else np.nan)
+    win = df[(df.result == "yes") & (df.strike_type == "between")].set_index("event")
+    mid = df["event"].map(((win["floor"] + win["cap"]) / 2).groupby(level=0).first())
+    df["actual"] = exact.fillna(mid)
+    df = df.dropna(subset=["actual"])
     CACHE.mkdir(parents=True, exist_ok=True)
     df.to_parquet(f)
     return df
