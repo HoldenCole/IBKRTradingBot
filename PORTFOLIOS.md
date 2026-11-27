@@ -1807,3 +1807,33 @@ The test: at 1, 5 and 10 minutes into each of 2,000 random windows from March to
 Trades taken by the rule (at least 3 cents of edge after fee and slippage): 1,723, half YES and half NO. The mean return per dollar was -8.3% (t -1.6) with a 37% win rate: March-May -7.3%, June-August -9.0%, and -11.7% at 2 cents of slippage. By checkpoint: minute 1 -13.4%, minute 5 -0.5%, minute 10 -11.7%. All gates except the trade count fail; the hold-out was not opened.
 
 **Reading.** This market is efficient. Both the fair-value model and the market price match the outcome rates to within a cent or two in every bucket. That leaves nothing for a taker who pays 2 cents of fee plus the spread. The gaps the rule found were noise, and trading them lost money. The one angle this test cannot reach is quoting as a maker, which pays no fee in this series and earns the spread instead. That needs order-book history or a live paper quoter, and it competes directly with the fast bots that keep the prices this accurate.
+
+## Bitcoin technical signals through Kalshi 15-minute up/down (2026-11-27, entry 110)
+
+User direction: do not hunt mispricings in a liquid market. Forecast bitcoin with technical analysis and use the up/down binary to express the view. Pre-registered in `research/kalshi/PREREGISTRATION_BTC_TA.md`. Code: `research/kalshi/btc_ta.py`. Results: `research/kalshi/btc_ta_results.csv` and `btc_ta_kalshi_check.csv`.
+
+The hurdle: bought near 50c with the 2c fee and 1c of slippage, the contract costs about 53c, so a direction call must be right 53% of the time. The gate was 53.5% in both 2020-22 and 2023-25. The test scored eight rules, each fixed in advance, on Binance minute prices, across 242,111 fifteen-minute windows lined up with Kalshi's.
+
+| rule, decided at the window's start | 2020-22 right | 2023-25 right | 2026 right | bets a day |
+|---|---|---|---|---|
+| follow the previous 15 minutes | 47.4% | 47.7% | 47.9% | 96 |
+| fade the previous 15 minutes | 52.6% | 52.3% | 52.1% | 96 |
+| follow the previous hour | 46.7% | 47.5% | 48.0% | 96 |
+| RSI(14) extremes, fade | 57.3% | 58.5% | 54.8% | 3 |
+| Bollinger (20, 2) on 15-minute closes, fade | 57.0% | 56.8% | 56.1% | 11.5 |
+| 4-hour trend, follow | 46.4% | 47.3% | 47.3% | 88 |
+| 20-bar breakout, follow | 42.5% | 43.6% | 44.1% | 19 |
+| hour of day (fitted 2020-22) | | 51.6% | 51.4% | 4.5 |
+
+**Kalshi check of the passer** (the Bollinger fade), buying the signalled side at Kalshi's last trade 1 minute into each window, March to November 2026:
+
+| | bets | won | return per dollar |
+|---|---|---|---|
+| all | 3,028 | 53.6% | -0.2% (t -0.1); -2.3% at 2c slippage |
+| March-May | 1,023 | 56.4% | +8.0% |
+| June-August | 1,033 | 53.5% | -2.5% |
+| September-November | 972 | 50.8% | -6.2% |
+
+The average cost was 54.2c, against a 53.6% win rate.
+
+**Reading.** Bitcoin reverts over 15 minutes. Every rule that follows the move is wrong more often than right, and fading a 15-minute Bollinger extreme was right 55.5-58.4% of the time in every year from 2020 to 2026. But Kalshi's contract does not pay that rate. Its strike is the average of the minute before the window, and its price one minute in already reflects where bitcoin is. The fade won only 53.6% there, at about the price it cost, and its result fell from +8% to -6% a dollar as the market grew through 2026. On spot or perpetual futures the same signal averages about 0 basis points a bet. The snap-backs are frequent but small (median +3 to +5 bp), and the misses are large. That is why a binary was the right vehicle for this view, and why, now that the market prices it, no vehicle is left. Lead, not tested: fading 20-bar breakouts, which were wrong 56-58% of the time when followed.

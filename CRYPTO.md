@@ -50,7 +50,8 @@ Binance's trading API (451) and Bybit (403) are blocked here; neither is usable 
 6. **Kalshi favourite-longshot bias (entry 106). Done: no edge after fees in a thin 2026 sample.**
 7. **Kalshi weather, forecast model vs prices (entry 108). Done: the market is better calibrated than a free forecast model; no edge.**
 8. **Kalshi 15-minute bitcoin up/down (entry 109). Done: priced to within 1-2c of fair value; the 2c fee is larger than any gap; no taker edge.**
-9. Only a design that passes goes to paper trading, then to a small live account with the safety controls listed
+9. **Bitcoin TA through Kalshi 15-minute up/down (entry 110). Done: a real 15-minute reversal (Bollinger fade right 57% for six years), but at Kalshi prices it wins 53.6% at a 54c cost, trending negative through 2026.**
+10. Only a design that passes goes to paper trading, then to a small live account with the safety controls listed
    in the survey (kill switch, position limits, reconciliation, exchange-resident stops).
 
 ## Standing rules carried over
