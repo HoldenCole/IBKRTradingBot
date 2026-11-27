@@ -1896,3 +1896,19 @@ Each cell is the return per dollar, with the win rate in brackets.
 Exit-price check: at 300 random early exits, the actual Kalshi trade minus the model's value was -0.01 cents on average (median -0.10 cents). The modelled sale prices are accurate.
 
 **Reading.** The longer contract does not change the arithmetic. Targets lift the win rate to 63-79% and cost 7-13 points per dollar, because each early sale pays a second fee and the spread on a fairly priced contract. With entries 109 to 113, every way of trading Kalshi's bitcoin contracts tested here has failed after fees: fair value, eight technical views, the 15-minute and hourly contracts, holding to settlement, and selling early.
+
+## The reversal signals on Kalshi's daily bitcoin contract (2026-11-27, entry 114)
+
+User direction: try the daily bitcoin contracts with the same signals. The daily contract is the 17:00 New York event of Kalshi's KXBTCD series. It opens at 17:00 the day before and settles at 17:00; strikes are $250-500 apart, and it traded about 3.7 million contracts a day in late 2026. Pre-registered in `research/kalshi/PREREGISTRATION_BTC_DAILY.md`. Code: `research/kalshi/btc_daily.py`; scores in `research/kalshi/btc_daily_scores.csv`.
+
+With one bet a day at most, the gate on Binance bitcoin was 55% right in both 2020-22 and 2023-25, with at least 100 bets each.
+
+| signal at 17:00 New York, for the next 24 hours | bets 2020-22 | right | bets 2023-25 | right | 2026 right |
+|---|---|---|---|---|---|
+| fade a daily Bollinger extreme | 125 | 44.8% | 139 | 52.5% | 52.3% |
+| fade a daily RSI(14) extreme | 90 | 42.2% | 90 | 41.1% | 46.2% |
+| fade a 15-minute Bollinger extreme | 136 | 51.5% | 97 | 60.8% | 58.3% |
+| fade an hourly Bollinger extreme | 117 | 52.1% | 144 | 52.1% | 57.9% |
+| bet against the previous 24 hours | 1,065 | 51.3% | 1,096 | 54.0% | 51.7% |
+
+**Reading.** None passes on bitcoin's own price, so the Kalshi check was not run. The snap-back of entries 110-111 belongs to the 15-minute and hourly scale. Over a day, bitcoin's extremes tend to continue: fading a daily RSI extreme was wrong about 58% of the time. That is consistent with the daily trend findings of entries 102-104. Post-hoc and not a result: following a daily RSI extreme would have been right 57.8% and 58.9% of the time, but only 90 times in each three-year period, too few to rely on.

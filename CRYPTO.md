@@ -54,7 +54,8 @@ Binance's trading API (451) and Bybit (403) are blocked here; neither is usable 
 10. **Kalshi bitcoin, round 2 (entry 111). Done: breakout fade, three hourly rules and five more 15-minute rules; 7 of 8 work on bitcoin's own price, 0 of 8 at Kalshi's prices. Kalshi bitcoin binaries closed as a research line.**
 11. **Early exits on Kalshi bitcoin contracts (entry 112). Done: profit targets raise the win rate to ~70% but every combination loses 2-15% per dollar (second fee and spread on exit).**
 12. **Early exits on the hourly contracts (entry 113). Done: 0 of 18; same as the 15-minute contract.**
-13. Only a design that passes goes to paper trading, then to a small live account with the safety controls listed
+13. **Daily bitcoin contract with the reversal signals (entry 114). Done: at the daily scale bitcoin trends; 0 of 5 pass on bitcoin itself.**
+14. Only a design that passes goes to paper trading, then to a small live account with the safety controls listed
    in the survey (kill switch, position limits, reconciliation, exchange-resident stops).
 
 ## Standing rules carried over

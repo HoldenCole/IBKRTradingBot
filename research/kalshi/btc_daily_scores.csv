@@ -1,0 +1,6 @@
+signal,2020-22 bets,2020-22 hit,2023-25 bets,2023-25 hit,2026 bets,2026 hit,passes
+D1 fade daily Bollinger,125,0.4480,139,0.5252,44,0.5227,False
+D2 fade daily RSI,90,0.4222,90,0.4111,26,0.4615,False
+"D3 fade 15-min Bollinger, next 24h",136,0.5147,97,0.6082,24,0.5833,False
+"D4 fade hourly Bollinger, next 24h",117,0.5214,144,0.5208,19,0.5789,False
+D5 bet against the previous 24h,1065,0.5127,1096,0.5401,329,0.5167,False
