@@ -154,3 +154,74 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+# ---------------------------------------------------------------- entry 113: the hourly contracts
+HOURLY = {"H1 hourly Bollinger fade": "ta2_check_H1", "H2 15-min Bollinger fade, next hour": "ta2_check_H2",
+          "H3 hourly RSI fade": "ta2_check_H3"}
+
+
+def hourly_entries() -> pd.DataFrame:
+    parts = []
+    for name, f in HOURLY.items():
+        x = pd.read_parquet(CACHE / f"{f}.parquet")
+        x["fresh"] = (x.open + pd.Timedelta(minutes=2) - pd.to_datetime(x.trade_ts, utc=True)) <= pd.Timedelta(seconds=120)
+        x = x[x.fresh & x.price.between(0.01, 0.99)].copy()
+        x["signal"] = name
+        parts.append(x[["signal", "open", "ticker", "strike", "dir", "price", "result"]])
+    return pd.concat(parts, ignore_index=True)
+
+
+def hourly_paths(e: pd.DataFrame) -> np.ndarray:
+    px = minutes()["close"]
+    lr = np.log(px).diff()
+    sig = lr.rolling(60, min_periods=50).std()
+    w = windows()
+    w["bin_close"] = px.reindex(w.close).values
+    basis = (w.final / w.bin_close - 1).rolling(96, min_periods=48).median().set_axis(w.close)
+    b = basis.reindex(e.open, method="ffill").values
+    K = e.strike.values
+    out = np.full((len(e), 57), np.nan)
+    for j, m in enumerate(range(3, 60)):
+        t = e.open + pd.Timedelta(minutes=m)
+        S = px.reindex(t).values * (1 + b)
+        s = sig.reindex(t).values
+        fy = norm.cdf(np.log(S / K) / (s * np.sqrt(60 - m - 0.5)))
+        out[:, j] = np.where(e.dir.values > 0, fy, 1 - fy)
+    return out
+
+
+def hourly_main():
+    global SIGNALS
+    e = hourly_entries()
+    print(f"hourly entries: {len(e):,} across {e.signal.nunique()} signals")
+    fair = hourly_paths(e)
+    saved = SIGNALS
+    SIGNALS = HOURLY
+    try:
+        df = run(e, fair)
+        # exit-price check against actual trades (exit minute index j -> minute j + 3)
+        r, xm = simulate(e, fair, 0.10, None)
+        idx = np.where(np.isfinite(xm))[0]
+        pick = np.random.default_rng(SEED).permutation(idx)[:300]
+        diffs = []
+        for i in pick:
+            row = e.iloc[i]
+            minute = int(xm[i]) + 1                     # simulate() stores j + 2; hourly minutes start at 3
+            t = row.open + pd.Timedelta(minutes=minute)
+            close = row.open + pd.Timedelta(hours=1)
+            p, ts = last_trade(row.ticker, t, archived=close < ARCHIVE_CUTOFF)
+            if p is None or (t - pd.Timestamp(ts)) > pd.Timedelta(seconds=120):
+                continue
+            side = p if row.dir > 0 else 1 - p
+            diffs.append(side - fair[i, minute - 3])
+        d = pd.Series(diffs)
+        print(f"\nexit-price check: {len(d)} early exits, actual Kalshi minus modelled value of the held side: "
+              f"mean {d.mean() * 100:+.2f}c, median {d.median() * 100:+.2f}c")
+        if d.mean() < -0.005:
+            print(f"recomputing with a {-d.mean() * 100:.2f}c haircut on every early sale")
+            df = run(e, fair, adj=float(d.mean()))
+        df.to_csv(ROOT / "research" / "kalshi" / "btc_exits_hourly_results.csv", index=False, float_format="%.4f")
+        print("\npassing trials:", df[df.passes][["signal", "target", "stop"]].to_dict("records") or "none")
+    finally:
+        SIGNALS = saved

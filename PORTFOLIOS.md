@@ -1878,3 +1878,21 @@ Each cell is the return per dollar, with the win rate in brackets.
 Exit-price check: at 400 random early exits, the actual Kalshi trade was on average 0.96 cents better than the model's value for the held side. That is too little to change any result; the gain is at most about 2 points per dollar.
 
 **Reading.** Early exits do what targets always do. They raise the win rate (to 65-74%) by taking small gains, and they leave the rare full losses in place. Each early sale also pays a second taker fee (about 2 cents near 50c) and the spread. For a contract that is fairly priced at every minute, which entry 109 showed this one is, selling early does not change the expected value; it only adds those costs. Stops cut losers at -10c but also cut the winners that would have recovered, and they are worse still. None of the 36 combinations passes. This closes the Kalshi bitcoin line for this account: fair value, eight technical views and early exits have all been tested (entries 109-112).
+
+## Early exits on the hourly bitcoin contracts (2026-11-27, entry 113)
+
+User direction: try the hourly contracts with profit targets. Pre-registered in `research/kalshi/PREREGISTRATION_BTC_EXITS_HOURLY.md`. Code: `hourly_main` in `research/kalshi/btc_exits.py`; all rows in `research/kalshi/btc_exits_hourly_results.csv`.
+
+The test reused entry 111's actual hourly entries: 1,780 bets from March to November 2026, each on the strike nearest the price, bought 2 minutes into the hour. Each minute, the held side's value comes from the fair-value model. A sale fills at that value minus 1 cent, minus the taker fee.
+
+| signal | hold to settlement | +5c target | +10c target | +15c target | +10c target, -10c stop |
+|---|---|---|---|---|---|
+| H1 fade hourly Bollinger | -3.4% (52% win) | -9.4% (64%) | -9.6% (78%) | -9.9% (72%) | -10.1% (52%) |
+| H2 fade 15-min Bollinger, next hour | -0.1% (55%) | -7.7% (65%) | -8.7% (79%) | -9.3% (73%) | -12.4% (49%) |
+| H3 fade hourly RSI | +3.9% (52%) | -9.4% (65%) | -10.7% (77%) | -9.4% (71%) | -6.7% (59%) |
+
+Each cell is the return per dollar, with the win rate in brackets.
+
+Exit-price check: at 300 random early exits, the actual Kalshi trade minus the model's value was -0.01 cents on average (median -0.10 cents). The modelled sale prices are accurate.
+
+**Reading.** The longer contract does not change the arithmetic. Targets lift the win rate to 63-79% and cost 7-13 points per dollar, because each early sale pays a second fee and the spread on a fairly priced contract. With entries 109 to 113, every way of trading Kalshi's bitcoin contracts tested here has failed after fees: fair value, eight technical views, the 15-minute and hourly contracts, holding to settlement, and selling early.
