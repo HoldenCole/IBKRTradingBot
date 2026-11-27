@@ -2162,3 +2162,46 @@ With the pre-registered skew the same grid showed up to +81% a year; that was th
 In 40% of the months the trend said buy, the account could not afford one contract. Today one contract costs $765-$1,470 on TQQQ and $1,705-$2,000 on SOXL.
 
 **Reading.** Priced correctly, the calls do worse than simply holding SOXL and TQQQ while their trend is up: the premium, the 6.5% spreads and the 6-month rolls eat the leverage. Calls do cap the loss on each purchase, but with half the account in them the worst fall was still -66% to -74%. Holding the two funds under the trend rule made more in every version tested, though with a -77% worst drop. That is the hindsight result of two funds picked after they won, through a historic semis boom. No change to the plan; any change is the investor's decision.
+
+## When did levered funds make sense? Rotation across 3x funds (2026-11-27, entry 119)
+
+User direction: find when SOXL or any levered fund made sense. Not buy-and-hold over many years, but catching rotations, without overfitting to semis' last two years. Pre-registered in `research/swing/PREREGISTRATION_119.md`. Code: `research/swing/study_rotation_3x.py`; output in `research/swing/rotation_3x_output.txt`; every fund-month in `rotation_3x_months.csv`.
+
+**Method.** Monthly decisions on 17 1x ETFs that each have a liquid 3x fund: SPY, QQQ, IWM, XLK, SMH, XLF, XLE, XLV, XLU, IYR, EEM, TLT, GDX, XBI, KRE, XHB, FXI. Each is held as a synthetic 3x daily-reset fund, so 2000-2026 is covered, including the 2000-02 and 2008 crashes that most of today's funds never lived through. 9 bp a side; idle cash earns nothing.
+
+### Rotating into the leaders (top N by trailing return, only if above the 10-month average)
+
+| rule | all 17: CAGR / max DD | 2000-12 | 2013-26 | without SMH, XLK, QQQ: CAGR / max DD |
+|---|---|---|---|---|
+| P: 6-month, top 2 | +0.2% / -96% | -5.5% | +5.9% | +4.1% / -96% |
+| best of the 9 rules (12-month, top 3) | +8.0% / -90% | -3.8% | +20.4% | +9.3% / -87% |
+| any top-1 rule | -18% to -10% / -99% to -100% | | | -15% to -3% |
+| median of the 9 rules | +0.8% / -95% | -5.5% | +5.9% | +6.3% / -92% |
+| random 2 funds in uptrends (500 draws) | median +4.9% (95th +14.8%) / -91% | -5.8% | +15.9% | |
+| equal-weight trend rule, all funds | +11.5% / -60% | +5.4% | +17.5% | +11.1% / -48% |
+| SPY at 3x while above its 10-month average | +12.9% / -62% | +9.6% | +16.1% | |
+
+**Fails every guard.** Picking the leaders does worse than picking at random among funds in uptrends. At 3x the hottest fund is the most stretched and most volatile, so it carries the most decay and falls hardest when the rotation turns: tech in 2000, energy in 2008, semis in 2026. Concentration makes it worse; every top-1 rule lost money. Spreading across every fund in an uptrend did best, and still does without semis and tech, so that result is not a semis artefact.
+
+### When 3x made sense: monthly returns of each synthetic 3x fund
+
+| condition at the prior month-end | months | mean 3x return a month | decay a month (3x minus 3 x the 1x) |
+|---|---|---|---|
+| prior 3-month vol below 20% | 2,529 | +1.46% | -0.67% |
+| vol 20-35% | 1,691 | +1.83% | -0.96% |
+| vol above 35% | 693 | +1.03% | -2.15% |
+| above 10-month average, 2000-12 | 1,306 | +1.28% | |
+| below it, 2000-12 | 768 | -1.19% | |
+| above 10-month average, 2013-26 | 1,999 | +2.29% | |
+| below it, 2013-26 | 840 | +2.57% | |
+
+- **Decay is the volatility tax.** It triples once realized vol passes 35%. Levered funds pay off when the trend is up and the ride is calm.
+- **The trend filter is crash insurance, not an edge.** It helped in 2000-2012 but not in 2013-2026, when crashes reversed within months (2018, 2020, 2022-23).
+- **Regime effects flip between halves.** Deflation months averaged -0.2% then +11.7%; Stagflation -6.0% then +0.7%. None of them is reliable.
+- **SMH, the SOXL proxy:** +3.5% a month above its 10-month average against +2.3% below, but -3.9% a month in calm uptrends in 2000-12 against +5.3% in 2013-26. The semis edge belongs to the second half only.
+
+### Today (informational only; never trades)
+
+As of Nov 25, 5 of 17 are above their 10-month average: XLV (+23.9% over 6 months), XBI, XLF, XLE, IYR. SMH is -29.5% over 6 months with 60% realized vol, XLK -18%, QQQ -14%, and SPY is below its 10-month average. By these rules a downward rotation out of semis and tech is under way. At October's month-end 11 of 17 were in uptrends.
+
+**Reading.** No rule here reliably catches rotations at 3x. The one that held up in both halves and without semis is the plain trend rule spread across many funds, and its job is cutting the big crashes, not picking winners. No change to the plan; any change is the investor's decision.

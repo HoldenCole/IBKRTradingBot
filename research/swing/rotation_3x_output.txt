@@ -1,0 +1,190 @@
+=== Part 1. When did 3x make sense? Monthly returns of each synthetic 3x fund, 2000-2026 ===
+
+-- all 17 funds --
+       months  mean 3x %/mo  median %  up months  decay %/mo  worst %
+trend                                                                
+False    1608          0.77      1.39       0.52       -1.38   -87.23
+True     3305          1.89      2.05       0.56       -0.78   -68.47
+
+       months  mean 3x %/mo  median %  up months  decay %/mo  worst %
+top3                                                                 
+False    3947          1.43      2.03       0.55       -0.98   -87.23
+True      966          1.93      1.23       0.53       -0.97   -72.77
+
+            months  mean 3x %/mo  median %  up months  decay %/mo  worst %
+vol bucket                                                                
+vol < 20%     2529          1.46      2.26       0.57       -0.67   -78.32
+20-35%        1691          1.83      1.49       0.53       -0.96   -85.76
+> 35%          693          1.03     -0.15       0.50       -2.15   -87.23
+
+      months  mean 3x %/mo  median %  up months  decay %/mo  worst %
+quad                                                                
+D        636          4.54      5.73       0.60       -1.83   -87.23
+G       1392          2.66      3.54       0.59       -0.67   -68.47
+R       2378          1.23      1.54       0.54       -0.81   -57.29
+S        507         -4.01     -4.47       0.40       -1.51   -61.18
+
+trend x vol:
+                  months  mean 3x %/mo  median %  up months  decay %/mo  worst %
+trend vol bucket                                                                
+False vol < 20%      467         -0.32      1.90       0.55       -0.77   -78.32
+      20-35%         661          2.17      2.06       0.54       -0.92   -85.76
+      > 35%          480         -0.08     -2.65       0.48       -2.62   -87.23
+True  vol < 20%     2062          1.86      2.28       0.57       -0.64   -47.10
+      20-35%        1030          1.61      1.01       0.53       -0.99   -68.47
+      > 35%          213          3.53      2.29       0.55       -1.09   -57.29
+
+   2000-12: trend on and vol <= 35%: +1.28%/mo (1215); trend off: -1.19%/mo (768)
+   2013-26: trend on and vol <= 35%: +2.10%/mo (1877); trend off: +2.57%/mo (840)
+
+-- SMH (the SOXL proxy) --
+       months  mean 3x %/mo  median %  up months  decay %/mo  worst %
+trend                                                                
+False     101          2.26      0.26       0.50       -1.29   -72.77
+True      204          3.52      1.84       0.52       -0.86   -57.29
+
+       months  mean 3x %/mo  median %  up months  decay %/mo  worst %
+top3                                                                 
+False     216          2.66      0.75       0.51       -1.09   -59.81
+True       89          4.17      2.24       0.52       -0.78   -72.77
+
+            months  mean 3x %/mo  median %  up months  decay %/mo  worst %
+vol bucket                                                                
+vol < 20%       71          4.35      3.57       0.55       -0.71   -35.68
+20-35%         157          2.05      0.08       0.50       -1.06   -49.95
+> 35%           77          4.09      0.81       0.51       -1.15   -72.77
+
+      months  mean 3x %/mo  median %  up months  decay %/mo  worst %
+quad                                                                
+D         39          9.63     13.27       0.67       -2.10   -72.77
+G         85          7.68      7.91       0.59       -0.61   -41.55
+R        147          0.10     -0.86       0.46       -1.03   -57.29
+S         34         -2.87    -10.18       0.41       -0.62   -59.81
+
+trend x vol:
+                  months  mean 3x %/mo  median %  up months  decay %/mo  worst %
+trend vol bucket                                                                
+False vol < 20%        8          6.87      5.75       0.62       -0.92   -16.34
+      20-35%          49          3.49      0.26       0.51       -0.80   -40.61
+      > 35%           44          0.06     -7.57       0.48       -1.89   -72.77
+True  vol < 20%       63          4.03      3.04       0.54       -0.68   -35.68
+      20-35%         108          1.40     -0.23       0.50       -1.18   -49.95
+      > 35%           33          9.46      5.16       0.55       -0.16   -57.29
+
+   2000-12: trend on and vol <= 35%: -3.93%/mo (54); trend off: -0.11%/mo (74)
+   2013-26: trend on and vol <= 35%: +5.28%/mo (117); trend off: +8.76%/mo (27)
+
+-- all except SMH, XLK, QQQ --
+       months  mean 3x %/mo  median %  up months  decay %/mo  worst %
+trend                                                                
+False    1332          0.70      1.65       0.53       -1.44   -87.23
+True     2634          1.71      1.92       0.56       -0.77   -68.47
+
+       months  mean 3x %/mo  median %  up months  decay %/mo  worst %
+top3                                                                 
+False    3204          1.32      1.99       0.55       -1.00   -87.23
+True      762          1.59      0.95       0.53       -0.97   -69.12
+
+            months  mean 3x %/mo  median %  up months  decay %/mo  worst %
+vol bucket                                                                
+vol < 20%     2096          1.14      2.01       0.56       -0.65   -78.32
+20-35%        1349          1.83      1.69       0.54       -0.96   -85.76
+> 35%          521          1.15      0.79       0.51       -2.46   -87.23
+
+      months  mean 3x %/mo  median %  up months  decay %/mo  worst %
+quad                                                                
+D        509          4.34      4.97       0.60       -1.91   -87.23
+G       1137          1.92      2.78       0.58       -0.68   -68.47
+R       1923          1.40      1.62       0.54       -0.80   -56.02
+S        397         -4.13     -4.02       0.41       -1.67   -61.18
+
+trend x vol:
+                  months  mean 3x %/mo  median %  up months  decay %/mo  worst %
+trend vol bucket                                                                
+False vol < 20%      431         -0.98      1.64       0.54       -0.78   -78.32
+      20-35%         542          2.33      2.29       0.55       -0.92   -85.76
+      > 35%          359          0.24     -1.07       0.49       -3.01   -87.23
+True  vol < 20%     1665          1.68      2.07       0.57       -0.62   -47.10
+      20-35%         807          1.49      1.05       0.53       -0.99   -68.47
+      > 35%          162          3.15      1.68       0.55       -1.25   -56.02
+
+   2000-12: trend on and vol <= 35%: +1.56%/mo (987); trend off: -1.13%/mo (569)
+   2013-26: trend on and vol <= 35%: +1.66%/mo (1485); trend off: +2.07%/mo (763)
+
+=== Part 2. Rotation (synthetic 3x, 2000-2026) ===
+
+-- universe: all 17 --
+equal-weight trend rule                  CAGR +11.5% maxDD  -60% | 2000-12  +5.4%  -60% | 2013-26 +17.5%  -43% | worst yr  -28% best  +102%
+SPY 3x while above 10-month average      CAGR +12.9% maxDD  -62% | 2000-12  +9.6%  -55% | 2013-26 +16.1%  -62% | worst yr  -54% best  +116%
+rotation L= 3 N=1                        CAGR -18.0% maxDD -100% | 2000-12 -17.7% -100% | 2013-26 -18.2%  -98% | worst yr  -88% best  +195%
+rotation L= 3 N=2                        CAGR  +0.8% maxDD  -95% | 2000-12  +0.6%  -95% | 2013-26  +1.1%  -83% | worst yr  -64% best  +244%
+rotation L= 3 N=3                        CAGR  +7.8% maxDD  -85% | 2000-12  +3.0%  -85% | 2013-26 +12.5%  -72% | worst yr  -58% best  +145%
+rotation L= 6 N=1                        CAGR -10.6% maxDD -100% | 2000-12 -11.7%  -99% | 2013-26  -9.6%  -99% | worst yr  -79% best  +341%
+rotation L= 6 N=2  <- P                  CAGR  +0.2% maxDD  -96% | 2000-12  -5.5%  -96% | 2013-26  +5.9%  -86% | worst yr  -77% best  +289%
+rotation L= 6 N=3                        CAGR  +5.7% maxDD  -90% | 2000-12  +3.6%  -89% | 2013-26  +7.7%  -81% | worst yr  -70% best  +179%
+rotation L=12 N=1                        CAGR  -9.8% maxDD  -99% | 2000-12 -12.6%  -97% | 2013-26  -7.1%  -98% | worst yr  -75% best  +183%
+rotation L=12 N=2                        CAGR  +1.2% maxDD  -95% | 2000-12  -8.4%  -95% | 2013-26 +11.1%  -84% | worst yr  -77% best  +370%
+rotation L=12 N=3                        CAGR  +8.0% maxDD  -90% | 2000-12  -3.8%  -90% | 2013-26 +20.4%  -75% | worst yr  -61% best  +185%
+grid median (each column separately)     CAGR  +0.8% maxDD  -95% | 2000-12  -5.5%  -95% | 2013-26  +5.9%  -84% | worst yr  -75% best  +195%
+
+-- universe: without SMH, XLK, QQQ --
+equal-weight trend rule                  CAGR +11.1% maxDD  -48% | 2000-12 +10.3%  -48% | 2013-26 +11.9%  -42% | worst yr  -31% best   +76%
+rotation L= 3 N=1                        CAGR -14.9% maxDD -100% | 2000-12  -4.3%  -98% | 2013-26 -23.8%  -99% | worst yr  -82% best  +201%
+rotation L= 3 N=2                        CAGR  +6.3% maxDD  -84% | 2000-12 +12.0%  -80% | 2013-26  +1.2%  -83% | worst yr  -52% best  +250%
+rotation L= 3 N=3                        CAGR  +9.8% maxDD  -82% | 2000-12 +10.1%  -82% | 2013-26  +9.5%  -65% | worst yr  -48% best   +83%
+rotation L= 6 N=1                        CAGR  -3.2% maxDD -100% | 2000-12  -8.3%  -99% | 2013-26  +1.8%  -97% | worst yr  -79% best  +554%
+rotation L= 6 N=2  <- P                  CAGR  +4.1% maxDD  -96% | 2000-12  +3.3%  -96% | 2013-26  +4.8%  -81% | worst yr  -77% best  +343%
+rotation L= 6 N=3                        CAGR  +8.6% maxDD  -89% | 2000-12 +10.6%  -89% | 2013-26  +6.7%  -78% | worst yr  -70% best  +180%
+rotation L=12 N=1                        CAGR  -5.6% maxDD  -99% | 2000-12  -4.0%  -97% | 2013-26  -7.0%  -97% | worst yr  -79% best  +187%
+rotation L=12 N=2                        CAGR  +7.3% maxDD  -92% | 2000-12  +3.7%  -92% | 2013-26 +10.9%  -85% | worst yr  -55% best  +291%
+rotation L=12 N=3                        CAGR  +9.3% maxDD  -87% | 2000-12  +5.6%  -87% | 2013-26 +12.8%  -73% | worst yr  -46% best  +158%
+grid median (each column separately)     CAGR  +6.3% maxDD  -92% | 2000-12  +3.7%  -92% | 2013-26  +4.8%  -83% | worst yr  -70% best  +201%
+
+=== Random control: N=2 at random among funds above their 10-month average, 500 draws, all 17 ===
+random CAGR median +4.9%, 95th pct +14.8%, best +22.4%; P +0.2%; random maxDD median -91%
+   2000-12: random median -5.8%, 95th +6.2%; P -5.5%
+   2013-26: random median +15.9%, 95th +34.4%; P +5.9%
+
+P beats trend rule both halves: False; beats random 95th pct: False; ex-tech P beats ex-tech trend both halves: False -> PASSES: False
+
+=== Today (informational; never trades) ===
+
+last completed month-end 2026-10-30: P would hold ['XLV', 'XLE']; trend on for 11 of 17
+     6-month %  above 10-month avg  3-month vol % 3x fund
+XLV       27.7                True           17.3    CURE
+XLE       18.9                True           21.6     ERX
+XBI       18.9                True           30.6    LABU
+XLK       12.8                True           25.3    TECL
+XLF        9.2                True           12.5     FAS
+SPY        5.7                True           10.5    UPRO
+KRE        4.3                True           15.6    DPST
+QQQ        3.6                True           18.8    TQQQ
+SMH        3.1                True           37.2    SOXL
+IWM        1.0                True           13.7     TNA
+IYR       -1.7                True           13.4     DRN
+TLT       -2.2               False           10.8     TMF
+XHB       -4.1               False           25.2    NAIL
+EEM       -4.1               False           21.1     EDC
+XLU       -6.0               False           15.7    UTSL
+FXI       -9.4               False           16.5    YINN
+GDX      -12.7               False           48.5    NUGT
+
+latest close, provisional 2026-11-25: P would hold ['XLV', 'XBI']; trend on for 5 of 17
+     6-month %  above 10-month avg  3-month vol % 3x fund
+XLV       23.9                True           19.1    CURE
+XBI       14.7                True           36.5    LABU
+XLF       10.3                True           17.7     FAS
+XLE        9.6                True           24.9     ERX
+XHB        1.7               False           30.5    NAIL
+KRE        1.5               False           18.1    DPST
+IYR        1.3                True           16.0     DRN
+XLU       -0.5               False           15.5    UTSL
+TLT       -1.8               False           10.9     TMF
+SPY       -4.8               False           19.6    UPRO
+IWM       -7.0               False           20.6     TNA
+FXI      -10.0               False           18.9    YINN
+QQQ      -14.0               False           30.4    TQQQ
+EEM      -17.4               False           30.7     EDC
+GDX      -17.4               False           50.0    NUGT
+XLK      -18.3               False           38.6    TECL
+SMH      -29.5               False           60.1    SOXL
