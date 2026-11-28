@@ -1,0 +1,23 @@
+{
+  "headline": "A bounce on the line, a verdict on Monday",
+  "deck": "The S&P 500 rose <b>1.7%</b> and the equal-weight index <b>3.2%</b>, while technology slipped. Daily bars have turned up from last week's washout. The weekly decline is now in its fourth week. The S&P 500 sits <b>0.2%</b> below the 10-month line that sets December's regime.",
+  "changed": [
+    "<b>Breadth turned.</b> Members in a daily cycle decline fell from 77% to 15%. Ten of 11 sectors rose. Technology lost 0.3%.",
+    "<b>Weekly stage.</b> The weekly cycle reached week 4 of its decline, the Mature stage. The weekly trend is in week 2.",
+    "<b>Volatility eased.</b> VIX fell 16.3% to 23.8. The 10-year yield fell 12 bp to 4.94%. Long Treasuries gained 1.1%.",
+    "<b>Miners led.</b> Gold miners rose 10.0% while gold fell 1.2%. WTI was flat and is down 20.2% this month."
+  ],
+  "watch": [
+    "<b>Month-end, 30 Nov.</b> The S&P 500 fund needs +0.2% and commodities +0.8% to regain their lines. Short of that, December is Deflation.",
+    "<b>Stage of the decline.</b> Week 4 onward has been a better entry than weeks 1 to 3, mainly while the monthly readings stay above zero.",
+    "<b>Monthly washout line.</b> 17% of members are in a monthly cycle decline, 33 points short of the 50% washout line.",
+    "<b>Technology.</b> The only sector down on the week. It is 20.7% below its high and 6.5% below its 200-day average."
+  ],
+  "qb": "The daily clock turned. Members in a daily cycle decline fell from 77% to 15% as both daily readings moved into quadrant 1. The <b>weekly</b> cycle is in week 4 of its decline, the Mature stage, and the weekly trend in week 2. The <b>monthly</b> readings are still above zero, after 43 and 40 months.",
+  "nasdaq": "A step behind the S&P 500 on trend: the weekly trend is in week 3 of a decline, the daily readings have just turned up, and both monthly readings remain above zero.",
+  "equities": "The rally was broad and led by smaller names. The equal-weight index rose 3.2% and the Russell 2000 3.6%, against 1.7% for the S&P 500. Materials gained 5.5%. Technology fell 0.3% and is now the weakest sector against its 200-day average.",
+  "macro": "Rates and volatility both eased. The 10-year yield fell 12 bp to 4.94% and the 5-year 12 bp to 4.75%. VIX fell 16.3% to 23.8, though it is still 59% above where it began the year. Long Treasuries gained 1.1% and credit held steady, with high-yield bonds up 0.1%. The dollar index was flat at 104.0.",
+  "commodities": "Oil paused after its slide. WTI was flat on the week at 83.08, down 20.2% this month and still up 44.7% on the year. Brent rose 3.8% and natural gas 6.8%. Gold fell 1.2% and silver 2.6%, yet gold miners jumped 10.0%. No mean-reversion rule fired this week.",
+  "technicals": "No closing buy trigger fired. SPY closed inside its Bollinger band with a 2-day RSI of 79.1, and QQQ with 73.3, a week after SPY closed with a 2-day RSI of 0.3. Short-term momentum is now stretched up, not down.",
+  "model": "Reflation is in force for November. Both dials sit just below their 10-month lines: the S&P 500 by 0.2% and commodities by 0.8%. If Monday's close leaves them there, December is Deflation. The quadrant balances flag is Intact. Since 1987 a growth-off reading with intact monthly readings has been followed by +1.7% and +3.2% for the S&P 500 in the two eras."
+}
