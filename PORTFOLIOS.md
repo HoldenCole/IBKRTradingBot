@@ -2205,3 +2205,22 @@ User direction: find when SOXL or any levered fund made sense. Not buy-and-hold 
 As of Nov 25, 5 of 17 are above their 10-month average: XLV (+23.9% over 6 months), XBI, XLF, XLE, IYR. SMH is -29.5% over 6 months with 60% realized vol, XLK -18%, QQQ -14%, and SPY is below its 10-month average. By these rules a downward rotation out of semis and tech is under way. At October's month-end 11 of 17 were in uptrends.
 
 **Reading.** No rule here reliably catches rotations at 3x. The one that held up in both halves and without semis is the plain trend rule spread across many funds, and its job is cutting the big crashes, not picking winners. No change to the plan; any change is the investor's decision.
+
+## A levered-fund trend sleeve beside VAGG (2026-11-28, entry 120)
+
+User direction: look at adding entry 119's trend rule as an option under VAGG. Pre-registered in `research/PREREGISTRATION_120.md`. Code: `research/vagg_trend_sleeve.py`; output in `research/vagg_trend_sleeve_output.txt`.
+
+**Design rule.** The locked rule says AGG and VAGG own MOD's regime exposures with more octane, never other assets. A sleeve across 17 sector, country and bond 3x funds would break it inside the cells, so it was tested only as a satellite: a fixed share of the account, reset monthly, beside the unchanged v9 VAGG.
+
+| | 2007-2026 CAGR | Sortino | max DD | 2000-2006 CAGR | Sortino | max DD |
+|---|---|---|---|---|---|---|
+| VAGG alone (v9) | +33.2% | 1.14 | -46.8% | +23.2% | 1.01 | -29.8% |
+| 80% VAGG + 20% 17-fund trend sleeve | +29.4% | 1.09 | -44.2% | +20.3% | 0.93 | -30.3% |
+| 70% VAGG + 30% 17-fund trend sleeve | +27.5% | 1.05 | -43.4% | +18.8% | 0.88 | -31.0% |
+| 80% VAGG + 20% SPY-3x trend sleeve | +29.4% | 1.02 | -47.8% | +21.1% | 0.97 | -30.4% |
+| 17-fund sleeve alone | +12.5% | 0.50 | -44.1% | +7.6% | 0.34 | -60.2% |
+| SPY-3x trend sleeve alone | +12.8% | 0.37 | -62.0% | +11.5% | 0.42 | -42.4% |
+
+The modern window runs to November 2026, past the official September figures (+35.3%); the drawdown matches. **0 of 3 variants pass.**
+
+**Reading.** The sleeve is a weaker version of something VAGG already does. VAGG's regime switch is itself a trend-and-cycle rule, it earns more in every regime (Growth +4.9% a month against the sleeve's +2.0%; Deflation +4.3% against +0.9%), and the two move together (monthly correlation 0.65-0.76). The 17-fund sleeve did fall less in VAGG's six worst months (-5% to -13% against -21% to -27%), but it shaved only about 2.6 points off VAGG's modern drawdown and none off the earlier one, while costing 3-6 points of return a year. As a stand-alone rule for the small account (entry 119) it remains an idea; as part of VAGG it does not earn its place. No change to the matrix; any change is the investor's decision.

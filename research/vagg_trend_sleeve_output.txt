@@ -1,0 +1,46 @@
+modern window 2007-01-03 to 2026-11-20; earlier window 2000-01-03 to 2006-12-29
+V0 reproduces the official engine: VAGG CAGR +33.2% Sortino 1.14 maxDD -46.8%
+
+  df = pd.concat([a, b], axis=1, keys=["a", "b"]).dropna()
+  df = pd.concat([a, b], axis=1, keys=["a", "b"]).dropna()
+  df = pd.concat([a, b], axis=1, keys=["a", "b"]).dropna()
+                                     2007-2026 CAGR  2007-2026 Sortino  2007-2026 maxDD  2000-2006 CAGR  2000-2006 Sortino  2000-2006 maxDD
+variant                                                                                                                                    
+V0 VAGG alone                                 33.16               1.14           -46.82           23.18               1.01           -29.78
+V1 80% VAGG + 20% T17                         29.43               1.09           -44.20           20.25               0.93           -30.26
+V2 70% VAGG + 30% T17                         27.47               1.05           -43.37           18.75               0.88           -31.00
+V3 80% VAGG + 20% T1 (SPY 3x trend)           29.35               1.02           -47.84           21.14               0.97           -30.36
+T17 sleeve alone                              12.50               0.50           -44.14            7.58               0.34           -60.23
+T1 sleeve alone                               12.80               0.37           -62.04           11.51               0.42           -42.36
+
+verdicts (both eras: higher CAGR and Sortino, drawdown no more than 2 points worse):
+   V1 80% VAGG + 20% T17: fails
+   V2 70% VAGG + 30% T17: fails
+   V3 80% VAGG + 20% T1 (SPY 3x trend): fails
+
+correlation of monthly returns with VAGG:
+   2007-2026 T17: +0.65
+   2007-2026 T1: +0.76
+   2000-2006 T17: +0.74
+   2000-2006 T1: +0.70
+
+mean monthly return by regime, 2007-2026 (%):
+        VAGG   T17    T1  months
+regime                          
+D       4.29  0.89  0.00      30
+G       4.85  2.03  3.04      76
+R       1.51  1.29  1.13     114
+S       0.87 -1.08  0.00      19
+
+worst VAGG months 2007-2026 and the sleeves the same month (%):
+            VAGG   T17    T1 regime
+2018-12-31 -26.6  -5.3 -26.1      G
+2022-12-31 -26.4  -8.6 -17.8      G
+2019-05-31 -24.1 -13.2 -19.0      G
+2026-11-30 -21.4 -12.3 -17.3      R
+2015-08-31 -21.3 -11.2 -18.9      G
+2016-01-31 -21.2  -5.4 -15.5      G
+
+practicality: T17 holds up to 17 positions. At 20% of the account, one position is about 1.2% of the account;
+with IBKR Pro's $1 minimum per order to stay near 0.1% per trade, each position needs about $1,000, i.e. an account
+of roughly $85,000. T1 is one position and works at any size.
